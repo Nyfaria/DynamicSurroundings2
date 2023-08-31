@@ -60,7 +60,7 @@ public class UpdateChecker extends Checker {
             return null;
         final String t = result.target != null ? result.target.toString() : "UNKNOWN";
         final String u = result.url != null ? result.url : "UNKNOWN";
-        return I18n.format(this.messageId, mod.get().getDisplayName(), t, u);
+        return I18n.get(this.messageId, mod.get().getDisplayName(), t, u);
     }
 
     @Nullable
@@ -69,7 +69,7 @@ public class UpdateChecker extends Checker {
         final String updateMessage = getUpdateMessage(this.modId);
         if (updateMessage != null) {
             try {
-                return ITextComponent.Serializer.getComponentFromJson(updateMessage);
+                return ITextComponent.Serializer.fromJson(updateMessage);
             } catch (@Nonnull final Throwable t) {
                 t.printStackTrace();
             }

@@ -78,7 +78,7 @@ class CommonStateHandler extends HandlerBase {
 
         final long currentTick = TickCounter.getTickCount();
         final CommonState data = CommonState.getData();
-        final World world = player.getEntityWorld();
+        final World world = player.getCommandSenderWorld();
 
         ceilingCoverage.tick();
 
@@ -89,7 +89,7 @@ class CommonStateHandler extends HandlerBase {
         data.truePlayerBiome = BiomeLibrary.getPlayerBiome(player, true);
         data.dimInfo = DimensionLibrary.getData(world);
         data.dimensionName = data.dimInfo.getName().toString();
-        data.playerPosition = player.getPosition();
+        data.playerPosition = player.blockPosition();
         data.playerEyePosition = player.getEyePosition(1F);
         data.dayCycle = DayCycle.getCycle(world);
         data.inside = ceilingCoverage.isReallyInside();
@@ -99,26 +99,26 @@ class CommonStateHandler extends HandlerBase {
         data.isInSpace = data.playerBiome == BiomeLibrary.OUTERSPACE_INFO;
         data.isInClouds = data.playerBiome == BiomeLibrary.CLOUDS_INFO;
 
-        final int blockLight = world.getLightFor(LightType.BLOCK, data.playerPosition);
-        final int skyLight = world.getLightFor(LightType.SKY, data.playerPosition) - world.getLightSubtracted(data.playerPosition, 0);
+        final int blockLight = world.getBrightness(LightType.BLOCK, data.playerPosition);
+        final int skyLight = world.getBrightness(LightType.SKY, data.playerPosition) - world.getRawBrightness(data.playerPosition, 0);
         data.lightLevel = Math.max(blockLight, skyLight);
 
         // Only check once a second
         if (currentTick % 20 == 0) {
             // Only for surface worlds.  Other types of worlds are interpreted as not having villages.
-            if (world.getDimensionType().isNatural()) {
+            if (world.dimensionType().natural()) {
                 // Look for a bell within range of the player
-                final Optional<TileEntity> bell = world.loadedTileEntityList.stream()
+                final Optional<TileEntity> bell = world.blockEntityList.stream()
                         .filter(te -> te instanceof BellTileEntity)
-                        .filter(te -> te.getPos().distanceSq(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z, true) <= VILLAGE_RANGE)
+                        .filter(te -> te.getBlockPos().distSqr(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z, true) <= VILLAGE_RANGE)
                         .findAny();
 
                 // If a bell is found, look for a villager within range
                 data.isInVillage = bell.isPresent();
                 if (data.isInVillage) {
-                    final Optional<Entity> entity = Streams.stream(GameUtils.getWorld().getAllEntities())
+                    final Optional<Entity> entity = Streams.stream(GameUtils.getWorld().entitiesForRendering())
                             .filter(e -> e instanceof VillagerEntity)
-                            .filter(e -> e.getDistanceSq(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z) <= VILLAGE_RANGE)
+                            .filter(e -> e.distanceToSqr(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z) <= VILLAGE_RANGE)
                             .findAny();
                     data.isInVillage = entity.isPresent();
                 }

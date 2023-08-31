@@ -111,8 +111,8 @@ public final class FootStrikeLocation {
 	@Nonnull
 	public Vector3d offset(@Nonnull final Direction facing, final float n) {
 		return n == 0 ? this.strike
-				: new Vector3d(this.strike.x + facing.getXOffset() * n, this.strike.y + facing.getYOffset() * n,
-						this.strike.z + facing.getZOffset() * n);
+				: new Vector3d(this.strike.x + facing.getStepX() * n, this.strike.y + facing.getStepY() * n,
+						this.strike.z + facing.getStepZ() * n);
 	}
 
 	/**
@@ -125,7 +125,7 @@ public final class FootStrikeLocation {
 	 */
 	@Nullable
 	protected Vector3d footprintPosition() {
-		final World world = this.entity.getEntityWorld();
+		final World world = this.entity.getCommandSenderWorld();
 
 		// The foot strike is just inside the block that was stepped on.
 		BlockState state = world.getBlockState(this.stepPos);
@@ -135,7 +135,7 @@ public final class FootStrikeLocation {
 			return null;
 
 		// Check the block above - it could be a snow layer or carpet
-		BlockPos feetPos = this.stepPos.up();
+		BlockPos feetPos = this.stepPos.above();
 		BlockState upState = world.getBlockState(feetPos);
 		if (upState.getMaterial() != Material.AIR) {
 			state = upState;
@@ -149,15 +149,15 @@ public final class FootStrikeLocation {
 			return null;
 
 		final VoxelShape shape = state.getCollisionShape(world, feetPos);
-		final double boundingY = state.getShape(world, feetPos).getEnd(Direction.Axis.Y);
-		final double collisionY = shape.isEmpty() ? 0 : shape.getEnd(Direction.Axis.Y);
+		final double boundingY = state.getShape(world, feetPos).max(Direction.Axis.Y);
+		final double collisionY = shape.isEmpty() ? 0 : shape.max(Direction.Axis.Y);
 		final double maxYblock = feetPos.getY() + Math.max(boundingY, collisionY);
 		// Should we get the max of strike.Y and maxYblock?
-		return new Vector3d(this.strike.getX(), maxYblock, this.strike.getZ());
+		return new Vector3d(this.strike.x(), maxYblock, this.strike.z());
 	}
 
 	protected boolean hasFootstepImprint(@Nonnull final BlockState state, @Nonnull final BlockPos pos) {
-		final BlockState footstepState = FacadeHelper.resolveState(this.entity, state, this.entity.getEntityWorld(), Vector3d.copyCentered(pos), Direction.UP);
+		final BlockState footstepState = FacadeHelper.resolveState(this.entity, state, this.entity.getCommandSenderWorld(), Vector3d.atCenterOf(pos), Direction.UP);
 		return FootstepLibrary.hasFootprint(footstepState);
 	}
 }

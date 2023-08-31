@@ -93,7 +93,7 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
 
         final List<ITextComponent> toolTip = new ArrayList<>();
         toolTip.add(label);
-        final List<ITextProperties> lines = GameUtils.getMC().fontRenderer.getCharacterManager().func_238362_b_(new TranslationTextComponent(translationKey + ".tooltip"), ConfigProperty.TOOLTIP_WIDTH, Style.EMPTY);
+        final List<ITextProperties> lines = GameUtils.getMC().font.getSplitter().splitLines(new TranslationTextComponent(translationKey + ".tooltip"), ConfigProperty.TOOLTIP_WIDTH, Style.EMPTY);
         for (final ITextProperties l : lines) {
             toolTip.add(new StringTextComponent(l.getString()));
         }
@@ -125,7 +125,7 @@ public abstract class ClothAPIFactory implements BiFunction<Minecraft, Screen, S
                 .startBooleanToggle(name, value.get())
                 .setTooltip(property.getTooltip())
                 .setDefaultValue(value.get())
-                .setYesNoTextSupplier(DialogTexts::optionsEnabled)
+                .setYesNoTextSupplier(DialogTexts::optionStatus)
                 .setSaveConsumer(value::set);
 
         if (property.getNeedsWorldRestart())

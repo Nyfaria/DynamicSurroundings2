@@ -49,16 +49,16 @@ public class CommandHelpers {
 
     public static void scheduleOnClientThread(Runnable runnable) {
         final ThreadTaskExecutor<?> scheduler = LogicalSidedProvider.WORKQUEUE.get(LogicalSide.CLIENT);
-        scheduler.deferTask(runnable);
+        scheduler.submitAsync(runnable);
     }
 
     public static void sendSuccess(@Nonnull final CommandSource source, @Nonnull final String command, @Nonnull String operation, @Nonnull String target) {
         final String key = String.format("command.dsurround.%s.success", command);
-        source.sendFeedback(new TranslationTextComponent(key, operation, target), true);
+        source.sendSuccess(new TranslationTextComponent(key, operation, target), true);
     }
 
     public static void sendFailure(@Nonnull final CommandSource source, @Nonnull final String command) {
         final String key = String.format("command.dsurround.%s.failure", command);
-        source.sendFeedback(new TranslationTextComponent(key), true);
+        source.sendSuccess(new TranslationTextComponent(key), true);
     }
 }

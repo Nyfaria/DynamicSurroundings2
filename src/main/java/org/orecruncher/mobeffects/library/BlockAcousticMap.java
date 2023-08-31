@@ -47,9 +47,9 @@ public final class BlockAcousticMap {
 
 	public BlockAcousticMap(@Nonnull final Function<BlockState, IAcoustic> resolver) {
 		this.resolver = resolver;
-		put(BlockStateMatcher.create(Blocks.AIR.getDefaultState()), Constants.NOT_EMITTER);
-		put(BlockStateMatcher.create(Blocks.CAVE_AIR.getDefaultState()), Constants.NOT_EMITTER);
-		put(BlockStateMatcher.create(Blocks.VOID_AIR.getDefaultState()), Constants.NOT_EMITTER);
+		put(BlockStateMatcher.create(Blocks.AIR.defaultBlockState()), Constants.NOT_EMITTER);
+		put(BlockStateMatcher.create(Blocks.CAVE_AIR.defaultBlockState()), Constants.NOT_EMITTER);
+		put(BlockStateMatcher.create(Blocks.VOID_AIR.defaultBlockState()), Constants.NOT_EMITTER);
 	}
 
 	/**

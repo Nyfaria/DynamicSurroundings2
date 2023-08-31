@@ -48,10 +48,10 @@ class RainSplashAccent implements IFootstepAccentProvider {
             @Nonnull final BlockState posState,
             @Nonnull final ObjectArray<IAcoustic> acoustics)
     {
-        final World world = entity.getEntityWorld();
+        final World world = entity.getCommandSenderWorld();
         if (world.isRaining()) {
             // Get the precipitation type at the location
-            final Biome.RainType rainType = WorldUtils.getCurrentPrecipitationAt(world, blockPos.up());
+            final Biome.RainType rainType = WorldUtils.getCurrentPrecipitationAt(world, blockPos.above());
             if (rainType == Biome.RainType.RAIN)
                 acoustics.add(FootstepLibrary.getRainSplashAcoustic());
         }

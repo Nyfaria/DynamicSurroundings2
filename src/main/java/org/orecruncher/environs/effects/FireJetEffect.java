@@ -47,7 +47,7 @@ public class FireJetEffect extends JetEffect {
     @Override
     public boolean canTrigger(@Nonnull final IBlockReader provider, @Nonnull final BlockState state,
                               @Nonnull final BlockPos pos, @Nonnull final Random random) {
-        return WorldUtils.isAirBlock(provider, pos.up()) && super.canTrigger(provider, state, pos, random);
+        return WorldUtils.isAirBlock(provider, pos.above()) && super.canTrigger(provider, state, pos, random);
     }
 
     @Override
@@ -60,17 +60,17 @@ public class FireJetEffect extends JetEffect {
 
         if (!state.getFluidState().isEmpty()) {
             blockCount = countVerticalBlocks(provider, pos, LAVA_PREDICATE, -1);
-            spawnHeight = pos.getY() + state.getFluidState().getHeight() + 0.1F;
+            spawnHeight = pos.getY() + state.getFluidState().getOwnHeight() + 0.1F;
             isSolid = false;
         } else {
             final VoxelShape shape = state.getShape(provider, pos);
             if (shape.isEmpty()) {
                 return;
             }
-            final double blockHeight = shape.getBoundingBox().maxY;
+            final double blockHeight = shape.bounds().maxY;
             spawnHeight = (float) (pos.getY() + blockHeight);
             isSolid = true;
-            if (state.isSolid()) {
+            if (state.canOcclude()) {
                 blockCount = 2;
             } else {
                 blockCount = 1;

@@ -105,7 +105,7 @@ public final class SoundFXUtils {
 
         // Would have been cool to have a direction vec as a 3d as well as 3i.
         for (final Direction d : Direction.values()) {
-            Vector3i v = d.getDirectionVec();
+            Vector3i v = d.getNormal();
             SURFACE_DIRECTION_NORMALS[d.ordinal()] = new Vector3d(v.getX(), v.getY(), v.getZ());
         }
 
@@ -192,12 +192,12 @@ public final class SoundFXUtils {
                 continue;
 
             // Additional bounces
-            BlockPos lastHitBlock = rayHit.getPos();
-            Vector3d lastHitPos = rayHit.getHitVec();
-            Vector3d lastHitNormal = surfaceNormal(rayHit.getFace());
+            BlockPos lastHitBlock = rayHit.getBlockPos();
+            Vector3d lastHitPos = rayHit.getLocation();
+            Vector3d lastHitNormal = surfaceNormal(rayHit.getDirection());
             Vector3d lastRayDir = REVERB_RAY_NORMALS[i];
 
-            double totalRayDistance = origin.distanceTo(rayHit.getHitVec());
+            double totalRayDistance = origin.distanceTo(rayHit.getLocation());
 
             // Secondary ray bounces
             for (int j = 0; j < REVERB_RAY_BOUNCES; j++) {
@@ -216,12 +216,12 @@ public final class SoundFXUtils {
                 } else {
 
                     bounceRatio[j] += blockReflectivity;
-                    totalRayDistance += lastHitPos.distanceTo(rayHit.getHitVec());
+                    totalRayDistance += lastHitPos.distanceTo(rayHit.getLocation());
 
-                    lastHitPos = rayHit.getHitVec();
-                    lastHitNormal = surfaceNormal(rayHit.getFace());
+                    lastHitPos = rayHit.getLocation();
+                    lastHitNormal = surfaceNormal(rayHit.getDirection());
                     lastRayDir = newRayDir;
-                    lastHitBlock = rayHit.getPos();
+                    lastHitBlock = rayHit.getBlockPos();
 
                     // Cast a ray back at the player.  If it is a miss there is a path back from the reflection
                     // point to the player meaning they share the same airspace.
@@ -359,18 +359,18 @@ public final class SoundFXUtils {
 
         if (Config.CLIENT.sound.enableOcclusionCalcs.get()) {
             Vector3d lastHit = origin;
-            BlockState lastState = ctx.world.getBlockState(new BlockPos(lastHit.getX(), lastHit.getY(), lastHit.getZ()));
+            BlockState lastState = ctx.world.getBlockState(new BlockPos(lastHit.x(), lastHit.y(), lastHit.z()));
             final BlockRayTrace traceContext = new BlockRayTrace(ctx.world, origin, target, RayTraceContext.BlockMode.VISUAL, RayTraceContext.FluidMode.SOURCE_ONLY);
             final Iterator<BlockRayTraceResult> itr = new RayTraceIterator(traceContext);
             for (int i = 0; i < OCCLUSION_SEGMENTS; i++) {
                 if (itr.hasNext()) {
                     final BlockRayTraceResult result = itr.next();
                     final float occlusion = AudioEffectLibrary.getOcclusion(lastState);
-                    final double distance = lastHit.distanceTo(result.getHitVec());
+                    final double distance = lastHit.distanceTo(result.getLocation());
                     // Occlusion is scaled by the distance travelled through the block.
                     factor += occlusion * distance;
-                    lastHit = result.getHitVec();
-                    lastState = ctx.world.getBlockState(result.getPos());
+                    lastHit = result.getLocation();
+                    lastState = ctx.world.getBlockState(result.getBlockPos());
                 } else {
                     break;
                 }

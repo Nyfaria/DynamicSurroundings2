@@ -106,7 +106,7 @@ public final class EffectLibrary {
     public static void soundPlay(@Nonnull PlaySoundEvent e) {
         final ISound theSound = e.getSound();
         if (theSound != null) {
-            final ResourceLocation soundResource = theSound.getSoundLocation();
+            final ResourceLocation soundResource = theSound.getLocation();
             if (blockedSounds.contains(soundResource)) {
                 e.setResultSound(null);
             } else {
@@ -136,7 +136,7 @@ public final class EffectLibrary {
 
             // Seed our configuration with known entities that have defaults
             ForgeRegistries.ENTITIES.forEach(e -> {
-                if (e.getClassification() != EntityClassification.MISC)
+                if (e.getCategory() != EntityClassification.MISC)
                     effectConfiguration.put(e.getRegistryName(), DEFAULT);
             });
 

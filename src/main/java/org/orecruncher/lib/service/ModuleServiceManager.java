@@ -60,7 +60,7 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
 
     private ModuleServiceManager() {
         final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
-        ((IReloadableResourceManager) resourceManager).addReloadListener(this);
+        ((IReloadableResourceManager) resourceManager).registerReloadListener(this);
     }
 
     public static ModuleServiceManager instance() {
@@ -81,7 +81,7 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
      */
     private void reload() {
         ForgeUtils.getEnabledResourcePacks().forEach(p -> {
-            LOGGER.debug("Resource pack '%s'", p.getName());
+            LOGGER.debug("Resource pack '%s'", p.getId());
             LOGGER.debug("+  %s", p.getTitle().getString());
             LOGGER.debug("+  %s", p.getDescription().getString());
         });
@@ -138,7 +138,7 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
     @SubscribeEvent
     public static void entityJoinWorld(@Nonnull final EntityJoinWorldEvent event) {
         final PlayerEntity player = GameUtils.getPlayer();
-        if (player != null && player.getEntityWorld().isRemote() && player.getEntityId() == event.getEntity().getEntityId()) {
+        if (player != null && player.getCommandSenderWorld().isClientSide() && player.getId() == event.getEntity().getId()) {
             instance().joinWorld(event);
         }
     }

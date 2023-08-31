@@ -60,7 +60,7 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
     }
 
     public void tick() {
-        this.getEventListeners().stream()
+        this.children().stream()
                 .map(IndividualSoundControlListEntry.class::cast)
                 .forEach(IndividualSoundControlListEntry::tick);
     }

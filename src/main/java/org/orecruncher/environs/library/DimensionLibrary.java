@@ -100,12 +100,12 @@ public final class DimensionLibrary {
 
 	@Nonnull
 	public static DimensionInfo getData(@Nonnull final World world) {
-		RegistryKey<World> key = world.getDimensionKey();
+		RegistryKey<World> key = world.dimension();
 		DimensionInfo dimInfo = configs.get(key);
 
 		if (dimInfo == null) {
 			DimensionConfig config = null;
-			ResourceLocation location = key.getLocation();
+			ResourceLocation location = key.location();
 			for (final DimensionConfig e : cache)
 				if (e.dimensionId.equals(location.toString())) {
 					config = e;

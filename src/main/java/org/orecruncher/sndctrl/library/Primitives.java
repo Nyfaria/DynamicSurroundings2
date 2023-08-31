@@ -108,7 +108,7 @@ public class Primitives {
         final ResourceLocation loc = createArmorToolbarResource(material);
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
-            final SoundEvent event = material.getSoundEvent();;
+            final SoundEvent event = material.getEquipSound();;
             if (SoundTypeUtils.isValid(event)) {
                 acoustic = new SimpleAcoustic(event, Constants.TOOLBAR);
                 AcousticLibrary.addAcoustic(loc, acoustic);
@@ -122,14 +122,14 @@ public class Primitives {
         final ResourceLocation loc = createArmorAccentResource(material);
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
-            final SoundEvent event = material.getSoundEvent();
+            final SoundEvent event = material.getEquipSound();
             if (SoundTypeUtils.isValid(event)) {
-                acoustic = generateAcousticFromTemplate(ARMOR_TEMPLATE, loc, event.getName());
+                acoustic = generateAcousticFromTemplate(ARMOR_TEMPLATE, loc, event.getLocation());
                 AcousticLibrary.addAcoustic(loc, acoustic);
                 return acoustic;
             }
         }
-        return footstepAcousticResolver(loc, material.getSoundEvent());
+        return footstepAcousticResolver(loc, material.getEquipSound());
     }
 
     @Nonnull
@@ -174,7 +174,7 @@ public class Primitives {
                     AcousticLibrary.addAcoustic(loc, simple);
                     acoustic = simple;
                 } else {
-                    acoustic = generateAcousticFromTemplate(FOOTSTEP_TEMPLATE, loc, soundType.getStepSound().getName());
+                    acoustic = generateAcousticFromTemplate(FOOTSTEP_TEMPLATE, loc, soundType.getStepSound().getLocation());
                 }
             }
         }

@@ -47,7 +47,7 @@ public class BubbleJetEffect extends JetEffect {
     public boolean canTrigger(@Nonnull final IBlockReader provider, @Nonnull final BlockState state,
                               @Nonnull final BlockPos pos, @Nonnull final Random random) {
         if (WATER_PREDICATE.test(state)) {
-            final BlockState belowBlock = provider.getBlockState(pos.down());
+            final BlockState belowBlock = provider.getBlockState(pos.below());
             final Material material = belowBlock.getMaterial();
             final boolean isSolidBlock = material.isSolid();
             if (isSolidBlock) {

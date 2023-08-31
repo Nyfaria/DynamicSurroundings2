@@ -59,15 +59,15 @@ public class DimensionInfo {
 
     public DimensionInfo(@Nonnull final World world, @Nullable final DimensionConfig dimConfig) {
         // Attributes that come from the world object itself. Set now because the config may override.
-        DimensionType dt = world.getDimensionType();
-        this.name = world.getDimensionKey().getLocation();
+        DimensionType dt = world.dimensionType();
+        this.name = world.dimension().location();
         this.seaLevel = world.getSeaLevel();
-        this.skyHeight = world.getHeight();
+        this.skyHeight = world.getMaxBuildHeight();
         this.cloudHeight = this.skyHeight;
         this.spaceHeight = this.skyHeight + SPACE_HEIGHT_OFFSET;
         this.isFlatWorld = WorldUtils.isSuperFlat(world);
 
-        if (dt.isNatural() && dt.hasSkyLight()) {
+        if (dt.natural() && dt.hasSkyLight()) {
             this.hasAuroras = true;
             this.hasFog = true;
         }
@@ -75,7 +75,7 @@ public class DimensionInfo {
         // Force sea level based on known world types that give heartburn
         if (this.isFlatWorld)
             this.seaLevel = 0;
-        else if (dt.isNatural() && Config.CLIENT.biome.worldSealevelOverride.get() > 0)
+        else if (dt.natural() && Config.CLIENT.biome.worldSealevelOverride.get() > 0)
             this.seaLevel = Config.CLIENT.biome.worldSealevelOverride.get();
 
         if (Config.CLIENT.biome.biomeSoundBlacklist.get().contains(this.name.toString()))

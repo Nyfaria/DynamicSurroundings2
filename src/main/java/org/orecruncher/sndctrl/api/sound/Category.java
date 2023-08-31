@@ -154,7 +154,7 @@ public class Category implements ISoundCategory {
         if (sound instanceof ISoundInstance) {
             return Optional.of(((ISoundInstance) sound).getSoundCategory());
         }
-        return getCategory(sound.getCategory());
+        return getCategory(sound.getSource());
     }
 
     /**
@@ -268,12 +268,12 @@ public class Category implements ISoundCategory {
 
         @Override
         public float getVolumeScale() {
-            return GameUtils.getGameSettings().getSoundLevel(this.category);
+            return GameUtils.getGameSettings().getSoundSourceVolume(this.category);
         }
 
         @Override
         public void setVolumeScale(final float scale) {
-            GameUtils.getGameSettings().setSoundLevel(this.category, scale);
+            GameUtils.getGameSettings().setSoundCategoryVolume(this.category, scale);
         }
 
         @Nonnull

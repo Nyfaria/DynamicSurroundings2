@@ -91,7 +91,7 @@ public final class ForgeUtils {
     @OnlyIn(Dist.CLIENT)
     @Nonnull
     public static Collection<ResourcePackInfo> getEnabledResourcePacks() {
-        return GameUtils.getMC().getResourcePackList().getEnabledPacks();
+        return GameUtils.getMC().getResourcePackRepository().getSelectedPacks();
     }
 
     @OnlyIn(Dist.CLIENT)
@@ -99,7 +99,7 @@ public final class ForgeUtils {
     public static List<String> getResourcePackIdList() {
         return getEnabledResourcePacks()
                 .stream()
-                .flatMap(e -> e.getResourcePack().getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES).stream())
+                .flatMap(e -> e.open().getNamespaces(ResourcePackType.CLIENT_RESOURCES).stream())
                 .collect(Collectors.toList());
     }
 
@@ -111,7 +111,7 @@ public final class ForgeUtils {
     @Nonnull
     public static Collection<BlockState> getBlockStates() {
         return StreamSupport.stream(ForgeRegistries.BLOCKS.spliterator(), false)
-                .map(block -> block.getStateContainer().getValidStates())
+                .map(block -> block.getStateDefinition().getPossibleStates())
                 .flatMap(Collection::stream)
                 .collect(Collectors.toList());
     }

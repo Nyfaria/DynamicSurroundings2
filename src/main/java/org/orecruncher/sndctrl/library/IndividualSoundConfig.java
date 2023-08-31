@@ -45,7 +45,7 @@ public final class IndividualSoundConfig {
     private int volumeScale;
 
     public IndividualSoundConfig(@Nonnull final SoundEvent soundEvent) {
-        this.location = soundEvent.getName();
+        this.location = soundEvent.getLocation();
         this.isBocked = false;
         this.isCulled = false;
         this.volumeScale = DEFAULT_VOLUME_SCALE;
@@ -67,7 +67,7 @@ public final class IndividualSoundConfig {
     private static boolean isResourceNameValid(@Nonnull final String text) {
         if (!text.contains(":"))
             return false;
-        final ResourceLocation loc = ResourceLocation.tryCreate(text);
+        final ResourceLocation loc = ResourceLocation.tryParse(text);
         if (loc == null)
             return false;
         return loc.getPath().length() > 0;

@@ -127,11 +127,11 @@ public final class BiomeLibrary {
 
 	@Nonnull
 	public static BiomeInfo getPlayerBiome(@Nonnull final PlayerEntity player, final boolean getTrue) {
-		final Biome biome = player.getEntityWorld().getBiome(new BlockPos(player.getPosX(), 0, player.getPosZ()));
+		final Biome biome = player.getCommandSenderWorld().getBiome(new BlockPos(player.getX(), 0, player.getZ()));
 		BiomeInfo info = BiomeUtil.getBiomeData(biome);
 
 		if (!getTrue) {
-			if (player.areEyesInFluid(FluidTags.WATER)) {
+			if (player.isEyeInFluid(FluidTags.WATER)) {
 				if (info.isRiver())
 					info = UNDERRIVER_INFO;
 				else if (info.isDeepOcean())
@@ -141,8 +141,8 @@ public final class BiomeLibrary {
 				else
 					info = UNDERWATER_INFO;
 			} else {
-				final DimensionInfo dimInfo = DimensionLibrary.getData(player.getEntityWorld());
-				final int theY = MathStuff.floor(player.getPosY());
+				final DimensionInfo dimInfo = DimensionLibrary.getData(player.getCommandSenderWorld());
+				final int theY = MathStuff.floor(player.getY());
 				if ((theY + INSIDE_Y_ADJUST) <= dimInfo.getSeaLevel())
 					info = UNDERGROUND_INFO;
 				else if (theY >= dimInfo.getSpaceHeight())

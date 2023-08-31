@@ -103,7 +103,7 @@ public class Manager {
     }
 
     protected boolean checkReady(@Nonnull final TickEvent.ClientTickEvent event) {
-        if (event.phase == TickEvent.Phase.END || Minecraft.getInstance().isGamePaused())
+        if (event.phase == TickEvent.Phase.END || Minecraft.getInstance().isPaused())
             return false;
         return GameUtils.isInGame();
     }
@@ -113,20 +113,20 @@ public class Manager {
             return;
 
         final IProfiler profiler = GameUtils.getMC().getProfiler();
-        profiler.startSection("Environs Client Tick");
+        profiler.push("Environs Client Tick");
 
         final long tick = TickCounter.getTickCount();
 
         for (final HandlerBase handler : this.effectHandlers) {
-            profiler.startSection(handler.getHandlerName());
+            profiler.push(handler.getHandlerName());
             final long mark = System.nanoTime();
             if (handler.doTick(tick))
                 handler.process(getPlayer());
             handler.updateTimer(System.nanoTime() - mark);
-            profiler.endSection();
+            profiler.pop();
         }
 
-        profiler.endSection();
+        profiler.pop();
     }
 
     @SubscribeEvent

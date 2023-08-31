@@ -100,8 +100,8 @@ public class AcousticResolver {
 			// over
 			final LivingEntity entity = this.loc.getEntity();
 			final BlockPos adj = new BlockPos(pos);
-			final double xdang = (entity.getPosX() - adj.getX()) * 2 - 1;
-			final double zdang = (entity.getPosZ() - adj.getZ()) * 2 - 1;
+			final double xdang = (entity.getX() - adj.getX()) * 2 - 1;
+			final double zdang = (entity.getZ() - adj.getZ()) * 2 - 1;
 			// -1 0 1
 			// ------- -1
 			// | o |
@@ -158,8 +158,8 @@ public class AcousticResolver {
 		int posY = MathHelper.floor(pos.y - PROBE_DEPTH);
 		int posZ = MathHelper.floor(pos.z);
 		BlockPos blockpos = new BlockPos(posX, posY, posZ);
-		if (this.world.isAirBlock(blockpos)) {
-			BlockPos blockpos1 = blockpos.down();
+		if (this.world.isEmptyBlock(blockpos)) {
+			BlockPos blockpos1 = blockpos.below();
 			BlockState blockstate = this.world.getBlockState(blockpos1);
 			if (blockstate.collisionExtendsVertically(this.world, blockpos1, this.loc.getEntity())) {
 				blockpos = blockpos1;
@@ -169,8 +169,8 @@ public class AcousticResolver {
 		// We have a position - next up figure out what sound to play
 		final BlockState state = this.world.getBlockState(blockpos);
 		if (!(state.getMaterial().isLiquid() || state.isAir(this.world, blockpos))) {
-			BlockState blockstate = this.world.getBlockState(blockpos.up());
-			SoundType soundtype = blockstate.isIn(Blocks.SNOW) ? blockstate.getSoundType(this.world, blockpos, this.loc.getEntity()) : state.getSoundType(this.world, blockpos, this.loc.getEntity());
+			BlockState blockstate = this.world.getBlockState(blockpos.above());
+			SoundType soundtype = blockstate.is(Blocks.SNOW) ? blockstate.getSoundType(this.world, blockpos, this.loc.getEntity()) : state.getSoundType(this.world, blockpos, this.loc.getEntity());
 			final IAcoustic acoustics = Primitives.getVanillaFootstepAcoustic(soundtype);
 			return new Association(this.loc, acoustics);
 		}

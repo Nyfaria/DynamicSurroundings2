@@ -93,11 +93,11 @@ public class ParticleSystems extends HandlerBase {
     // Determines if it is OK to spawn a particle system at the specified
     // location. Generally only a single system can occupy a block.
     public static boolean okToSpawn(@Nonnull final BlockPos pos) {
-        return !_instance.systems.containsKey(pos.toLong());
+        return !_instance.systems.containsKey(pos.asLong());
     }
 
     public static void add(@Nonnull final ParticleEmitter system) {
-        _instance.systems.put(system.getPos().toLong(), system);
+        _instance.systems.put(system.getPos().asLong(), system);
     }
 
 }

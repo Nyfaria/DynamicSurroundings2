@@ -44,7 +44,7 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     private int playDelay;
 
     public SoundInstance(@Nonnull final SoundEvent event, @Nonnull final ISoundCategory cat) {
-        this(event.getName(), cat);
+        this(event.getLocation(), cat);
     }
 
     public SoundInstance(@Nonnull final ResourceLocation soundResource, @Nonnull final ISoundCategory cat) {
@@ -55,16 +55,16 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.volume = 1F;
         this.pitch = 1F;
         this.x = this.y = this.z = 0;
-        this.repeat = false;
-        this.repeatDelay = 0;
-        this.attenuationType = ISound.AttenuationType.LINEAR;
+        this.looping = false;
+        this.delay = 0;
+        this.attenuation = ISound.AttenuationType.LINEAR;
 
         this.playDelay = 0;
-        this.sound = SoundHandler.MISSING_SOUND;
+        this.sound = SoundHandler.EMPTY_SOUND;
 
         // Force creation of the sound instance now.  Need the info in the OGG definition for attenuation
         // distance prior to submission.
-        this.createAccessor(GameUtils.getSoundHander());
+        this.resolve(GameUtils.getSoundHander());
     }
 
     @Override
@@ -103,15 +103,15 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     }
 
     public void setAttenuationType(@Nonnull final ISound.AttenuationType type) {
-        this.attenuationType = type;
+        this.attenuation = type;
     }
 
     public void setRepeat(final boolean flag) {
-        this.repeat = flag;
+        this.looping = flag;
     }
 
     public void setRepeatDelay(final int delay) {
-        this.repeatDelay = delay;
+        this.delay = delay;
     }
 
     public void setVolume(final float v) {
@@ -123,7 +123,7 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     }
 
     public void setGlobal(final boolean flag) {
-        this.global = flag;
+        this.relative = flag;
     }
 
     public boolean isDonePlaying() {
@@ -143,9 +143,9 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
     @Nonnull
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .addValue(getSoundLocation().toString())
+                .addValue(getLocation().toString())
                 .addValue(getSoundCategory().toString())
-                .addValue(getAttenuationType().toString())
+                .addValue(getAttenuation().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())
                 .add("ev", getEffectiveVolume(this))

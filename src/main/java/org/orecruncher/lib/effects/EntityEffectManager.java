@@ -74,7 +74,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 			return;
 		this.isActive = isEntityAlive();
 		if (this.activeEffects != null) {
-			this.rangeToPlayer = this.subject.getDistanceSq(thePlayer());
+			this.rangeToPlayer = this.subject.distanceToSqr(thePlayer());
 			for (final AbstractEntityEffect eff : this.activeEffects)
 				if (this.isActive || eff.receiveLastCall())
 					eff.update();
@@ -149,7 +149,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	@Override
 	public boolean isFirstPersonView() {
 		final GameSettings settings = GameUtils.getGameSettings();
-		return settings.getPointOfView() == PointOfView.FIRST_PERSON;
+		return settings.getCameraType() == PointOfView.FIRST_PERSON;
 	}
 
 	/**
@@ -159,7 +159,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 */
 	@Override
 	public void addParticle(@Nonnull final Particle particle) {
-		GameUtils.getMC().particles.addEffect(particle);
+		GameUtils.getMC().particleEngine.add(particle);
 	}
 
 	/**
@@ -171,7 +171,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	@Override
 	public boolean isActivePlayer(@Nonnull final LivingEntity player) {
 		final PlayerEntity ep = thePlayer();
-		return ep.getEntityId() == player.getEntityId();
+		return ep.getId() == player.getId();
 	}
 
 	/**

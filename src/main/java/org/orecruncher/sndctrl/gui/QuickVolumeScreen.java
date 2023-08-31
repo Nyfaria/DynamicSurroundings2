@@ -127,11 +127,11 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
     }
 
     protected ITextComponent generateTextForSetting(@Nonnull final ForgeConfigSpec.BooleanValue value) {
-        final IFormattableTextComponent txt = OCCLUSION.copyRaw().appendString(": ");
+        final IFormattableTextComponent txt = OCCLUSION.plainCopy().append(": ");
         if (value.get()) {
-            txt.append(DialogTexts.OPTIONS_ON);
+            txt.append(DialogTexts.OPTION_ON);
         } else {
-            txt.append(DialogTexts.OPTIONS_OFF);
+            txt.append(DialogTexts.OPTION_OFF);
         }
         return txt;
     }
@@ -191,8 +191,10 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
         drawCenteredString(stack, this.font, FOOTER, this.width / 2, this.footerY, ColorPalette.WHITE.rgb());
     }
 
+
+
     @Override
-    public void closeScreen() {
+    public void onClose() {
         for (int i = 0; i < this.categories.size(); i++) {
             final ISoundCategory cat = this.categories.get(i);
             // Setting the value will trigger autosave of the config
@@ -202,7 +204,7 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
                 SoundControl.LOGGER.error(t, "Error saving value for Sound Category %s", cat.getName());
             }
         }
-        super.closeScreen();
+        super.onClose();
     }
 
 }

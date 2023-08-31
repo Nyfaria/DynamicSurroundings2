@@ -34,11 +34,11 @@ public final class Localization {
 
     @Nonnull
     public static String format(@Nonnull final String fmt, @Nullable final Object... args) {
-        return I18n.format(fmt, args);
+        return I18n.get(fmt, args);
     }
 
     @Nonnull
     public static String load(@Nonnull final String fmt) {
-        return LanguageMap.getInstance().func_230503_a_(fmt);
+        return LanguageMap.getInstance().getOrDefault(fmt);
     }
 }

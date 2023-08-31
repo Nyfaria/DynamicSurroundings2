@@ -43,7 +43,7 @@ final class ResourceAccessorPack extends ResourceAccessorBase {
     @Override
     protected byte[] getAsset() {
         try {
-            try (InputStream stream = this.pack.getResourceStream(ResourcePackType.CLIENT_RESOURCES, this.actual)) {
+            try (InputStream stream = this.pack.getResource(ResourcePackType.CLIENT_RESOURCES, this.actual)) {
                 return IOUtils.toByteArray(stream);
             }
         } catch (@Nonnull final Throwable t) {

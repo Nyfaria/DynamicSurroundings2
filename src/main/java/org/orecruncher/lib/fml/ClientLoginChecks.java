@@ -55,7 +55,7 @@ public class ClientLoginChecks {
             for (final ICallbackHandler callback : handlers) {
                 final ITextComponent msg = callback.onClientLogin(event.getPlayer());
                 if (msg != null)
-                    event.getPlayer().sendMessage(msg, Util.DUMMY_UUID);
+                    event.getPlayer().sendMessage(msg, Util.NIL_UUID);
             }
         }
     }

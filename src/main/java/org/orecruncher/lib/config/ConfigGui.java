@@ -60,7 +60,7 @@ public class ConfigGui {
     // up with dancing creepers or something.
     private static class InstallClothGui extends Screen {
         private final ITextComponent message;
-        private IBidiRenderer field_243289_b = IBidiRenderer.field_243257_a;
+        private IBidiRenderer message2 = IBidiRenderer.EMPTY;
         private final Screen nextScreen;
         private int textHeight;
 
@@ -75,17 +75,17 @@ public class ConfigGui {
         }
 
         protected void init() {
-            this.field_243289_b = IBidiRenderer.func_243258_a(this.font, this.message, this.width - 50);
-            this.textHeight = this.field_243289_b.func_241862_a() * 9;
+            this.message2 = IBidiRenderer.create(this.font, this.message, this.width - 50);
+            this.textHeight = this.message2.getLineCount() * 9;
             this.addButton(new Button(this.width / 2 - 100, Math.min(this.height / 2 + this.textHeight / 2 + 9, this.height - 30), 200, 20, DialogTexts.GUI_DONE, (p_213033_1_) -> {
-                this.minecraft.displayGuiScreen(this.nextScreen);
+                this.minecraft.setScreen(this.nextScreen);
             }));
         }
 
         public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             this.renderBackground(matrixStack);
             drawCenteredString(matrixStack, this.font, this.title, this.width / 2, this.height / 2 - this.textHeight / 2 - 9 * 2, 11184810);
-            this.field_243289_b.func_241863_a(matrixStack, this.width / 2, this.height / 2 - this.textHeight / 2);
+            this.message2.renderCentered(matrixStack, this.width / 2, this.height / 2 - this.textHeight / 2);
             super.render(matrixStack, mouseX, mouseY, partialTicks);
         }
     }

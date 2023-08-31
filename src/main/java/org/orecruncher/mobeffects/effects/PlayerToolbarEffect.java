@@ -58,7 +58,7 @@ public class PlayerToolbarEffect extends AbstractEntityEffect {
         }
 
         protected Item getItemForHand(final PlayerEntity player, final Hand hand) {
-            final ItemStack stack = player.getHeldItem(hand);
+            final ItemStack stack = player.getItemInHand(hand);
             return stack.getItem();
         }
 
@@ -69,13 +69,13 @@ public class PlayerToolbarEffect extends AbstractEntityEffect {
 
         public void update(@Nonnull final PlayerEntity player) {
             if (triggerNewEquipSound(player)) {
-                final ItemStack currentStack = player.getHeldItem(this.hand);
+                final ItemStack currentStack = player.getItemInHand(this.hand);
                 if (!currentStack.isEmpty()) {
                     final ItemData data = ItemLibrary.getItemData(currentStack);
                     if (this.manager.isActivePlayer(player))
                         data.playEquipSound();
                     else
-                        data.playEquipSound(player.getPosition());
+                        data.playEquipSound(player.blockPosition());
                 }
                 this.lastHeld = currentStack.getItem();
             }
@@ -88,18 +88,18 @@ public class PlayerToolbarEffect extends AbstractEntityEffect {
 
         public MainHandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final PlayerEntity player) {
             super(manager, player, Hand.MAIN_HAND);
-            this.lastSlot = player.inventory.currentItem;
+            this.lastSlot = player.inventory.selected;
         }
 
         @Override
         protected boolean triggerNewEquipSound(@Nonnull final PlayerEntity player) {
-            return this.lastSlot != player.inventory.currentItem || super.triggerNewEquipSound(player);
+            return this.lastSlot != player.inventory.selected || super.triggerNewEquipSound(player);
         }
 
         @Override
         public void update(@Nonnull final PlayerEntity player) {
             super.update(player);
-            this.lastSlot = player.inventory.currentItem;
+            this.lastSlot = player.inventory.selected;
         }
     }
 

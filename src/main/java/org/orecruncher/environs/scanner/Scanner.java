@@ -42,9 +42,9 @@ public abstract class Scanner {
 
 	static {
 		// The implementation searches backwards so order so the most common blocks will be hit first
-		BLOCKSTATES_TO_IGNORE.add(Blocks.VOID_AIR.getDefaultState());
-		BLOCKSTATES_TO_IGNORE.add(Blocks.CAVE_AIR.getDefaultState());
-		BLOCKSTATES_TO_IGNORE.add(Blocks.AIR.getDefaultState());
+		BLOCKSTATES_TO_IGNORE.add(Blocks.VOID_AIR.defaultBlockState());
+		BLOCKSTATES_TO_IGNORE.add(Blocks.CAVE_AIR.defaultBlockState());
+		BLOCKSTATES_TO_IGNORE.add(Blocks.AIR.defaultBlockState());
 	}
 
 	private final static int MAX_BLOCKS_TICK = 6000;

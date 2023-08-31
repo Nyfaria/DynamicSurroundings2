@@ -42,8 +42,8 @@ public final class Collections {
     private static final ParticleRenderType FOOTPRINT_RENDER =
             new ParticleRenderType(new ResourceLocation(MobEffects.MOD_ID, "textures/particles/footprint.png")) {
                 @Override
-                public void beginRender(@Nonnull final BufferBuilder buffer, @Nonnull final TextureManager textureManager) {
-                    super.beginRender(buffer, textureManager);
+                public void begin(@Nonnull final BufferBuilder buffer, @Nonnull final TextureManager textureManager) {
+                    super.begin(buffer, textureManager);
                     RenderSystem.depthMask(false);
                     RenderSystem.enableBlend();
                     RenderSystem.blendFunc(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

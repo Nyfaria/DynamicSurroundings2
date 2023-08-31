@@ -20,7 +20,14 @@ package org.orecruncher.sndctrl.mixins;
 
 import com.google.common.collect.Multimap;
 import net.minecraft.client.GameSettings;
-import net.minecraft.client.audio.*;
+import net.minecraft.client.audio.ChannelManager;
+import net.minecraft.client.audio.ISound;
+import net.minecraft.client.audio.ITickableSound;
+import net.minecraft.client.audio.Sound;
+import net.minecraft.client.audio.SoundEngine;
+import net.minecraft.client.audio.SoundEventAccessor;
+import net.minecraft.client.audio.SoundSource;
+import net.minecraft.client.audio.SoundSystem;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.SoundCategory;
 import net.minecraft.util.math.vector.Vector3d;
@@ -51,11 +58,11 @@ public class MixinSoundEngine {
 
     @Final
     @Shadow
-    private SoundSystem sndSystem;
+    private SoundSystem library;
 
     @Final
     @Shadow
-    public Map<ISound, ChannelManager.Entry> playingSoundsChannel;
+    public Map<ISound, ChannelManager.Entry> instanceToChannel;
 
     @Final
     @Shadow
@@ -63,15 +70,14 @@ public class MixinSoundEngine {
 
     @Final
     @Shadow
-    private Map<ISound, Integer> playingSoundsStopTime;
+    private Map<ISound, Integer> soundDeleteTime;
 
-    @Final
-    @Shadow
-    private Multimap<SoundCategory, ISound> categorySounds;
 
-    @Final
-    @Shadow
-    private List<ITickableSound> tickableSounds;
+
+
+    @Shadow @Final private List<ITickableSound> tickingSounds;
+
+    @Shadow @Final private Multimap<SoundCategory, ISound> instanceBySource;
 
     /**
      * Calculates the volume of sound based on the myriad of factors in the game as
@@ -80,7 +86,7 @@ public class MixinSoundEngine {
      * @param sound The sound instance that is being evaluated
      * @param ci    The callback context used to return the result of the calculation
      */
-    @Inject(method = "getClampedVolume(Lnet/minecraft/client/audio/ISound;)F", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "calculateVolume(Lnet/minecraft/client/audio/ISound;)F", at = @At("HEAD"), cancellable = true)
     private void getClampedVolume(ISound sound, CallbackInfoReturnable<Float> ci) {
         try {
             ci.setReturnValue(SoundVolumeEvaluator.getClampedVolume(sound));
@@ -93,9 +99,9 @@ public class MixinSoundEngine {
      *
      * @param ci ignored
      */
-    @Inject(method = "load()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSystem;init()V", shift = At.Shift.AFTER))
+    @Inject(method = "loadLibrary", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSystem;init()V", shift = At.Shift.AFTER))
     public void initialize(CallbackInfo ci) {
-        SoundUtils.initialize(this.sndSystem);
+        SoundUtils.initialize(this.library);
     }
 
     /**
@@ -103,9 +109,9 @@ public class MixinSoundEngine {
      *
      * @param ci ignored
      */
-    @Inject(method = "unload()V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSystem;unload()V", shift = At.Shift.BEFORE))
+    @Inject(method = "destroy", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/SoundSystem;cleanup()V", shift = At.Shift.BEFORE))
     public void deinitialize(CallbackInfo ci) {
-        SoundUtils.deinitialize(this.sndSystem);
+        SoundUtils.deinitialize(this.library);
     }
 
     /**
@@ -130,7 +136,7 @@ public class MixinSoundEngine {
      * @param completablefuture  Ignored
      * @param entry              The ChannelManager entry that is being queued to the SoundEngine for off thread processing.
      */
-    @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/ChannelManager$Entry;runOnSoundExecutor(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
+    @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/ChannelManager$Entry;execute(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
     public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f, float f1, SoundCategory soundcategory, float f2, float f3, ISound.AttenuationType attenuationtype, boolean flag, Vector3d vector3d, boolean flag2, boolean flag3, CompletableFuture completablefuture, ChannelManager.Entry entry) {
         try {
             SoundFXProcessor.onSoundPlay(p_sound, entry);
@@ -151,7 +157,7 @@ public class MixinSoundEngine {
         if (!isGamePaused)
             return;
 
-        final Iterator<Map.Entry<ISound, ChannelManager.Entry>> iterator = this.playingSoundsChannel.entrySet().iterator();
+        final Iterator<Map.Entry<ISound, ChannelManager.Entry>> iterator = this.instanceToChannel.entrySet().iterator();
 
         while (iterator.hasNext()) {
             Map.Entry<ISound, ChannelManager.Entry> entry = iterator.next();
@@ -161,21 +167,21 @@ public class MixinSoundEngine {
                 if (instance.getSoundCategory() != Category.CONFIG)
                     continue;
                 final ChannelManager.Entry channelmanager$entry1 = entry.getValue();
-                float f2 = this.options.getSoundLevel(instance.getCategory());
+                float f2 = this.options.getSoundSourceVolume(instance.getSource());
                 if (f2 <= 0.0F) {
-                    channelmanager$entry1.runOnSoundExecutor(SoundSource::stop);
+                    channelmanager$entry1.execute(SoundSource::stop);
                     iterator.remove();
-                } else if (channelmanager$entry1.isReleased()) {
+                } else if (channelmanager$entry1.isStopped()) {
                     iterator.remove();
-                    this.playingSoundsStopTime.remove(instance);
+                    this.soundDeleteTime.remove(instance);
 
                     try {
-                        this.categorySounds.remove(instance.getCategory(), instance);
+                        this.instanceBySource.remove(instance.getSource(), instance);
                     } catch (RuntimeException ignore) {
                     }
 
                     if (instance instanceof ITickableSound) {
-                        this.tickableSounds.remove(instance);
+                        this.tickingSounds.remove(instance);
                     }
                 }
             }

@@ -112,7 +112,7 @@ public class Generator {
 	public void generateFootsteps(@Nonnull final LivingEntity entity) {
 
 		// If an entity is a passenger or is sleeping then no footsteps to process
-		if (entity.isOnePlayerRiding() || entity.isSleeping())
+		if (entity.hasOnePlayerPassenger() || entity.isSleeping())
 			return;
 
 		// No footstep or print effects for spectators
@@ -126,8 +126,8 @@ public class Generator {
 		this.isOnGround = entity.isOnGround();
 		this.isOnLadder = isClimbing(entity);
 		this.isInWater = entity.isInWater();
-		this.isSneaking = entity.isSneaking();
-		this.isJumping = entity.isJumping;
+		this.isSneaking = entity.isShiftKeyDown();
+		this.isJumping = entity.jumping;
 
 		simulateFootsteps(entity);
 		simulateAirborne(entity);
@@ -137,19 +137,19 @@ public class Generator {
 			this.pedometer++;
 
 		if (Constants.FOOTSTEPS.getVolumeScale() > 0) {
-			entity.nextStepDistance = Float.MAX_VALUE;
+			entity.nextStep = Float.MAX_VALUE;
 		} else {
-			final float dist = entity.nextStepDistance;
+			final float dist = entity.nextStep;
 			if (dist == Float.MAX_VALUE)
-				entity.nextStepDistance = 0;
+				entity.nextStep = 0;
 		}
 	}
 
 	protected boolean isClimbing(@Nonnull final LivingEntity entity) {
-		final World world = entity.getEntityWorld();
-		final BlockPos blockPos = entity.getPosition();
+		final World world = entity.getCommandSenderWorld();
+		final BlockPos blockPos = entity.blockPosition();
 		final BlockState blockState = world.getBlockState(blockPos);
-		return blockState.isIn(BlockTags.CLIMBABLE) || ForgeHooks.isLivingOnLadder(blockState, world, blockPos, entity);
+		return blockState.is(BlockTags.CLIMBABLE) || ForgeHooks.isLivingOnLadder(blockState, world, blockPos, entity);
 
 	}
 
@@ -174,17 +174,17 @@ public class Generator {
 
 		// First time initialization
 		if (Double.compare(this.prevX, Double.MIN_VALUE) == 0) {
-			this.prevX = entity.getPosX();
-			this.prevY = entity.getPosY();
-			this.prevZ = entity.getPosZ();
+			this.prevX = entity.getX();
+			this.prevY = entity.getY();
+			this.prevZ = entity.getZ();
 		} else {
-			final double dX = entity.getPosX() - this.prevX;
-			final double dY = entity.getPosY() - this.prevY;
-			final double dZ = entity.getPosZ() - this.prevZ;
+			final double dX = entity.getX() - this.prevX;
+			final double dY = entity.getY() - this.prevY;
+			final double dZ = entity.getZ() - this.prevZ;
 
-			this.prevX = entity.getPosX();
-			this.prevY = entity.getPosY();
-			this.prevZ = entity.getPosZ();
+			this.prevX = entity.getX();
+			this.prevY = entity.getY();
+			this.prevZ = entity.getZ();
 
 			// The amount of distance added is dependent on whether the player
 			// is on the ground (moving x/z) or not (moving x/y/z)
@@ -210,8 +210,8 @@ public class Generator {
 			this.dwmYChange = 0;
 		}
 
-		final double movX = entity.getMotion().x;
-		final double movZ = entity.getMotion().z;
+		final double movX = entity.getDeltaMovement().x;
+		final double movZ = entity.getDeltaMovement().z;
 
 		final double scal = movX * this.xMovec + movZ * this.zMovec;
 		if (this.scalStat != scal < 0.001f) {
@@ -239,10 +239,10 @@ public class Generator {
 
 			if (this.isOnLadder && !this.isOnGround) {
 				distance = this.VAR.STRIDE_LADDER;
-			} else if (!this.isInWater && MathStuff.abs(this.yPosition - entity.getPosY()) > 0.4d) {
+			} else if (!this.isInWater && MathStuff.abs(this.yPosition - entity.getY()) > 0.4d) {
 				// This ensures this does not get recorded as landing, but as a
 				// step
-				if (this.yPosition < entity.getPosY()) { // Going upstairs
+				if (this.yPosition < entity.getY()) { // Going upstairs
 					distance = this.VAR.STRIDE_STAIR;
 					event = speedDisambiguator(entity, Constants.UP, Constants.UP_RUN);
 				} else if (!this.isSneaking) { // Going downstairs
@@ -273,7 +273,7 @@ public class Generator {
 		// while the player is between two steps in the air
 		// while descending stairs
 		if (this.isOnGround) {
-			this.yPosition = entity.getPosY();
+			this.yPosition = entity.getY();
 		}
 	}
 
@@ -317,9 +317,9 @@ public class Generator {
 		if (this.isFlying && this.isJumping) {
 			if (this.VAR.EVENT_ON_JUMP) {
 				// If climbing stairs motion will be negative
-				if (entity.getMotion().y > 0) {
+				if (entity.getDeltaMovement().y > 0) {
 					this.didJump = true;
-					final double speed = entity.getMotion().x * entity.getMotion().x + entity.getMotion().z * entity.getMotion().z;
+					final double speed = entity.getDeltaMovement().x * entity.getDeltaMovement().x + entity.getDeltaMovement().z * entity.getDeltaMovement().z;
 
 					if (speed < this.VAR.SPEED_TO_JUMP_AS_MULTIFOOT) {
 						// STILL JUMP
@@ -343,7 +343,7 @@ public class Generator {
 
 	protected AcousticEvent speedDisambiguator(@Nonnull final LivingEntity entity, @Nonnull final AcousticEvent walk,
 			@Nonnull final AcousticEvent run) {
-		final double velocity = entity.getMotion().x * entity.getMotion().x + entity.getMotion().z * entity.getMotion().z;
+		final double velocity = entity.getDeltaMovement().x * entity.getDeltaMovement().x + entity.getDeltaMovement().z * entity.getDeltaMovement().z;
 		return velocity > this.VAR.SPEED_TO_RUN ? run : walk;
 	}
 
@@ -351,10 +351,10 @@ public class Generator {
 		final long current = TickCounter.getTickCount();
 		if (current >= this.brushesTime) {
 			this.brushesTime = current + BRUSH_INTERVAL;
-			if (proceedWithStep(entity) && (entity.getMotion().x != 0d || entity.getMotion().z != 0d)) {
+			if (proceedWithStep(entity) && (entity.getDeltaMovement().x != 0d || entity.getDeltaMovement().z != 0d)) {
 				final int yy = MathStuff
-						.floor(entity.getPosY() - PROBE_DEPTH - entity.getYOffset() - (entity.isOnGround() ? 0d : 0.25d));
-				final BlockPos pos = new BlockPos(entity.getPosX(), yy, entity.getPosZ());
+						.floor(entity.getY() - PROBE_DEPTH - entity.getMyRidingOffset() - (entity.isOnGround() ? 0d : 0.25d));
+				final BlockPos pos = new BlockPos(entity.getX(), yy, entity.getZ());
 				if (!this.messyPos.equals(pos)) {
 					this.messyPos = pos;
 					final Association assos = findAssociationMessyFoliage(entity, pos);
@@ -401,8 +401,8 @@ public class Generator {
 	protected boolean shouldProducePrint(@Nonnull final LivingEntity entity) {
 		return this.VAR.HAS_FOOTPRINT
 				&& Config.CLIENT.footsteps.enableFootprintParticles.get()
-				&& (this.isOnGround || !(this.isJumping || entity.isAirBorne))
-				&& !entity.isInvisibleToPlayer(GameUtils.getPlayer());
+				&& (this.isOnGround || !(this.isJumping || entity.hasImpulse))
+				&& !entity.isInvisibleTo(GameUtils.getPlayer());
 	}
 
 	/**
@@ -415,17 +415,17 @@ public class Generator {
 	protected Association findAssociation(@Nonnull final LivingEntity entity,
 			final double verticalOffsetAsMinus, final boolean isRightFoot) {
 
-		final float rotDegrees = MathStuff.wrapDegrees(entity.rotationYaw);
+		final float rotDegrees = MathStuff.wrapDegrees(entity.yRot);
 		final double rot = MathStuff.toRadians(rotDegrees);
 		final float feetDistanceToCenter = isRightFoot ? -this.VAR.DISTANCE_TO_CENTER : this.VAR.DISTANCE_TO_CENTER;
 
-		final double xx = entity.getPosX() + MathStuff.cos(rot) * feetDistanceToCenter;
-		final double zz = entity.getPosZ() + MathStuff.sin(rot) * feetDistanceToCenter;
+		final double xx = entity.getX() + MathStuff.cos(rot) * feetDistanceToCenter;
+		final double zz = entity.getZ() + MathStuff.sin(rot) * feetDistanceToCenter;
 		final double minY = entity.getBoundingBox().minY;
 		final FootStrikeLocation loc = new FootStrikeLocation(entity, xx, minY - PROBE_DEPTH - verticalOffsetAsMinus,
 				zz);
 
-		final AcousticResolver resolver = new AcousticResolver(entity.getEntityWorld(), loc,
+		final AcousticResolver resolver = new AcousticResolver(entity.getCommandSenderWorld(), loc,
 				this.VAR.DISTANCE_TO_CENTER);
 
 		final Association result = addFootstepAccent(entity, resolver.findAssociation());
@@ -447,7 +447,7 @@ public class Generator {
 						isRightFoot);
 
 				final Vector3d stepLocation = print.getStepLocation();
-				final World world = print.getEntity().getEntityWorld();
+				final World world = print.getEntity().getCommandSenderWorld();
 				Collections.addFootprint(print.getStyle(), world, stepLocation, print.getRotation(), print.getScale(),
 						print.isRightFoot());
 			}
@@ -462,9 +462,9 @@ public class Generator {
 	protected boolean playSpecialStoppingConditions(@Nonnull final LivingEntity entity) {
 		if (entity.isInWater()) {
 			if (proceedWithStep(entity)) {
-				final FluidState fs = entity.getEntityWorld().getFluidState(new BlockPos(entity.getEyePosition(1F)));
+				final FluidState fs = entity.getCommandSenderWorld().getFluidState(new BlockPos(entity.getEyePosition(1F)));
 				final AcousticEvent evt = fs.isEmpty() ? Constants.WALK : Constants.SWIM;
-				FootstepLibrary.getSwimAcoustic().playAt(entity.getPositionVec(), evt);
+				FootstepLibrary.getSwimAcoustic().playAt(entity.position(), evt);
 			}
 			return true;
 		}
@@ -482,8 +482,8 @@ public class Generator {
 	@Nullable
 	protected Association findAssociationMessyFoliage(@Nonnull final LivingEntity entity, @Nonnull final BlockPos pos) {
 		Association result = null;
-		final BlockPos up = pos.up();
-		final BlockState above = entity.getEntityWorld().getBlockState(up);
+		final BlockPos up = pos.above();
+		final BlockState above = entity.getCommandSenderWorld().getBlockState(up);
 
 		if (above.getMaterial() != Material.AIR) {
 			IAcoustic acoustics = FootstepLibrary.getBlockAcoustics(above, Substrate.MESSY);
@@ -506,7 +506,7 @@ public class Generator {
 		// Don't apply overlays if the entity is not on the ground
 		if (entity.isOnGround()) {
 			accents.clear();
-			final BlockPos pos = assoc != null ? assoc.getStepPos() : entity.getPosition();
+			final BlockPos pos = assoc != null ? assoc.getStepPos() : entity.blockPosition();
 			FootstepAccents.provide(entity, pos, accents);
 			if (accents.size() > 0) {
 				if (assoc == null) {

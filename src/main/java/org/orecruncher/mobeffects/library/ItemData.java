@@ -86,8 +86,8 @@ public class ItemData {
      * to make the determination.
      */
     public static ItemStack effectiveArmorItemStack(@Nonnull final LivingEntity entity) {
-        final ItemStack chest = entity.getItemStackFromSlot(EquipmentSlotType.CHEST);
-        final ItemStack legs = entity.getItemStackFromSlot(EquipmentSlotType.LEGS);
+        final ItemStack chest = entity.getItemBySlot(EquipmentSlotType.CHEST);
+        final ItemStack legs = entity.getItemBySlot(EquipmentSlotType.LEGS);
         final ItemData chestItemData = ItemLibrary.getItemData(chest);
         final ItemData legsItemData = ItemLibrary.getItemData(legs);
         final int chestPriority = chestItemData.isArmor() ? ((ArmorItemData) chestItemData).getPriority() : -1;
@@ -99,7 +99,7 @@ public class ItemData {
      * Gets the armor class of the entities feet.
      */
     public static ItemStack footArmorItemStack(@Nonnull final LivingEntity entity) {
-        return entity.getItemStackFromSlot(EquipmentSlotType.FEET);
+        return entity.getItemBySlot(EquipmentSlotType.FEET);
     }
 
     @Nonnull
@@ -185,7 +185,7 @@ public class ItemData {
                 if (acoustic == null) {
                     acoustic = Library.resolve(loc);
                     if (acoustic == NullAcoustic.INSTANCE) {
-                        acoustic = Primitives.getArmorAccentAcoustic(((ArmorItem) item).getArmorMaterial());
+                        acoustic = Primitives.getArmorAccentAcoustic(((ArmorItem) item).getMaterial());
                     }
                     this.acoustics[type] = acoustic;
                 }

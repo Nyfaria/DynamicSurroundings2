@@ -74,12 +74,12 @@ public class BiomeAdapter implements IBiome {
 
 	@Override
 	public float getTemperature() {
-		return this.biome.getTemperature();
+		return this.biome.getBaseTemperature();
 	}
 
 	@Override
 	public boolean isHighHumidity() {
-		return this.biome.isHighHumidity();
+		return this.biome.isHumid();
 	}
 
 	@Override

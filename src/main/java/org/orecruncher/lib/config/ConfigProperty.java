@@ -101,9 +101,9 @@ public final class ConfigProperty {
             if (theDefault != null) {
                 String text = theDefault.toString();
                 if (text.compareToIgnoreCase("true") == 0)
-                    text = DialogTexts.OPTIONS_ON.getString();
+                    text = DialogTexts.OPTION_ON.getString();
                 else if (text.compareToIgnoreCase("false") == 0)
-                    text = DialogTexts.OPTIONS_OFF.getString();
+                    text = DialogTexts.OPTION_OFF.getString();
                 else
                     text = GuiHelpers.getTrimmedText(text, TOOLTIP_WIDTH).getString();
                 text = new TranslationTextComponent("dsurround.text.format.default", text).getString();

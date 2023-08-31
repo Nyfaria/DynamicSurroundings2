@@ -37,7 +37,7 @@ public class Association {
 	private IAcoustic data;
 
 	public Association(@Nonnull final LivingEntity entity, @Nonnull final IAcoustic association) {
-		final Vector3d vec = entity.getPositionVec();
+		final Vector3d vec = entity.position();
 		this.location = new FootStrikeLocation(entity, vec.x, vec.y + 1, vec.z);
 		this.data = association;
 	}

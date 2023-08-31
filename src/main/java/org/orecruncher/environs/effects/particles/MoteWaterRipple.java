@@ -62,7 +62,7 @@ public class MoteWaterRipple extends AgeableMote {
 
 		this.posY -= 0.2D;
 
-		final Color waterColor = BiomeUtilities.getColorForLiquid(world, this.position.down());
+		final Color waterColor = BiomeUtilities.getColorForLiquid(world, this.position.below());
 		this.red = waterColor.red();
 		this.green = waterColor.green();
 		this.blue = waterColor.blue();

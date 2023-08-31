@@ -40,7 +40,7 @@ public class SteamJetEffect extends JetEffect {
 
     public static boolean isValidSpawnBlock(@Nonnull final IBlockReader provider,
                                             @Nonnull final BlockPos pos, @Nonnull final BlockState source) {
-        if (!WorldUtils.isAirBlock(provider, pos.up()))
+        if (!WorldUtils.isAirBlock(provider, pos.above()))
             return false;
         if (provider.getBlockState(pos) != source)
             return false;
@@ -69,7 +69,7 @@ public class SteamJetEffect extends JetEffect {
             if (fluidState.isEmpty()) {
                 spawnHeight = pos.getY() + 0.9F;
             } else {
-                spawnHeight = pos.getY() + fluidState.getHeight() + 0.1F;
+                spawnHeight = pos.getY() + fluidState.getOwnHeight() + 0.1F;
             }
             final Jet effect = new SteamJet(strength, provider, pos.getX() + 0.5D, spawnHeight, pos.getZ() + 0.5D);
             addEffect(effect);

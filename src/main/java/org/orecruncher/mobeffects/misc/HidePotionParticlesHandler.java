@@ -37,7 +37,7 @@ public class HidePotionParticlesHandler {
     public static void handler(@Nonnull final TickEvent.ClientTickEvent event) {
         if (Config.CLIENT.effects.hidePlayerPotionParticles.get() && GameUtils.isInGame()) {
             final boolean hide = GameUtils.isFirstPersonView();
-            GameUtils.getPlayer().getDataManager().set(LivingEntity.HIDE_PARTICLES, hide);
+            GameUtils.getPlayer().getEntityData().set(LivingEntity.DATA_EFFECT_AMBIENCE_ID, hide);
         }
     }
 }

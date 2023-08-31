@@ -127,7 +127,7 @@ public final class CeilingCoverage {
 		}
 
 		public float score(@Nonnull final BlockPos playerPos) {
-			this.working.setPos(
+			this.working.set(
 					playerPos.getX() + this.offset.getX(),
 					playerPos.getY() + this.offset.getY(),
 					playerPos.getZ() + this.offset.getZ()
@@ -137,7 +137,7 @@ public final class CeilingCoverage {
 			final int playerHeight = Math.max(playerPos.getY() + 1, 0);
 
 			// Get the precipitation height
-			this.working.setPos(WorldUtils.getPrecipitationHeight(world, this.working));
+			this.working.set(WorldUtils.getPrecipitationHeight(world, this.working));
 
 			// Scan down looking for blocks that are considered "cover"
 			while (this.working.getY() > playerHeight) {
@@ -171,7 +171,7 @@ public final class CeilingCoverage {
 
 		private boolean actsAsCeiling(@Nonnull final BlockState state) {
 			// If it doesn't block movement it doesn't count as a ceiling.
-			if (!state.getMaterial().blocksMovement())
+			if (!state.getMaterial().blocksMotion())
 				return false;
 
 			// Test the block tags in our NON_CEILING set to see if any match

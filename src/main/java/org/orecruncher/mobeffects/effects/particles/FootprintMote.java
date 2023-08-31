@@ -83,9 +83,9 @@ public class FootprintMote extends AgeableMote {
         // Make sure that the down position is calculated from the display position!
         final float fraction = (float) (y - (int) y);
         if (this.isSnowLayer || fraction <= 0.0625F) {
-            this.downPos = new BlockPos(this.posX, this.posY, this.posZ).down();
+            this.downPos = new BlockPos(this.posX, this.posY, this.posZ).below();
         } else {
-            this.downPos = this.position.toImmutable();
+            this.downPos = this.position.immutable();
         }
 
         float u1 = style.ordinal() * TEXEL_WIDTH + 1 / 256F;

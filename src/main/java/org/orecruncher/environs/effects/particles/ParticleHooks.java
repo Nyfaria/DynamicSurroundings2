@@ -64,29 +64,29 @@ public final class ParticleHooks {
     public static void dripHandler(@Nonnull final DripParticle particle) {
         // If the particle is down at bedrock level kill it.  This could happen if water is sitting on top of flat
         // bedrock.
-        if (particle.posY < 1) {
-            particle.setExpired();
+        if (particle.y < 1) {
+            particle.remove();
             return;
         }
 
         final World world = GameUtils.getWorld();
         // Move down slightly on the Y.  Reason is that the particle may literally just above the block
-        final BlockPos pos = new BlockPos(particle.posX, particle.posY - 0.01D, particle.posZ);
+        final BlockPos pos = new BlockPos(particle.x, particle.y - 0.01D, particle.z);
         final BlockState state = world.getBlockState(pos);
 
         // Could be falling into a fluid
         final FluidState fluidState = world.getFluidState(pos);
         if (!fluidState.isEmpty()) {
-            final float fluidHeight = fluidState.getActualHeight(world, pos);
+            final float fluidHeight = fluidState.getHeight(world, pos);
             final float actualHeight = fluidHeight + pos.getY();
-            if (fluidHeight < 1.0F && particle.posY <= actualHeight) {
+            if (fluidHeight < 1.0F && particle.y <= actualHeight) {
                 // The position of the particle intersected with the fluid surface thus a hit.  The effect of a drop
                 // hitting lava is different than water.
-                boolean isDripLava = particle.fluid.isIn(FluidTags.LAVA);
-                final Vector3d vecPos = new Vector3d(particle.posX, particle.posY, particle.posZ);
+                boolean isDripLava = particle.type.is(FluidTags.LAVA);
+                final Vector3d vecPos = new Vector3d(particle.x, particle.y, particle.z);
                 final ResourceLocation acoustic;
 
-                if (fluidState.isTagged(FluidTags.LAVA)) {
+                if (fluidState.is(FluidTags.LAVA)) {
                     if (isDripLava) {
                         acoustic = WATER_DROP_ACOUSTIC;
                     } else {
@@ -96,7 +96,7 @@ public final class ParticleHooks {
                 } else {
                     // There will be a water ripple
                     if (doRipples())
-                        Collections.addWaterRipple(world, particle.posX, particle.posY + 0.01D, particle.posZ);
+                        Collections.addWaterRipple(world, particle.x, particle.y + 0.01D, particle.z);
                     if (isDripLava) {
                         createSteamCloud(world, vecPos);
                         acoustic = STEAM_HISS_ACOUSTIC;
@@ -106,19 +106,19 @@ public final class ParticleHooks {
                 }
 
                 Library.resolve(acoustic).playAt(vecPos);
-                particle.setExpired();
+                particle.remove();
                 return;
             }
         }
 
         // If the particle is hitting solid ground we need to play a splat
         if (particle.onGround) {
-            final Vector3d vecPos = new Vector3d(particle.posX, particle.posY, particle.posZ);
+            final Vector3d vecPos = new Vector3d(particle.x, particle.y, particle.z);
             final ResourceLocation acoustic;
-            if (doSteamHiss(particle.fluid, state)) {
+            if (doSteamHiss(particle.type, state)) {
                 createSteamCloud(world, vecPos);
                 acoustic = STEAM_HISS_ACOUSTIC;
-                particle.setExpired();
+                particle.remove();
                 // Do this to prevent the splash from generating
                 particle.onGround = false;
             } else {
@@ -161,15 +161,15 @@ public final class ParticleHooks {
 
         // Could be falling into a fluid
         final FluidState fluidState = collision.fluidState;
-        if (!fluidState.isEmpty() && fluidState.isSource() && world.getBlockState(pos.up()).getMaterial() == Material.AIR) {
-            final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
+        if (!fluidState.isEmpty() && fluidState.isSource() && world.getBlockState(pos.above()).getMaterial() == Material.AIR) {
+            final float actualHeight = fluidState.getHeight(world, pos) + pos.getY();
             if (particlePos.y <= actualHeight) {
                 // The position of the particle intersected with the fluid surface thus a hit.  The effect of a drop
                 // hitting lava is different than water.
-                boolean isDripLava = fluidType.isIn(FluidTags.LAVA);
+                boolean isDripLava = fluidType.is(FluidTags.LAVA);
                 final ResourceLocation acoustic;
 
-                if (fluidState.isTagged(FluidTags.LAVA)) {
+                if (fluidState.is(FluidTags.LAVA)) {
                     if (isDripLava) {
                         acoustic = WATER_DROP_ACOUSTIC;
                     } else {
@@ -201,7 +201,7 @@ public final class ParticleHooks {
             final FluidState fluidState = world.getFluidState(pos);
             if (fluidState.isEmpty())
                 return false;
-            final float actualHeight = fluidState.getActualHeight(world, pos) + pos.getY();
+            final float actualHeight = fluidState.getHeight(world, pos) + pos.getY();
             Collections.addWaterRipple(world, position.x, actualHeight + LIQUID_HEIGHT_ADJUST, position.z);
             return true;
         }
@@ -210,10 +210,10 @@ public final class ParticleHooks {
 
     private static void createSteamCloud(@Nonnull final IBlockReader world, @Nonnull final Vector3d pos) {
         final Particle steamCloud = new SteamCloudParticle(GameUtils.getWorld(), pos.x, pos.y + 0.01D, pos.z, 0.01D);
-        GameUtils.getMC().particles.addEffect(steamCloud);
+        GameUtils.getMC().particleEngine.add(steamCloud);
     }
 
     private static boolean doSteamHiss(@Nonnull final Fluid particleFluid, @Nonnull final BlockState state) {
-        return JetEffect.HOTBLOCK_PREDICATE.test(state) && particleFluid.isIn(FluidTags.WATER);
+        return JetEffect.HOTBLOCK_PREDICATE.test(state) && particleFluid.is(FluidTags.WATER);
     }
 }

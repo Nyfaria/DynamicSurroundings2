@@ -33,7 +33,7 @@ import java.util.Random;
 @OnlyIn(Dist.CLIENT)
 public abstract class BaseParticle extends Particle {
 
-    protected static final EntityRendererManager manager = GameUtils.getMC().getRenderManager();
+    protected static final EntityRendererManager manager = GameUtils.getMC().getEntityRenderDispatcher();
     protected static final Random RANDOM = XorShiftRandom.current();
 
     protected BaseParticle(@Nonnull final World worldIn, final double posXIn, final double posYIn,

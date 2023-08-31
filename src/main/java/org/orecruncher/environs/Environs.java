@@ -82,7 +82,7 @@ public final class Environs {
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         // Disable Particles if configured to do so
         if (Config.CLIENT.effects.disableUnderwaterParticles.get())
-            Minecraft.getInstance().particles.registerFactory(ParticleTypes.UNDERWATER, (IParticleFactory<BasicParticleType>) null);
+            Minecraft.getInstance().particleEngine.register(ParticleTypes.UNDERWATER, (IParticleFactory<BasicParticleType>) null);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

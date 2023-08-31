@@ -40,12 +40,12 @@ public final class BlockPosUtil {
      * @return BlockPos with coordinates
      */
     public static BlockPos getNonOffsetPos(@Nonnull final Entity entity) {
-        return entity.getPosition().toImmutable();
+        return entity.blockPosition().immutable();
     }
 
     public static BlockPos.Mutable setPos(@Nonnull final BlockPos.Mutable pos,
                                                   @Nonnull final Vector3d vec) {
-        return pos.setPos(vec.x, vec.y, vec.z);
+        return pos.set(vec.x, vec.y, vec.z);
     }
 
     public static boolean canFormCuboid(@Nonnull final BlockPos p1, @Nonnull final BlockPos p2) {
@@ -146,7 +146,7 @@ public final class BlockPosUtil {
                         currentY++;
                     }
 
-                    this.currentPos.setPos(currentX, currentY, currentZ);
+                    this.currentPos.set(currentX, currentY, currentZ);
                     return this.currentPos;
                 }
             }

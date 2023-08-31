@@ -42,7 +42,7 @@ public class MixinSoundSource implements IMixinSoundContext {
 
     @Shadow
     @Final
-    public int id;
+    public int source;
 
     @Nullable
     @Override
@@ -74,7 +74,7 @@ public class MixinSoundSource implements IMixinSoundContext {
      * at the time of tick.
      * @param ci Ignored
      */
-    @Inject(method = "tick()V", at = @At("HEAD"))
+    @Inject(method = "updateStream", at = @At("HEAD"))
     public void onTick(CallbackInfo ci) {
         try {
             SoundFXProcessor.tick((SoundSource) ((Object) this));
@@ -103,15 +103,15 @@ public class MixinSoundSource implements IMixinSoundContext {
      * @param p_216429_1_ Buffer to convert to mono if needed.
      * @param ci Call will always be cancelled.
      */
-    @Inject(method = "bindBuffer(Lnet/minecraft/client/audio/AudioStreamBuffer;)V", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "attachStaticBuffer(Lnet/minecraft/client/audio/AudioStreamBuffer;)V", at = @At("HEAD"), cancellable = true)
     public void onPlayBuffer(AudioStreamBuffer p_216429_1_, CallbackInfo ci) {
         try {
             final SoundSource src = (SoundSource) ((Object) this);
 
             p_216429_1_ = SoundFXProcessor.playBuffer(src, p_216429_1_);
 
-            p_216429_1_.getBuffer().ifPresent((p_216431_1_) -> {
-                AL10.alSourcei(src.id, 4105, p_216431_1_);
+            p_216429_1_.getAlBuffer().ifPresent((p_216431_1_) -> {
+                AL10.alSourcei(src.source, 4105, p_216431_1_);
             });
 
             ci.cancel();

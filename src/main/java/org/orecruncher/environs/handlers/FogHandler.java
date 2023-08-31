@@ -62,16 +62,16 @@ public class FogHandler extends HandlerBase {
     public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
         if (event.getType() == FogRenderer.FogType.FOG_TERRAIN && doFog()) {
             final IProfiler profiler = GameUtils.getMC().getProfiler();
-            profiler.startSection("Environs Fog Render");
+            profiler.push("Environs Fog Render");
             this.render.begin();
-            final FluidState fluidState = event.getInfo().getFluidState();
+            final FluidState fluidState = event.getInfo().getFluidInCamera();
             if (fluidState.isEmpty()) {
                 final FogResult result = this.fogRange.calculate(event);
-                GlStateManager.fogStart(result.getStart());
-                GlStateManager.fogEnd(result.getEnd());
+                GlStateManager._fogStart(result.getStart());
+                GlStateManager._fogEnd(result.getEnd());
             }
             this.render.end();
-            profiler.endSection();
+            profiler.pop();
         }
     }
 

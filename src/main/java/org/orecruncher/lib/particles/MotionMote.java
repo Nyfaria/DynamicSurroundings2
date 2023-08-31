@@ -64,17 +64,17 @@ public abstract class MotionMote extends AgeableMote {
 
 	@Override
 	protected float renderX(ActiveRenderInfo info, final float partialTicks) {
-		return (float)(MathHelper.lerp(partialTicks, this.prevX, this.posX) - info.getProjectedView().getX());
+		return (float)(MathHelper.lerp(partialTicks, this.prevX, this.posX) - info.getPosition().x());
 	}
 
 	@Override
 	protected float renderY(ActiveRenderInfo info, final float partialTicks) {
-		return (float)(MathHelper.lerp(partialTicks, this.prevY, this.posY) - info.getProjectedView().getY());
+		return (float)(MathHelper.lerp(partialTicks, this.prevY, this.posY) - info.getPosition().y());
 	}
 
 	@Override
 	protected float renderZ(ActiveRenderInfo info, final float partialTicks) {
-		return (float)(MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - info.getProjectedView().getZ());
+		return (float)(MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - info.getPosition().z());
 	}
 
 	/**
@@ -94,7 +94,7 @@ public abstract class MotionMote extends AgeableMote {
 		final FluidState fluid = state.getFluidState();
 		if (!fluid.isEmpty()) {
 			// Potential of collision with a liquid
-			final double height = fluid.getActualHeight(this.world, this.position) + this.position.getY();
+			final double height = fluid.getHeight(this.world, this.position) + this.position.getY();
 			if (height >= this.posY) {
 				// Hit the surface of liquid
 				return Optional.of(new ParticleCollisionResult(
@@ -108,10 +108,10 @@ public abstract class MotionMote extends AgeableMote {
 		}
 
 		// If the current position blocks movement then it will block a particle
-		if (state.getMaterial().blocksMovement()) {
-			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.dummy());
+		if (state.getMaterial().blocksMotion()) {
+			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.empty());
 			if (!shape.isEmpty()) {
-				final double height = shape.getEnd(Direction.Axis.Y) + this.position.getY();
+				final double height = shape.max(Direction.Axis.Y) + this.position.getY();
 				if (height >= this.posY) {
 					// Have a collision
 					return Optional.of(new ParticleCollisionResult(
@@ -151,7 +151,7 @@ public abstract class MotionMote extends AgeableMote {
 		this.posY += this.motionY;
 		this.posZ += this.motionZ;
 
-		this.position.setPos(this.posX, this.posY, this.posZ);
+		this.position.set(this.posX, this.posY, this.posZ);
 
 		final Optional<ParticleCollisionResult> result = detectCollision();
 		if (result.isPresent()) {

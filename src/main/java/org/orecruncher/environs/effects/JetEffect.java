@@ -42,13 +42,13 @@ public abstract class JetEffect extends BlockEffect {
 
     public static final Predicate<BlockState> FLUID_PREDICATE = (state) -> !state.getFluidState().isEmpty();
 
-    public static final Predicate<BlockState> LAVA_PREDICATE = (state) -> state.getFluidState().isTagged(FluidTags.LAVA);
+    public static final Predicate<BlockState> LAVA_PREDICATE = (state) -> state.getFluidState().is(FluidTags.LAVA);
 
-    public static final Predicate<BlockState> WATER_PREDICATE = (state) -> state.getFluidState().isTagged(FluidTags.WATER);
+    public static final Predicate<BlockState> WATER_PREDICATE = (state) -> state.getFluidState().is(FluidTags.WATER);
 
     public static final Predicate<BlockState> SOLID_PREDICATE = (state) -> state.getMaterial().isSolid();
 
-    public static final Predicate<BlockState> LIT_FURNACE = (state) -> state.getBlock() instanceof AbstractFurnaceBlock && state.get(AbstractFurnaceBlock.LIT);
+    public static final Predicate<BlockState> LIT_FURNACE = (state) -> state.getBlock() instanceof AbstractFurnaceBlock && state.getValue(AbstractFurnaceBlock.LIT);
 
     public static final Predicate<BlockState> HOTBLOCK_PREDICATE = (state) ->
             LAVA_PREDICATE.test(state)
@@ -62,7 +62,7 @@ public abstract class JetEffect extends BlockEffect {
     public static int countVerticalBlocks(@Nonnull final IBlockReader provider, @Nonnull final BlockPos pos,
                                           @Nonnull final Predicate<BlockState> predicate, final int step) {
         int count = 0;
-        final BlockPos.Mutable mutable = pos.toMutable();
+        final BlockPos.Mutable mutable = pos.mutable();
         for (; count < MAX_STRENGTH && predicate.test(provider.getBlockState(mutable)); count++)
             mutable.setY(mutable.getY() + step);
         return MathStuff.clamp(count, 0, MAX_STRENGTH);
@@ -74,7 +74,7 @@ public abstract class JetEffect extends BlockEffect {
         for (int k = -1; k <= 1; k++)
             for (int j = -1; j <= 1; j++)
                 for (int i = -1; i <= 1; i++) {
-                    final BlockState state = provider.getBlockState(pos.add(i, j, k));
+                    final BlockState state = provider.getBlockState(pos.offset(i, j, k));
                     if (predicate.test(state)) {
                         if (fastFirst)
                             return 1;

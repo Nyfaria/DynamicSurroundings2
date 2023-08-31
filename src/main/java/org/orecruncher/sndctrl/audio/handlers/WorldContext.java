@@ -86,12 +86,12 @@ public final class WorldContext {
             assert this.player != null;
 
             this.isPrecipitating = w.isRaining();
-            this.playerPosition = this.player.getPositionVec();
+            this.playerPosition = this.player.position();
             this.playerEyePosition = this.player.getEyePosition(1F);
             this.playerPos = new BlockPos(this.playerPosition);
             this.playerEyePos = new BlockPos(this.playerEyePosition);
 
-            final Fluid fs = this.player.world.getFluidState(this.playerEyePos).getFluid();
+            final Fluid fs = this.player.level.getFluidState(this.playerEyePos).getType();
             final ResourceLocation name = fs.getRegistryName();
             if (name != null)
                 this.auralDampening = AudioEffectLibrary.getFluidCoeffcient(name);

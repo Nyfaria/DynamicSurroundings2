@@ -56,24 +56,24 @@ public final class TagUtils {
     public static ITag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
         if (supplier == null)
             return null;
-        return supplier.getBlockTags().get(res);
+        return supplier.getBlocks().getTag(res);
     }
 
     public static Stream<String> dumpBlockTags() {
         if (supplier == null)
             return ImmutableList.<String>of().stream();
 
-        final ITagCollection<Block> collection = supplier.getBlockTags();
+        final ITagCollection<Block> collection = supplier.getBlocks();
 
-        return collection.getRegisteredTags().stream().map(loc -> {
+        return collection.getAvailableTags().stream().map(loc -> {
             final StringBuilder builder = new StringBuilder();
             builder.append(loc.toString()).append(" -> ");
-            final ITag<Block> tag = collection.get(loc);
+            final ITag<Block> tag = collection.getTag(loc);
             final String text;
             if (tag == null) {
                 text = "<NULL>";
             } else {
-                text = tag.getAllElements().stream().map(l -> l.getRegistryName().toString()).collect(Collectors.joining(","));
+                text = tag.getValues().stream().map(l -> l.getRegistryName().toString()).collect(Collectors.joining(","));
             }
             builder.append(text);
             return builder.toString();

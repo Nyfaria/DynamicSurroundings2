@@ -61,7 +61,7 @@ public abstract class Mote implements IParticleMote {
         this.posX = posX;
         this.posY = posY;
         this.posZ = posZ;
-        this.position.setPos(posX, posY, posZ);
+        this.position.set(posX, posY, posZ);
     }
 
     @Nonnull
@@ -103,19 +103,19 @@ public abstract class Mote implements IParticleMote {
     }
 
     public void updateBrightness() {
-        this.packedLighting = WorldRenderer.getCombinedLight(this.lighting, this.position);
+        this.packedLighting = WorldRenderer.getLightColor(this.lighting, this.position);
     }
 
     protected final double interpX(ActiveRenderInfo info) {
-        return info.getProjectedView().x;
+        return info.getPosition().x;
     }
 
     protected final double interpY(ActiveRenderInfo info) {
-        return info.getProjectedView().y;
+        return info.getPosition().y;
     }
 
     protected final double interpZ(ActiveRenderInfo info) {
-        return info.getProjectedView().z;
+        return info.getPosition().z;
     }
 
     protected float renderX(ActiveRenderInfo info, final float partialTicks) {
@@ -133,10 +133,10 @@ public abstract class Mote implements IParticleMote {
     protected void drawVertex(final IVertexBuilder buffer, final double x, final double y, final double z,
                               final float u, final float v) {
         buffer
-                .pos(x, y, z)
-                .tex(u, v)
+                .vertex(x, y, z)
+                .uv(u, v)
                 .color(this.red, this.green, this.blue, this.alpha)
-                .lightmap(this.packedLighting)
+                .uv2(this.packedLighting)
                 .endVertex();
     }
 

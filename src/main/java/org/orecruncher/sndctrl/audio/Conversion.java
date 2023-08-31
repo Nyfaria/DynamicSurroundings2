@@ -39,7 +39,7 @@ public final class Conversion {
      * @return An IAudioStream that is in mono format
      */
     public static IAudioStream convert(@Nonnull final IAudioStream inputStream) {
-        final AudioFormat format = inputStream.getAudioFormat();
+        final AudioFormat format = inputStream.getFormat();
         if (format.getChannels() == 1)
             return inputStream;
 
@@ -54,7 +54,7 @@ public final class Conversion {
      */
     public static AudioStreamBuffer convert(@Nonnull final AudioStreamBuffer buffer) {
 
-        final AudioFormat format = buffer.audioFormat;
+        final AudioFormat format = buffer.format;
 
         // If it is already mono return original buffer
         if (format.getChannels() == 1)
@@ -76,7 +76,7 @@ public final class Conversion {
                 format.getFrameRate(),
                 bigendian);
 
-        final ByteBuffer source = buffer.inputBuffer;
+        final ByteBuffer source = buffer.data;
         if (source == null) {
             return buffer;
         }
@@ -98,9 +98,9 @@ public final class Conversion {
             }
         }
         // Patch up the old object
-        buffer.audioFormat = monoformat;
-        buffer.inputBuffer.rewind();
-        buffer.inputBuffer.limit(sourceLength >> 1);
+        buffer.format = monoformat;
+        buffer.data.rewind();
+        buffer.data.limit(sourceLength >> 1);
         return buffer;
     }
 
@@ -113,13 +113,13 @@ public final class Conversion {
         }
 
         @Override
-        public AudioFormat getAudioFormat() {
-            return this.source.getAudioFormat();
+        public AudioFormat getFormat() {
+            return this.source.getFormat();
         }
 
         @Override
-        public ByteBuffer readOggSoundWithCapacity(int size) throws IOException {
-            return this.source.readOggSoundWithCapacity(size);
+        public ByteBuffer read(int size) throws IOException {
+            return this.source.read(size);
         }
 
         @Override

@@ -58,15 +58,15 @@ public class BiomeFogRangeCalculator extends VanillaFogRangeCalculator {
         assert world != null;
 
         final BiomeManager biomemanager = world.getBiomeManager();
-        final Vector3d origin = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView().subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
-        final Vector3d visibilitySurvey = CubicSampler.func_240807_a_(origin, (x, y, z) -> {
-            final Biome b = biomemanager.getBiomeAtPosition(x, y, z);
+        final Vector3d origin = GameUtils.getMC().gameRenderer.getMainCamera().getPosition().subtract(2.0D, 2.0D, 2.0D).scale(0.25D);
+        final Vector3d visibilitySurvey = CubicSampler.gaussianSampleVec3(origin, (x, y, z) -> {
+            final Biome b = biomemanager.getNoiseBiomeAtQuart(x, y, z);
             final BiomeInfo info = BiomeUtil.getBiomeData(b);
             return new Vector3d(info.getVisibility(), 0, 0);
         });
 
         // Lower values means less visibility
-        final double visibility = visibilitySurvey.getX();
+        final double visibility = visibilitySurvey.x();
         final double farPlaneDistance = visibility * event.getFarPlaneDistance();
         final double farPlaneDistanceScaleBiome = 0.1D * (1D - visibility) + FogResult.DEFAULT_PLANE_SCALE * visibility;
 

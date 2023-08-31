@@ -143,7 +143,7 @@ public final class BlockStateLibrary {
             final String tagName = blockName.substring(1);
             final ITag<Block> tag = TagUtils.getBlockTag(tagName);
             if (tag != null) {
-                return tag.getAllElements().stream().map(BlockStateMatcher::create).filter(m -> !m.isEmpty()).collect(Collectors.toList());
+                return tag.getValues().stream().map(BlockStateMatcher::create).filter(m -> !m.isEmpty()).collect(Collectors.toList());
             }
             LOGGER.debug("Unknown block tag '%s' in Block specification", tagName);
         } else {
@@ -178,9 +178,9 @@ public final class BlockStateLibrary {
             ForgeUtils.getBlockStates().forEach(BlockStateUtil::getData);
             ForgeUtils.getBlockStates().stream().map(BlockStateUtil::getData).forEach(BlockStateData::trim);
 
-            BlockStateUtil.setData(Blocks.AIR.getDefaultState(), BlockStateData.DEFAULT);
-            BlockStateUtil.setData(Blocks.CAVE_AIR.getDefaultState(), BlockStateData.DEFAULT);
-            BlockStateUtil.setData(Blocks.VOID_AIR.getDefaultState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.AIR.defaultBlockState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.CAVE_AIR.defaultBlockState(), BlockStateData.DEFAULT);
+            BlockStateUtil.setData(Blocks.VOID_AIR.defaultBlockState(), BlockStateData.DEFAULT);
         }
 
         @Override

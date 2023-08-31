@@ -120,7 +120,7 @@ public final class ItemLibrary {
         // See if it is an armor item.  We can use the equip sound from the material entry.
         if (item.getItem() instanceof ArmorItem) {
             final ArmorItem ai = (ArmorItem) item.getItem();
-            final IArmorMaterial material = ai.getArmorMaterial();
+            final IArmorMaterial material = ai.getMaterial();
             // Make sure the primitives get created before assigning to an item
             Primitives.getArmorToolbarAcoustic(material);
             Primitives.getArmorAccentAcoustic(material);
@@ -162,7 +162,7 @@ public final class ItemLibrary {
             Matcher match = ITEM_PATTERN.matcher(c);
             if (match.matches()) {
                 final String itemName = match.group(1);
-                if (ResourceLocation.isResouceNameValid(itemName)) {
+                if (ResourceLocation.isValidResourceLocation(itemName)) {
                     final Item item = ForgeRegistries.ITEMS.getValue(new ResourceLocation(itemName));
                     if (item != null) {
                         items.put(item, ic);

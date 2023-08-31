@@ -40,7 +40,7 @@ public class Keys {
         if ((Config.CLIENT.logging.flagMask.get() & Config.Flags.ALLOW_CHUNK_BORDER_HUD) != 0) {
             lightLevelHUD = new KeyBinding(
                     "dsurround.text.lightlevel.toggle",
-                    InputMappings.INPUT_INVALID.getKeyCode(),
+                    InputMappings.UNKNOWN.getValue(),
                     "dsurround.text.controls.group");
             ClientRegistry.registerKeyBinding(lightLevelHUD);
         }
@@ -48,7 +48,7 @@ public class Keys {
         if ((Config.CLIENT.logging.flagMask.get() & Config.Flags.ALLOW_LIGHTLEVEL_HUD) != 0) {
             chunkBorders = new KeyBinding(
                     "dsurround.text.chunkborders.toggle",
-                    InputMappings.INPUT_INVALID.getKeyCode(),
+                    InputMappings.UNKNOWN.getValue(),
                     "dsurround.text.controls.group");
             ClientRegistry.registerKeyBinding(chunkBorders);
         }
@@ -56,13 +56,13 @@ public class Keys {
 
     @SubscribeEvent
     public static void keyPressed(InputEvent.KeyInputEvent event) {
-        if (GameUtils.getMC().currentScreen == null && GameUtils.getPlayer() != null) {
-            if (lightLevelHUD != null && lightLevelHUD.isPressed()) {
+        if (GameUtils.getMC().screen == null && GameUtils.getPlayer() != null) {
+            if (lightLevelHUD != null && lightLevelHUD.consumeClick()) {
                 LightLevelHUD.toggleDisplay();
             }
 
-            if (chunkBorders != null && chunkBorders.isPressed()) {
-                GameUtils.getMC().debugRenderer.toggleChunkBorders();
+            if (chunkBorders != null && chunkBorders.consumeClick()) {
+                GameUtils.getMC().debugRenderer.switchRenderChunkborder();
             }
         }
     }

@@ -212,7 +212,7 @@ public final class AcousticLibrary {
 
     @Nonnull
     private static IAcoustic generateAcoustic(@Nonnull final SoundEvent evt) {
-        IAcoustic result = compiled.get(evt.getName().toString());
+        IAcoustic result = compiled.get(evt.getLocation().toString());
         if (result == null) {
             result = new SimpleAcoustic(evt);
         }

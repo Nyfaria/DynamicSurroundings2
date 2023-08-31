@@ -97,10 +97,10 @@ public class AuroraShaderBand extends AuroraBase {
 			final float u1 = i * this.panelTexWidth;
 			final float u2 = u1 + this.panelTexWidth;
 
-			builder.pos(matrix, quad[0].getX(), quad[0].getY(), quad[0].getZ()).tex(u1, V1).endVertex();
-			builder.pos(matrix, quad[1].getX(), quad[1].getY(), quad[1].getZ()).tex(u2, V1).endVertex();
-			builder.pos(matrix, quad[2].getX(), quad[2].getY(), quad[2].getZ()).tex(u2, V2).endVertex();
-			builder.pos(matrix, quad[3].getX(), quad[3].getY(), quad[3].getZ()).tex(u1, V2).endVertex();
+			builder.vertex(matrix, quad[0].x(), quad[0].y(), quad[0].z()).uv(u1, V1).endVertex();
+			builder.vertex(matrix, quad[1].x(), quad[1].y(), quad[1].z()).uv(u2, V1).endVertex();
+			builder.vertex(matrix, quad[2].x(), quad[2].y(), quad[2].z()).uv(u2, V2).endVertex();
+			builder.vertex(matrix, quad[3].x(), quad[3].y(), quad[3].z()).uv(u1, V2).endVertex();
 		}
 
 	}
@@ -117,12 +117,12 @@ public class AuroraShaderBand extends AuroraBase {
 		final double tranX = getTranslationX(partialTick);
 		final double tranZ = getTranslationZ(partialTick);
 
-		final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
-		matrixStack.push();
-		matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
+		final Vector3d view = GameUtils.getMC().gameRenderer.getMainCamera().getPosition();
+		matrixStack.pushPose();
+		matrixStack.translate(-view.x(), -view.y(), -view.z());
 
 		final RenderType type = AuroraRenderType.QUAD;
-		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().getRenderTypeBuffers().getBufferSource();
+		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().renderBuffers().bufferSource();
 
 		ShaderPrograms.MANAGER.useShader(this.program, this.callback);
 
@@ -130,12 +130,12 @@ public class AuroraShaderBand extends AuroraBase {
 
 			for (int b = 0; b < this.bandCount; b++) {
 				final IVertexBuilder builder = buffer.getBuffer(type);
-				matrixStack.push();
+				matrixStack.pushPose();
 				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
-				generateBand(builder, matrixStack.getLast().getMatrix());
-				matrixStack.pop();
+				generateBand(builder, matrixStack.last().pose());
+				matrixStack.popPose();
 				RenderSystem.disableDepthTest();
-				buffer.finish(type);
+				buffer.endBatch(type);
 			}
 
 		} catch (final Exception ex) {
@@ -145,7 +145,7 @@ public class AuroraShaderBand extends AuroraBase {
 
 		ShaderPrograms.MANAGER.releaseShader();
 
-		matrixStack.pop();
+		matrixStack.popPose();
 	}
 
 	@Override

@@ -81,7 +81,7 @@ public final class BiomeScanner {
 				final IWorldReader provider = CommonState.getBlockReader();
 				for (int dZ = -BIOME_SURVEY_RANGE; dZ <= BIOME_SURVEY_RANGE; dZ++) {
 					for (int dX = -BIOME_SURVEY_RANGE; dX <= BIOME_SURVEY_RANGE; dX++) {
-						this.mutable.setPos(this.surveyedPosition.getX() + dX, 0, this.surveyedPosition.getZ() + dZ);
+						this.mutable.set(this.surveyedPosition.getX() + dX, 0, this.surveyedPosition.getZ() + dZ);
 						final Biome biome = BiomeUtilities.getClientBiome(this.mutable);
 						if (biome == null || biome.getRegistryName() == null) {
 							continue;

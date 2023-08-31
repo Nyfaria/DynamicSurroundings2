@@ -64,10 +64,10 @@ public enum DayCycle {
     }
 
     public static DayCycle getCycle(@Nonnull final IWorld world) {
-        if (world.getDimensionType().getHasCeiling() || !world.getDimensionType().hasSkyLight())
+        if (world.dimensionType().hasCeiling() || !world.dimensionType().hasSkyLight())
             return DayCycle.NO_SKY;
 
-        final float angle = world.func_242415_f(0);
+        final float angle = world.getTimeOfDay(0);
 
         if (angle > DAYTIME_THRESHOLD)
             return DayCycle.DAYTIME;
@@ -81,7 +81,7 @@ public enum DayCycle {
     }
 
     public static float getMoonPhaseFactor(@Nonnull final IWorld world) {
-        return world.getMoonFactor();
+        return world.getMoonBrightness();
     }
 
     public static boolean isAuroraVisible(@Nonnull final IWorld world) {

@@ -132,32 +132,32 @@ public final class LightLevelHUD {
     protected static float heightAdjustment(@Nonnull final BlockState state, @Nonnull final BlockState below,
                                             @Nonnull final BlockPos pos) {
         if (state.getMaterial() == Material.AIR) {
-            final VoxelShape shape = below.getCollisionShape(GameUtils.getWorld(), pos.down());
-            return shape.isEmpty() ? 0 : (float) shape.getEnd(Direction.Axis.Y) - 1;
+            final VoxelShape shape = below.getCollisionShape(GameUtils.getWorld(), pos.below());
+            return shape.isEmpty() ? 0 : (float) shape.max(Direction.Axis.Y) - 1;
         }
 
         final VoxelShape shape = below.getCollisionShape(GameUtils.getWorld(), pos);
         if (shape.isEmpty())
             return 0F;
-        final float adjust = (float) (shape.getEnd(Direction.Axis.Y));
+        final float adjust = (float) (shape.max(Direction.Axis.Y));
         return state.getBlock() == Blocks.SNOW ? adjust + 0.125F : adjust;
     }
 
     protected static void updateLightInfo(@Nonnull final Vector3d position) {
 
-        final FontRenderer fr = GameUtils.getMC().fontRenderer;
+        final FontRenderer fr = GameUtils.getMC().font;
 
         if (fr != font) {
             font = fr;
             for (int i = 0; i < 16; i++)
-                margins[i] = -(font.getStringWidth(lightLevelText[i]) + 1) / 2;
+                margins[i] = -(font.width(lightLevelText[i]) + 1) / 2;
         }
 
         nextCoord = 0;
 
         final ColorSet colors = Config.CLIENT.lightLevel.colorSet.get();
         final Mode displayMode = Config.CLIENT.lightLevel.mode.get();
-        final int skyLightSub = GameUtils.getWorld().getSkylightSubtracted();
+        final int skyLightSub = GameUtils.getWorld().getSkyDarken();
         final int rangeXZ = Config.CLIENT.lightLevel.range.get() * 2 + 1;
         final int rangeY = Config.CLIENT.lightLevel.range.get() + 1;
         final int originX = MathStuff.floor(position.x) - (rangeXZ / 2);
@@ -185,10 +185,10 @@ public final class LightLevelHUD {
                     final BlockState state = world.getBlockState(pos);
 
                     if (lastState == null)
-                        lastState = world.getBlockState(pos.down());
+                        lastState = world.getBlockState(pos.below());
 
                     if (renderLightLevel(state, lastState)) {
-                        mutable.setPos(trueX, trueY, trueZ);
+                        mutable.set(trueX, trueY, trueZ);
 
                         final boolean mobSpawn = lastState.canCreatureSpawn(
                                 GameUtils.getWorld(),
@@ -197,8 +197,8 @@ public final class LightLevelHUD {
                                 EntityType.ZOMBIE);
 
                         if (mobSpawn || !Config.CLIENT.lightLevel.hideSafe.get()) {
-                            final int blockLight = world.getLightFor(LightType.BLOCK, mutable);
-                            final int skyLight = world.getLightFor(LightType.SKY, mutable) - skyLightSub;
+                            final int blockLight = world.getBrightness(LightType.BLOCK, mutable);
+                            final int skyLight = world.getBrightness(LightType.SKY, mutable) - skyLightSub;
                             final int effective = Math.max(blockLight, skyLight);
 
                             final int result;
@@ -244,16 +244,16 @@ public final class LightLevelHUD {
     @SubscribeEvent
     public static void doTick(@Nonnull final TickEvent.PlayerTickEvent event) {
 
-        if (!showHUD || event.side == LogicalSide.SERVER || event.phase == TickEvent.Phase.END || GameUtils.getMC().isGamePaused())
+        if (!showHUD || event.side == LogicalSide.SERVER || event.phase == TickEvent.Phase.END || GameUtils.getMC().isPaused())
             return;
 
-        if (event.player == null || event.player.world == null)
+        if (event.player == null || event.player.level == null)
             return;
 
         if (TickCounter.getTickCount() % 4 != 0)
             return;
 
-        updateLightInfo(event.player.getPositionVec());
+        updateLightInfo(event.player.position());
     }
 
     public static void render(@Nonnull final MatrixStack matrixStack, final float partialTicks) {
@@ -270,18 +270,18 @@ public final class LightLevelHUD {
     private static void drawStringRender(@Nonnull final MatrixStack matrixStack, @Nonnull final PlayerEntity player) {
 
         final boolean thirdPerson = GameUtils.isThirdPersonView();
-        Direction playerFacing = player.getHorizontalFacing();
+        Direction playerFacing = player.getDirection();
         if (thirdPerson)
             playerFacing = playerFacing.getOpposite();
         if (playerFacing == Direction.SOUTH || playerFacing == Direction.NORTH)
             playerFacing = playerFacing.getOpposite();
-        final float rotationAngle = playerFacing.getOpposite().getHorizontalAngle();
+        final float rotationAngle = playerFacing.getOpposite().toYRot();
 
         final Quaternion rotY = Vector3f.YP.rotationDegrees(rotationAngle);
         final Quaternion rotX = Vector3f.XP.rotationDegrees(90);
-        final Vector3d view = GameUtils.getMC().gameRenderer.getActiveRenderInfo().getProjectedView();
-        matrixStack.push();
-        matrixStack.translate(-view.getX(), -view.getY(), -view.getZ());
+        final Vector3d view = GameUtils.getMC().gameRenderer.getMainCamera().getPosition();
+        matrixStack.pushPose();
+        matrixStack.translate(-view.x(), -view.y(), -view.z());
 
         RenderSystem.disableLighting();
         RenderSystem.enableBlend();
@@ -290,9 +290,9 @@ public final class LightLevelHUD {
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
         RenderSystem.depthMask(true);
 
-        IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.getImpl(Tessellator.getInstance().getBuffer());
+        IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
 
-        final int yAdjust = -(font.FONT_HEIGHT / 2);
+        final int yAdjust = -(font.lineHeight / 2);
 
         for (int i = 0; i < nextCoord; i++) {
             final LightCoord coord = lightLevels.get(i);
@@ -300,28 +300,28 @@ public final class LightLevelHUD {
             final int margin = margins[coord.lightLevel];
             final float scale = 0.07F;
 
-            matrixStack.push();
+            matrixStack.pushPose();
             matrixStack.translate(coord.x + 0.5D, coord.y, coord.z + 0.5D);
-            matrixStack.rotate(rotY);
-            matrixStack.rotate(rotX);
+            matrixStack.mulPose(rotY);
+            matrixStack.mulPose(rotX);
             matrixStack.scale(-scale, -scale, scale);
 
-            font.renderString(
+            font.drawInBatch(
                     text,
                     margin,
                     yAdjust,
                     coord.color,
                     false,
-                    matrixStack.getLast().getMatrix(),
+                    matrixStack.last().pose(),
                     buffer,
                     false,
                     0,
                     15728880);
 
-            matrixStack.pop();
+            matrixStack.popPose();
         }
 
-        buffer.finish();
-        matrixStack.pop();
+        buffer.endBatch();
+        matrixStack.popPose();
     }
 }

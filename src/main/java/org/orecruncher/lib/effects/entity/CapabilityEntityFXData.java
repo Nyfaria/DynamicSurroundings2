@@ -62,9 +62,9 @@ public class CapabilityEntityFXData {
 	public static class EventHandler {
 		@SubscribeEvent
 		public static void attachCapabilities(@Nonnull final AttachCapabilitiesEvent<Entity> event) {
-			final World world = event.getObject().getEntityWorld();
+			final World world = event.getObject().getCommandSenderWorld();
 			// Check for null - some mods do no honor the contract
-			if (world != null && world.isRemote && event.getObject() instanceof LivingEntity) {
+			if (world != null && world.isClientSide && event.getObject() instanceof LivingEntity) {
 				final EntityFXData info = new EntityFXData();
 				event.addCapability(CAPABILITY_ID, createProvider(info));
 			}

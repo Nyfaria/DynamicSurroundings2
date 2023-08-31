@@ -77,8 +77,8 @@ public final class FootstepLibrary {
     private static final List<SoundType> FOOTPRINT_SOUND_PROFILE =
             Arrays.asList(
                     SoundType.SAND,
-                    SoundType.GROUND,
-                    SoundType.SLIME,
+                    SoundType.GRAVEL,
+                    SoundType.SLIME_BLOCK,
                     SoundType.SNOW
             );
     private static final Set<Material> FOOTPRINT_MATERIAL = new ReferenceOpenHashSet<>();
@@ -104,13 +104,13 @@ public final class FootstepLibrary {
 
         // Initialize the known materials that leave footprints
         FOOTPRINT_MATERIAL.add(Material.CLAY);
-        FOOTPRINT_MATERIAL.add(Material.EARTH);
+        FOOTPRINT_MATERIAL.add(Material.DIRT);
         FOOTPRINT_MATERIAL.add(Material.SPONGE);
         FOOTPRINT_MATERIAL.add(Material.SAND);
-        FOOTPRINT_MATERIAL.add(Material.SNOW_BLOCK);
         FOOTPRINT_MATERIAL.add(Material.SNOW);
+        FOOTPRINT_MATERIAL.add(Material.TOP_SNOW);
         FOOTPRINT_MATERIAL.add(Material.CAKE);
-        FOOTPRINT_MATERIAL.add(Material.ORGANIC);
+        FOOTPRINT_MATERIAL.add(Material.GRASS);
 
         final MacroEntry MESSY = new MacroEntry("messy", "messy_ground");
         final MacroEntry NOT_EMITTER = new MacroEntry(null, "not_emitter");
@@ -398,11 +398,11 @@ public final class FootstepLibrary {
 
         final ITag<Block> blockTag = TagUtils.getBlockTag(tagName);
         if (blockTag != null) {
-            final List<Block> elements = blockTag.getAllElements();
+            final List<Block> elements = blockTag.getValues();
             if (elements.size() == 0) {
                 LOGGER.debug("No blocks associated with tag '%s'", tagName);
             } else {
-                for (final Block b : blockTag.getAllElements()) {
+                for (final Block b : blockTag.getValues()) {
                     String blockName = Objects.requireNonNull(b.getRegistryName()).toString();
                     if (substrate != null)
                         blockName = blockName + "+" + substrate;
@@ -432,7 +432,7 @@ public final class FootstepLibrary {
     @Nonnull
     public static Generator createGenerator(@Nonnull final LivingEntity entity) {
         Variator var;
-        if (entity.isChild()) {
+        if (entity.isBaby()) {
             var = childVariator;
         } else if (entity instanceof PlayerEntity) {
             var = Config.CLIENT.footsteps.footstepsAsQuadruped.get() ? playerQuadrupedVariator : playerVariator;
@@ -467,7 +467,7 @@ public final class FootstepLibrary {
         // emitter.  Otherwise we get strange effects when edge walking on blocks with a plant
         // to the side.
         final Material mat = state.getMaterial();
-        if (mat == null || !mat.blocksMovement() || mat.isLiquid())
+        if (mat == null || !mat.blocksMotion() || mat.isLiquid())
             return Constants.NOT_EMITTER;
         final IAcoustic acoustic = Primitives.getFootstepAcoustic(state);
         return acoustic == NullAcoustic.INSTANCE ? Constants.NOT_EMITTER : acoustic;

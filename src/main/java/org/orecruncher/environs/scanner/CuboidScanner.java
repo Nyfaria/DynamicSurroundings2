@@ -64,8 +64,8 @@ public abstract class CuboidScanner extends Scanner {
 	}
 
 	protected BlockPos[] getMinMaxPointsForVolume(@Nonnull final BlockPos pos) {
-		BlockPos min = pos.add(-this.xRange, -this.yRange, -this.zRange);
-		final BlockPos max = pos.add(this.xRange, this.yRange, this.zRange);
+		BlockPos min = pos.offset(-this.xRange, -this.yRange, -this.zRange);
+		final BlockPos max = pos.offset(this.xRange, this.yRange, this.zRange);
 
 		if (min.getY() < 0)
 			min = new BlockPos(min.getX(), 0, min.getZ());

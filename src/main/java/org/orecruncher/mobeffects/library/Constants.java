@@ -66,7 +66,7 @@ public final class Constants {
     public static final ResourceLocation MEDIUM_FOOT_ARMOR = new ResourceLocation(MobEffects.MOD_ID, "medium_foot");
     public static final ResourceLocation HEAVY_FOOT_ARMOR = new ResourceLocation(MobEffects.MOD_ID, "heavy_foot");
     public static final ResourceLocation CRYSTAL_FOOT_ARMOR = new ResourceLocation(MobEffects.MOD_ID, "crystal_foot");
-    public static final ResourceLocation NETHERITE_ARMOR = SoundEvents.ITEM_ARMOR_EQUIP_NETHERITE.getName();
+    public static final ResourceLocation NETHERITE_ARMOR = SoundEvents.ARMOR_EQUIP_NETHERITE.getLocation();
 
     public static final ResourceLocation LEATHER_ARMOR_EQUIP = LIGHT_ARMOR;
     public static final ResourceLocation CHAIN_ARMOR_EQUIP = MEDIUM_ARMOR;

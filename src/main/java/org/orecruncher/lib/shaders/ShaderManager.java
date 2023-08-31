@@ -80,8 +80,8 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 		if (program == null)
 			return;
 
-		final int programId = program.getProgram();
-		ShaderLinkHelper.func_227804_a_(programId);
+		final int programId = program.getId();
+		ShaderLinkHelper.glUseProgram(programId);
 
 		if (callback != null) {
 			callback.accept(new ShaderCallContext(program));
@@ -95,7 +95,7 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 
 	public void releaseShader() {
 		if (supported())
-			ShaderLinkHelper.func_227804_a_(0);
+			ShaderLinkHelper.glUseProgram(0);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -104,9 +104,9 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 			return;
 
 		if (GameUtils.getMC().getResourceManager() instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) GameUtils.getMC().getResourceManager()).addReloadListener(
+			((IReloadableResourceManager) GameUtils.getMC().getResourceManager()).registerReloadListener(
 					(IResourceManagerReloadListener) manager -> {
-						this.programs.values().forEach(ShaderLinkHelper::deleteShader);
+						this.programs.values().forEach(ShaderLinkHelper::releaseProgram);
 						this.programs.clear();
 						loadShaders(manager);
 					});
@@ -139,7 +139,7 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 
 	private static ShaderLoader createShader(@Nonnull final IResourceManager manager, @Nonnull final ResourceLocation loc, @Nonnull final ShaderLoader.ShaderType shaderType) throws IOException {
 		try (InputStream is = new BufferedInputStream(manager.getResource(loc).getInputStream())) {
-			return ShaderLoader.func_216534_a(shaderType, loc.toString(), is, shaderType.name().toLowerCase(Locale.ROOT));
+			return ShaderLoader.compileShader(shaderType, loc.toString(), is, shaderType.name().toLowerCase(Locale.ROOT));
 		}
 	}
 }

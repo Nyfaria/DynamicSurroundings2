@@ -132,9 +132,9 @@ public final class AuroraHandler extends HandlerBase {
 	public static void renderHook(@Nonnull final MatrixStack matrixStack, final float partialTick) {
 		if (handler != null) {
 			final IProfiler profiler = GameUtils.getMC().getProfiler();
-			profiler.startSection("Aurora Render");
+			profiler.push("Aurora Render");
 			handler.doRender(matrixStack, partialTick);
-			profiler.endSection();
+			profiler.pop();
 		}
 	}
 

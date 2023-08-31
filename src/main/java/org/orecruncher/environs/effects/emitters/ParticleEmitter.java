@@ -62,7 +62,7 @@ public abstract class ParticleEmitter {
 	 * Minecraft particle manager.
 	 */
 	public void addParticle(@Nonnull final Particle particle) {
-		GameUtils.getMC().particles.addEffect(particle);
+		GameUtils.getMC().particleEngine.add(particle);
 	}
 
 	public boolean isAlive() {

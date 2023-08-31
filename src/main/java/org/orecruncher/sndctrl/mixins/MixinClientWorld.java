@@ -40,7 +40,7 @@ public class MixinClientWorld {
      * @param flags    Update flags
      * @param ci       Ignored
      */
-    @Inject(method = "notifyBlockUpdate(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;I)V", at = @At("RETURN"))
+    @Inject(method = "sendBlockUpdated(Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;Lnet/minecraft/block/BlockState;I)V", at = @At("RETURN"))
     public void blockUpdateCallback(BlockPos pos, BlockState oldState, BlockState newState, int flags, CallbackInfo ci) {
         if (oldState != newState)
             ClientBlockUpdateHandler.blockUpdateCallback((ClientWorld) ((Object) this), pos, newState);

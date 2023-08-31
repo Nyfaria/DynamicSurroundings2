@@ -74,8 +74,8 @@ public class Inspector {
                                         final BlockPos pos) {
 
         if (!stack.isEmpty()) {
-            text.add(TextFormatting.RED + stack.getDisplayName().getString());
-            final String itemName = stack.getItem().getName().getString();
+            text.add(TextFormatting.RED + stack.getHoverName().getString());
+            final String itemName = stack.getItem().getDescription().getString();
             if (!StringUtils.isEmpty(itemName)) {
                 text.add("ITEM: " + itemName);
                 text.add(TextFormatting.DARK_AQUA + stack.getItem().getClass().getName());
@@ -110,7 +110,7 @@ public class Inspector {
         final PlayerEntity player = GameUtils.getPlayer();
         if (player == null)
             return false;
-        final ItemStack held = player.getHeldItem(Hand.MAIN_HAND);
+        final ItemStack held = player.getItemInHand(Hand.MAIN_HAND);
         return !held.isEmpty() && held.getItem() == Items.CARROT_ON_A_STICK;
     }
 
@@ -123,21 +123,21 @@ public class Inspector {
 
             if (Config.CLIENT.logging.enableLogging.get() && isHolding()) {
                 final World world = GameUtils.getWorld();
-                if (GameUtils.getMC().pointedEntity != null) {
-                    final EntityInspectionEvent evt = new EntityInspectionEvent(GameUtils.getMC().pointedEntity);
+                if (GameUtils.getMC().crosshairPickEntity != null) {
+                    final EntityInspectionEvent evt = new EntityInspectionEvent(GameUtils.getMC().crosshairPickEntity);
                     evt.data.add(TextFormatting.RED + "Entity " + evt.entity.toString());
                     MinecraftForge.EVENT_BUS.post(evt);
                     diagnostics = evt.data;
                 } else {
-                    final RayTraceResult current = GameUtils.getMC().objectMouseOver;
+                    final RayTraceResult current = GameUtils.getMC().hitResult;
                     if (current instanceof BlockRayTraceResult) {
                         final BlockRayTraceResult trace = (BlockRayTraceResult) current;
                         if (trace.getType() != RayTraceResult.Type.MISS) {
 
-                            final BlockState state = world.getBlockState(trace.getPos());
+                            final BlockState state = world.getBlockState(trace.getBlockPos());
 
-                            if (!state.isAir(world, trace.getPos())) {
-                                final BlockInspectionEvent evt = new BlockInspectionEvent(trace, world, state, trace.getPos());
+                            if (!state.isAir(world, trace.getBlockPos())) {
+                                final BlockInspectionEvent evt = new BlockInspectionEvent(trace, world, state, trace.getBlockPos());
                                 MinecraftForge.EVENT_BUS.post(evt);
                                 diagnostics = evt.data;
                             }

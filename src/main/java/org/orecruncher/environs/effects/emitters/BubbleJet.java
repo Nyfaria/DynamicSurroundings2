@@ -33,7 +33,7 @@ public class BubbleJet extends Jet {
 
 	@Override
 	protected void spawnJetParticle() {
-		GameUtils.getMC().particles.addParticle(ParticleTypes.BUBBLE, this.posX, this.posY, this.posZ, 0, 0.5D + this.jetStrength / 10D, 0D);
+		GameUtils.getMC().particleEngine.createParticle(ParticleTypes.BUBBLE, this.posX, this.posY, this.posZ, 0, 0.5D + this.jetStrength / 10D, 0D);
 	}
 
 }

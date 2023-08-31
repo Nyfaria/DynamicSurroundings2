@@ -25,6 +25,8 @@ import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.audio.ISound.AttenuationType;
+
 /**
  * A BackgroundSoundInstance is intended to play continuously in the background, similar to the music
  * of Minecraft.  The difference here is that the volume can fade in and out.  Used by Dynamic Surroundings
@@ -42,7 +44,7 @@ public class BackgroundSoundInstance extends FadableSoundInstance {
     }
 
     @Override
-    public boolean isGlobal() {
+    public boolean isRelative() {
         return true;
     }
 
@@ -63,7 +65,7 @@ public class BackgroundSoundInstance extends FadableSoundInstance {
 
     @Nonnull
     @Override
-    public AttenuationType getAttenuationType() {
+    public AttenuationType getAttenuation() {
         return AttenuationType.NONE;
     }
 

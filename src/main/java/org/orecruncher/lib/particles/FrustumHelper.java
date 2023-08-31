@@ -55,6 +55,6 @@ public class FrustumHelper {
     public static boolean isBoundingBoxInFrustum(@Nonnull final AxisAlignedBB bb) {
         if (helper == null)
             return true;
-        return helper.isBoundingBoxInFrustum(bb);
+        return helper.isVisible(bb);
     }
 }

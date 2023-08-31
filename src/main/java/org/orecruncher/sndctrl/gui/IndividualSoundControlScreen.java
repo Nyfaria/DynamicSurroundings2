@@ -74,7 +74,7 @@ public class IndividualSoundControlScreen extends Screen {
     @Override
     protected void init() {
 
-        GameUtils.getMC().keyboardListener.enableRepeatEvents(true);
+        GameUtils.getMC().keyboardHandler.setSendRepeatsToGui(true);
 
         // Setup search bar
         final int searchBarLeftMargin = (this.width - SEARCH_BAR_WIDTH) / 2;
@@ -105,7 +105,7 @@ public class IndividualSoundControlScreen extends Screen {
                 SELECTION_WIDTH,
                 SELECTION_HEIGHT,
                 this.enablePlay,
-                () -> this.searchField.getText(),
+                () -> this.searchField.getValue(),
                 this.soundConfigList);
 
         this.children.add(this.soundConfigList);
@@ -131,7 +131,7 @@ public class IndividualSoundControlScreen extends Screen {
                 this::cancel);
         this.addButton(this.cancel);
 
-        this.setFocusedDefault(this.searchField);
+        this.setInitialFocus(this.searchField);
     }
 
     public void tick() {
@@ -147,8 +147,8 @@ public class IndividualSoundControlScreen extends Screen {
         return super.keyPressed(keyCode, scanCode, modifiers) || this.searchField.keyPressed(keyCode, scanCode, modifiers);
     }
 
-    public void closeScreen() {
-        GameUtils.getMC().displayGuiScreen(this.parent);
+    public void onClose() {
+        GameUtils.getMC().setScreen(this.parent);
     }
 
     public boolean charTyped(char codePoint, int modifiers) {
@@ -167,7 +167,7 @@ public class IndividualSoundControlScreen extends Screen {
             final IndividualSoundControlListEntry entry = this.soundConfigList.getEntryAt(mouseX, mouseY);
             if (entry != null) {
                 final List<ITextComponent> toolTip = entry.getToolTip(mouseX, mouseY);
-                this.renderWrappedToolTip(matrixStack, toolTip, mouseX, mouseY + TOOLTIP_Y_OFFSET, GameUtils.getMC().fontRenderer);
+                this.renderWrappedToolTip(matrixStack, toolTip, mouseX, mouseY + TOOLTIP_Y_OFFSET, GameUtils.getMC().font);
             }
         }
     }
@@ -177,13 +177,13 @@ public class IndividualSoundControlScreen extends Screen {
     protected void save(@Nonnull final Button button) {
         // Gather the changes and push to underlying routine for parsing and packaging
         this.soundConfigList.saveChanges();
+        this.removed();
         this.onClose();
-        this.closeScreen();
     }
 
     protected void cancel(@Nonnull final Button button) {
         // Just discard - no processing
+        this.removed();
         this.onClose();
-        this.closeScreen();
     }
 }

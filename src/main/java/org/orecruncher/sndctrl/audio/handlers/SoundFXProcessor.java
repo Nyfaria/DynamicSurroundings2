@@ -162,14 +162,14 @@ public final class SoundFXProcessor {
 
         // Double suplex!  Queue the operation on the sound executor to do the config work.  This should queue in
         // behind any attempt at getting a sound source.
-        entry.runOnSoundExecutor(source -> {
-            if (source.id > 0) {
+        entry.execute(source -> {
+            if (source.source > 0) {
                 final SourceContext ctx = new SourceContext();
                 ctx.attachSound(sound);
                 ctx.enable();
                 ctx.exec();
                 ((IMixinSoundContext) source).setData(ctx);
-                sources[source.id - 1] = ctx;
+                sources[source.source - 1] = ctx;
             }
         });
     }
@@ -183,7 +183,7 @@ public final class SoundFXProcessor {
     public static void tick(@Nonnull final SoundSource source) {
         final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
-            ctx.tick(source.id);
+            ctx.tick(source.source);
     }
 
     /**
@@ -194,7 +194,7 @@ public final class SoundFXProcessor {
     public static void stopSoundPlay(@Nonnull final SoundSource source) {
         final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
-            sources[source.id - 1] = null;
+            sources[source.source - 1] = null;
     }
 
     /**
@@ -215,7 +215,7 @@ public final class SoundFXProcessor {
 
         // If there is no context attached and conversion is enabled do it.  This can happen if enhanced sound
         // processing is turned off.  If there is a context, make sure that the sound is attenuated.
-        boolean doConversion = ctx == null || (ctx.getSound() != null && ctx.getSound().getAttenuationType() != ISound.AttenuationType.NONE);
+        boolean doConversion = ctx == null || (ctx.getSound() != null && ctx.getSound().getAttenuation() != ISound.AttenuationType.NONE);
 
         if (doConversion)
             return Conversion.convert(buffer);

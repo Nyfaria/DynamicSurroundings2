@@ -305,7 +305,7 @@ public final class MathStuff {
      */
     @Nonnull
     public static Vector3d reflection(@Nonnull final Vector3d vector, @Nonnull final Vector3d surfaceNormal) {
-        final double dot2 = vector.dotProduct(surfaceNormal) * 2;
+        final double dot2 = vector.dot(surfaceNormal) * 2;
         final double x = vector.x - dot2 * surfaceNormal.x;
         final double y = vector.y - dot2 * surfaceNormal.y;
         final double z = vector.z - dot2 * surfaceNormal.z;
@@ -325,7 +325,7 @@ public final class MathStuff {
      */
     @Nonnull
     public static Vector3d addScaled(@Nonnull final Vector3d base, @Nonnull final Vector3d addened, final double scale) {
-        return base.add(addened.getX() * scale, addened.getY() * scale, addened.getZ() * scale);
+        return base.add(addened.x() * scale, addened.y() * scale, addened.z() * scale);
     }
 
     /**

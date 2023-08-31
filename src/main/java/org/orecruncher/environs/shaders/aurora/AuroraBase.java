@@ -96,15 +96,15 @@ public abstract class AuroraBase implements IAurora {
 	}
 
 	protected double getTranslationX(final float partialTick) {
-		return MathHelper.lerp(partialTick, this.player.lastTickPosX, this.player.getPosX());
+		return MathHelper.lerp(partialTick, this.player.xOld, this.player.getX());
 	}
 
 	protected double getTranslationZ(final float partialTick) {
-		return MathHelper.lerp(partialTick, this.player.lastTickPosZ, this.player.getPosZ()) - AuroraUtils.PLAYER_FIXED_Z_OFFSET;
+		return MathHelper.lerp(partialTick, this.player.zOld, this.player.getZ()) - AuroraUtils.PLAYER_FIXED_Z_OFFSET;
 	}
 
 	protected double getTranslationY(final float partialTick) {
-		final double posY = MathHelper.lerp(partialTick, this.player.lastTickPosY, this.player.getPosY()) + AuroraUtils.PLAYER_FIXED_Y_OFFSET;
+		final double posY = MathHelper.lerp(partialTick, this.player.yOld, this.player.getY()) + AuroraUtils.PLAYER_FIXED_Y_OFFSET;
 		final double limit = (this.dimInfo.getSkyHeight() + this.dimInfo.getCloudHeight()) / 2D;
 		return MathStuff.clamp(posY, AuroraUtils.PLAYER_FIXED_Y_OFFSET, limit);
 	}

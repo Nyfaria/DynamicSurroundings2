@@ -27,6 +27,8 @@ import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
+import net.minecraft.client.audio.ISound.AttenuationType;
+
 @OnlyIn(Dist.CLIENT)
 public class LoopingSoundInstance extends WrappedSoundInstance {
 
@@ -48,12 +50,12 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public boolean canRepeat() {
+    public boolean isLooping() {
         return true;
     }
 
     @Override
-    public int getRepeatDelay() {
+    public int getDelay() {
         return 0;
     }
 
@@ -83,7 +85,7 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public AttenuationType getAttenuationType() {
+    public AttenuationType getAttenuation() {
         return AttenuationType.LINEAR;
     }
 
@@ -91,7 +93,7 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
     @Nonnull
     public String toString() {
         return MoreObjects.toStringHelper(this)
-                .addValue(getSoundLocation().toString())
+                .addValue(getLocation().toString())
                 .addValue(getSoundCategory().toString())
                 .addValue(getState().toString())
                 .add("v", getVolume())

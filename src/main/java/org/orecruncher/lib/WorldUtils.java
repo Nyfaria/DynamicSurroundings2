@@ -43,7 +43,7 @@ import java.lang.reflect.Method;
 @SuppressWarnings("unused")
 public final class WorldUtils {
 
-    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "field_239146_c_");
+    private static final BooleanField<ClientWorld.ClientWorldInfo> flatWorld = new BooleanField<>(ClientWorld.ClientWorldInfo.class, false, "flatWorld", "isFlat");
 
     /**
      * Temperatures LESS than this value are considered cold temperatures.
@@ -107,9 +107,9 @@ public final class WorldUtils {
         TEMP = TEMP1;
 
         // Place holder for future
-        RAIN_STRENGTH = World::getRainStrength;
+        RAIN_STRENGTH = World::getRainLevel;
         RAIN_OCCURING = World::isRaining;
-        THUNDER_STRENGTH = World::getThunderStrength;
+        THUNDER_STRENGTH = World::getThunderLevel;
         THUNDER_OCCURING = World::isThundering;
     }
 
@@ -148,7 +148,7 @@ public final class WorldUtils {
      */
     public static boolean isSolid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos, @Nonnull final Direction dir) {
         final BlockState state = world.getBlockState(pos);
-        return Block.doesSideFillSquare(state.getCollisionShape(world, pos, ISelectionContext.dummy()),dir);
+        return Block.isFaceFull(state.getCollisionShape(world, pos, ISelectionContext.empty()),dir);
     }
 
     /**
@@ -163,7 +163,7 @@ public final class WorldUtils {
      */
     public static boolean isBlockSolid(@Nonnull final IBlockReader world, @Nonnull final BlockPos pos) {
         final BlockState state = world.getBlockState(pos);
-        return state.isSolid();
+        return state.canOcclude();
     }
 
     /**
@@ -225,16 +225,16 @@ public final class WorldUtils {
 
     @Nonnull
     public static BlockPos getPrecipitationHeight(@Nonnull final IWorldReader world, @Nonnull final BlockPos pos) {
-        return world.getHeight(Heightmap.Type.MOTION_BLOCKING, pos);
+        return world.getHeightmapPos(Heightmap.Type.MOTION_BLOCKING, pos);
     }
 
     public static boolean hasVoidParticles(@Nonnull final World world) {
-        return world.getDimensionType().hasSkyLight();
+        return world.dimensionType().hasSkyLight();
     }
 
     @OnlyIn(Dist.CLIENT)
     public static boolean isSuperFlat(@Nonnull final World world) {
-        final IWorldInfo info = world.getWorldInfo();
+        final IWorldInfo info = world.getLevelData();
         return info instanceof ClientWorld.ClientWorldInfo && flatWorld.get((ClientWorld.ClientWorldInfo) info);
     }
 

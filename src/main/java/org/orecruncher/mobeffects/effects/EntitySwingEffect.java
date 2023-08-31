@@ -65,20 +65,20 @@ public class EntitySwingEffect extends AbstractEntityEffect {
         final LivingEntity entity = getEntity();
 
         // Boats are strange - ignore them for now
-        if (entity.getRidingEntity() instanceof BoatEntity)
+        if (entity.getVehicle() instanceof BoatEntity)
             return;
 
         // Is the swing in motion
-        if (entity.swingProgressInt > this.swingProgress && entity.swingingHand != null) {
+        if (entity.swingTime > this.swingProgress && entity.swingingArm != null) {
             if (!this.isSwinging) {
                 if (isClickOK(entity)) {
                     if (freeSwing(entity)) {
-                        final ItemStack currentItem = entity.getHeldItem(entity.swingingHand);
+                        final ItemStack currentItem = entity.getItemInHand(entity.swingingArm);
                         final ItemData data = ItemLibrary.getItemData(currentItem);
                         if (isActivePlayer(entity))
                             data.playSwingSound();
                         else
-                            data.playSwingSound(entity.getPosition());
+                            data.playSwingSound(entity.blockPosition());
                     }
                 }
             }
@@ -89,7 +89,7 @@ public class EntitySwingEffect extends AbstractEntityEffect {
             this.isSwinging = false;
         }
 
-        this.swingProgress = entity.swingProgressInt;
+        this.swingProgress = entity.swingTime;
     }
 
     protected static boolean freeSwing(@Nonnull final LivingEntity entity) {
@@ -102,15 +102,15 @@ public class EntitySwingEffect extends AbstractEntityEffect {
             return entity.getAttribute(ForgeMod.REACH_DISTANCE.get()).getValue();
 
         // From EntityAIAttackMelee::getAttackReachSqr - approximate
-        return entity.getWidth() * 2F + 0.6F; // 0.6 == default entity width
+        return entity.getBbWidth() * 2F + 0.6F; // 0.6 == default entity width
     }
 
     protected static BlockRayTraceResult rayTraceBlock(@Nonnull final LivingEntity entity) {
         double range = getReach(entity);
         final Vector3d eyes = entity.getEyePosition(1F);
-        final Vector3d look = entity.getLook(1F);
+        final Vector3d look = entity.getViewVector(1F);
         final Vector3d rangedLook = eyes.add(look.x * range, look.y * range, look.z * range);
-        return entity.getEntityWorld().rayTraceBlocks(new RayTraceContext(eyes, rangedLook, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY, entity));
+        return entity.getCommandSenderWorld().clip(new RayTraceContext(eyes, rangedLook, RayTraceContext.BlockMode.OUTLINE, RayTraceContext.FluidMode.SOURCE_ONLY, entity));
     }
 
     private boolean isClickOK(@Nonnull final LivingEntity entity) {

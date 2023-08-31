@@ -146,16 +146,16 @@ public class IndividualSoundControlListEntry extends AbstractOptionList.Entry<In
 
     @Override
     @Nonnull
-    public List<? extends IGuiEventListener> getEventListeners() {
+    public List<? extends IGuiEventListener> children() {
         return this.children;
     }
 
     @Override
     public void render(@Nonnull final MatrixStack matrixStack, int index, int rowTop, int rowLeft, int rowWidth, int rowHeight, int mouseX, int mouseY, boolean mouseOver, float partialTick_) {
-        final FontRenderer font = GameUtils.getMC().fontRenderer;
-        final float labelY = rowTop + (rowHeight - font.FONT_HEIGHT) / 2F;
+        final FontRenderer font = GameUtils.getMC().font;
+        final float labelY = rowTop + (rowHeight - font.lineHeight) / 2F;
         final String text = this.config.getLocation().toString();
-        font.drawString(matrixStack, text, (float) rowLeft, labelY, ColorPalette.WHITE.rgb());
+        font.draw(matrixStack, text, (float) rowLeft, labelY, ColorPalette.WHITE.rgb());
 
         // Need to position the other controls appropriately
         int rightMargin = rowLeft + rowWidth;

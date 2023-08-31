@@ -76,8 +76,8 @@ public final class ResourceUtils {
         // entries in the collection are lower priority that those further in the collection.  The result is that
         // higher priority resource packs will replace data from lower priority packs if there is an overlap.
         for (final ResourcePackInfo pack : packs) {
-            final IResourcePack rp = pack.getResourcePack();
-            final Set<String> namespaces = rp.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            final IResourcePack rp = pack.open();
+            final Set<String> namespaces = rp.getNamespaces(ResourcePackType.CLIENT_RESOURCES);
             for (final String mod : namespaceList) {
                 if (namespaces.contains(mod)) {
                     final String container = String.format(resourceContainer, config);
@@ -125,11 +125,11 @@ public final class ResourceUtils {
         final Collection<ResourcePackInfo> packs = ForgeUtils.getEnabledResourcePacks();
 
         for (final ResourcePackInfo pack : packs) {
-            final IResourcePack rp = pack.getResourcePack();
-            final Set<String> embeddedNamespaces = rp.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            final IResourcePack rp = pack.open();
+            final Set<String> embeddedNamespaces = rp.getNamespaces(ResourcePackType.CLIENT_RESOURCES);
             for (final String ns : embeddedNamespaces) {
                 final ResourceLocation location = new ResourceLocation(ns, "sounds.json");
-                final IResourceAccessor accessor = IResourceAccessor.createPackResource(pack.getResourcePack(), location, location);
+                final IResourceAccessor accessor = IResourceAccessor.createPackResource(pack.open(), location, location);
                 if (accessor.exists()) {
                     results.add(accessor);
                 }
@@ -162,12 +162,12 @@ public final class ResourceUtils {
         final Collection<ResourcePackInfo> packs = ForgeUtils.getEnabledResourcePacks();
 
         for (final ResourcePackInfo pack : packs) {
-            final IResourcePack rp = pack.getResourcePack();
-            final Set<String> embeddedNamespaces = rp.getResourceNamespaces(ResourcePackType.CLIENT_RESOURCES);
+            final IResourcePack rp = pack.open();
+            final Set<String> embeddedNamespaces = rp.getNamespaces(ResourcePackType.CLIENT_RESOURCES);
             for (final String ns : embeddedNamespaces) {
                 if (!namespaces.contains(ns)) {
                     final ResourceLocation location = new ResourceLocation(ns, container);
-                    final IResourceAccessor accessor = IResourceAccessor.createPackResource(pack.getResourcePack(), location, location);
+                    final IResourceAccessor accessor = IResourceAccessor.createPackResource(pack.open(), location, location);
                     if (accessor.exists()) {
                         final Manifest manifest = accessor.as(Manifest.class);
                         if (manifest != null) {

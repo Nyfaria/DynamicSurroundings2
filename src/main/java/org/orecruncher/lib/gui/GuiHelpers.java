@@ -45,8 +45,8 @@ public class GuiHelpers {
      */
     public static Collection<ITextComponent> getTrimmedTextCollection(@Nonnull final String key, final int width, @Nullable final TextFormatting... formatting) {
         final Style style = prefixHelper(formatting);
-        return GameUtils.getMC().fontRenderer.getCharacterManager()
-                .func_238362_b_(
+        return GameUtils.getMC().font.getSplitter()
+                .splitLines(
                         new TranslationTextComponent(key),
                         width,
                         style)
@@ -66,22 +66,22 @@ public class GuiHelpers {
     public static ITextComponent getTrimmedText(@Nonnull final String key, final int width, @Nullable final TextFormatting... formatting) {
         final Style style = prefixHelper(formatting);
         final ITextComponent text = new TranslationTextComponent(key);
-        final FontRenderer fr = GameUtils.getMC().fontRenderer;
-        final CharacterManager cm = fr.getCharacterManager();
-        if (fr.getStringPropertyWidth(text) > width) {
-            final int ellipsesWidth = fr.getStringWidth(ELLIPSES);
+        final FontRenderer fr = GameUtils.getMC().font;
+        final CharacterManager cm = fr.getSplitter();
+        if (fr.width(text) > width) {
+            final int ellipsesWidth = fr.width(ELLIPSES);
             final int trueWidth = width - ellipsesWidth;
-            final ITextProperties str = cm.func_238358_a_(text, trueWidth, style);
+            final ITextProperties str = cm.headByWidth(text, trueWidth, style);
             return new StringTextComponent(str.getString() + ELLIPSES);
         }
-        final ITextProperties str = cm.func_238358_a_(text, width, style);
+        final ITextProperties str = cm.headByWidth(text, width, style);
         return new StringTextComponent(str.getString());
     }
 
     private static Style prefixHelper(@Nullable final TextFormatting[] formatting) {
         final Style style;
         if (formatting != null && formatting.length > 0)
-            style = Style.EMPTY.createStyleFromFormattings(formatting);
+            style = Style.EMPTY.applyFormats(formatting);
         else
             style = Style.EMPTY;
         return style;

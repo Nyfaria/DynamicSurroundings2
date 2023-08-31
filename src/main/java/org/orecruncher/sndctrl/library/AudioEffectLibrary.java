@@ -120,7 +120,7 @@ public final class AudioEffectLibrary {
         if (result == null || result < 0) {
             result = materialOcclusion.getFloat(state.getMaterial());
             if (result < 0) {
-                result = state.getMaterial().isOpaque() ? DEFAULT_OPAQUE_OCCLUSION : DEFAULT_TRANSLUCENT_OCCLUSION;
+                result = state.getMaterial().isSolidBlocking() ? DEFAULT_OPAQUE_OCCLUSION : DEFAULT_TRANSLUCENT_OCCLUSION;
             }
         }
 
@@ -157,8 +157,8 @@ public final class AudioEffectLibrary {
                 final String tagName = name.substring(1);
                 final ITag<Block> tag = TagUtils.getBlockTag(tagName);
                 if (tag != null) {
-                    for (final Block block : tag.getAllElements()) {
-                        for (final BlockState state : block.getStateContainer().getValidStates())
+                    for (final Block block : tag.getValues()) {
+                        for (final BlockState state : block.getStateDefinition().getPossibleStates())
                             blockStateOcclusionMap.put(state, kvp.getValue());
                     }
                 } else {
@@ -198,8 +198,8 @@ public final class AudioEffectLibrary {
                 final String tagName = name.substring(1);
                 final ITag<Block> tag = TagUtils.getBlockTag(tagName);
                 if (tag != null) {
-                    for (final Block block : tag.getAllElements()) {
-                        for (final BlockState state : block.getStateContainer().getValidStates())
+                    for (final Block block : tag.getValues()) {
+                        for (final BlockState state : block.getStateDefinition().getPossibleStates())
                             blockStateReflectMap.put(state, val);
                     }
                 } else {
@@ -258,7 +258,7 @@ public final class AudioEffectLibrary {
             // Occlusion setup
             materialOcclusion.defaultReturnValue(-1F);
             for (final Material mat : MaterialUtils.getMaterials())
-                materialOcclusion.put(mat, mat.isOpaque() ? DEFAULT_OPAQUE_OCCLUSION : DEFAULT_TRANSLUCENT_OCCLUSION);
+                materialOcclusion.put(mat, mat.isSolidBlocking() ? DEFAULT_OPAQUE_OCCLUSION : DEFAULT_TRANSLUCENT_OCCLUSION);
             blockStateOcclusionMap.setDefaultValue(() -> -1F);
 
             // Reflection setup

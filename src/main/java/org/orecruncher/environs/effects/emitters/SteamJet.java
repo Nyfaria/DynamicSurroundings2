@@ -45,7 +45,7 @@ public class SteamJet extends Jet {
     @Override
     protected void spawnJetParticle() {
         final Particle particle = new SteamCloudParticle(GameUtils.getWorld(), this.posX, this.posY, this.posZ, 0.1D);
-        GameUtils.getMC().particles.addEffect(particle);
+        GameUtils.getMC().particleEngine.add(particle);
     }
 
 }

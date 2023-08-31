@@ -41,7 +41,7 @@ public class MoteFireFly extends AnimatedMote {
     private boolean doRender;
 
     public MoteFireFly(@Nonnull final IBlockReader world, final double x, final double y, final double z) {
-        super(GameUtils.getMC().particles.sprites.get(ParticleTypes.FIREWORK.getRegistryName()), world, x, y, z, 0, 0, 0);
+        super(GameUtils.getMC().particleEngine.spriteSets.get(ParticleTypes.FIREWORK.getRegistryName()), world, x, y, z, 0, 0, 0);
 
         this.motionX = RANDOM.nextGaussian() * XZ_MOTION_DELTA;
         this.motionZ = RANDOM.nextGaussian() * XZ_MOTION_DELTA;

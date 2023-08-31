@@ -31,6 +31,10 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
 import org.orecruncher.environs.Environs;
 
+import net.minecraft.client.renderer.RenderState.TargetState;
+import net.minecraft.client.renderer.RenderState.TextureState;
+import net.minecraft.client.renderer.RenderState.TransparencyState;
+
 @OnlyIn(Dist.CLIENT)
 public class AuroraRenderType extends RenderType {
     public AuroraRenderType(String nameIn, VertexFormat formatIn, int drawModeIn, int bufferSizeIn, boolean useDelegateIn, boolean needsSortingIn, Runnable setupTaskIn, Runnable clearTaskIn) {
@@ -45,24 +49,24 @@ public class AuroraRenderType extends RenderType {
             },
             RenderSystem::disableBlend);
 
-    private static final TargetState TARGET = field_239238_U_;
+    private static final TargetState TARGET = WEATHER_TARGET;
 
     public static ResourceLocation TEXTURE = new ResourceLocation(Environs.MOD_ID,"textures/misc/aurora_band.png");
 
-    public static final RenderType QUAD = makeType(
+    public static final RenderType QUAD = create(
             "aurora_render_type",
             DefaultVertexFormats.POSITION_TEX,
             GL11.GL_QUADS,
             64,
-            RenderType.State.getBuilder()
-                    .texture(new TextureState(TEXTURE, false, false))
-                    .transparency(AURORA_TRANSPARENCY)
-                    .target(TARGET)
-                    .fog(FOG)
-                    .shadeModel(RenderState.SHADE_ENABLED)
-                    .alpha(DEFAULT_ALPHA)
-                    .depthTest(DEPTH_LEQUAL)
-                    .cull(CULL_DISABLED)
-                    .writeMask(RenderState.COLOR_DEPTH_WRITE)
-                    .build(false));
+            RenderType.State.builder()
+                    .setTextureState(new TextureState(TEXTURE, false, false))
+                    .setTransparencyState(AURORA_TRANSPARENCY)
+                    .setOutputState(TARGET)
+                    .setFogState(FOG)
+                    .setShadeModelState(RenderState.SMOOTH_SHADE)
+                    .setAlphaState(DEFAULT_ALPHA)
+                    .setDepthTestState(LEQUAL_DEPTH_TEST)
+                    .setCullState(NO_CULL)
+                    .setWriteMaskState(RenderState.COLOR_DEPTH_WRITE)
+                    .createCompositeState(false));
 }

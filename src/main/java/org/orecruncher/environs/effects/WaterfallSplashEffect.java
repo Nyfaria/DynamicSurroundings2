@@ -58,12 +58,12 @@ public class WaterfallSplashEffect extends JetEffect {
 
 	private static boolean isUnboundedLiquid(final IBlockReader provider, final BlockPos pos) {
 		for (final Vector3i cardinal_offset : cardinal_offsets) {
-			final BlockPos tp = pos.add(cardinal_offset);
+			final BlockPos tp = pos.offset(cardinal_offset);
 			final BlockState state = provider.getBlockState(tp);
 			if (state.getMaterial() == Material.AIR)
 				return true;
 			final FluidState fluidState = state.getFluidState();
-			final int height = fluidState.getLevel();
+			final int height = fluidState.getAmount();
 			if (height > 0 && height < 8)
 				return true;
 		}
@@ -76,7 +76,7 @@ public class WaterfallSplashEffect extends JetEffect {
 	 */
 	private static boolean isBoundedLiquid(final IBlockReader provider, final BlockPos pos) {
 		for (final Vector3i cardinal_offset : cardinal_offsets) {
-			final BlockPos tp = pos.add(cardinal_offset);
+			final BlockPos tp = pos.offset(cardinal_offset);
 			final BlockState state = provider.getBlockState(tp);
 			if (state.getMaterial() == Material.AIR)
 				return false;
@@ -84,9 +84,9 @@ public class WaterfallSplashEffect extends JetEffect {
 			if (fluidState.isEmpty()) {
 				continue;
 			}
-			if (fluidState.get(FlowingFluid.FALLING))
+			if (fluidState.getValue(FlowingFluid.FALLING))
 				return false;
-			final int height = fluidState.getLevel();
+			final int height = fluidState.getAmount();
 			if (height > 0 && height < 8)
 				return false;
 		}
@@ -106,10 +106,10 @@ public class WaterfallSplashEffect extends JetEffect {
 			final BlockPos pos) {
 		if (state.getFluidState().isEmpty())
 			return false;
-		if (provider.getFluidState(pos.up()).isEmpty())
+		if (provider.getFluidState(pos.above()).isEmpty())
 			return false;
 		if (isUnboundedLiquid(provider, pos)) {
-			final BlockPos down = pos.down();
+			final BlockPos down = pos.below();
 			if (WorldUtils.isBlockSolid(provider, down))
 				return true;
 			return isBoundedLiquid(provider, down);
@@ -129,7 +129,7 @@ public class WaterfallSplashEffect extends JetEffect {
 
 		final int strength = liquidBlockCount(provider, pos);
 		if (strength > 1) {
-			final float height = state.getFluidState().getActualHeight(provider, pos) + 0.1F;
+			final float height = state.getFluidState().getHeight(provider, pos) + 0.1F;
 			final Jet effect = new WaterSplashJet(strength, provider, pos, height);
 			addEffect(effect);
 		}

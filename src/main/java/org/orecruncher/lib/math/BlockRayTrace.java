@@ -57,7 +57,7 @@ public class BlockRayTrace {
         this.end = end;
         this.blockMode = bm;
         this.fluidMode = fm;
-        this.selectionCtx = ISelectionContext.dummy();
+        this.selectionCtx = ISelectionContext.empty();
     }
 
     @Nonnull
@@ -99,9 +99,9 @@ public class BlockRayTrace {
                 final double lenX = xLerp - lerpX;
                 final double lenY = yLerp - lerpY;
                 final double lenZ = zLerp - lerpZ;
-                final int dirX = MathHelper.signum(lenX);
-                final int dirY = MathHelper.signum(lenY);
-                final int dirZ = MathHelper.signum(lenZ);
+                final int dirX = MathHelper.sign(lenX);
+                final int dirY = MathHelper.sign(lenY);
+                final int dirZ = MathHelper.sign(lenZ);
                 final double deltaX = dirX == 0 ? Double.MAX_VALUE : (dirX / lenX);
                 final double deltaY = dirY == 0 ? Double.MAX_VALUE : (dirY / lenY);
                 final double deltaZ = dirZ == 0 ? Double.MAX_VALUE : (dirZ / lenZ);
@@ -136,7 +136,7 @@ public class BlockRayTrace {
                     }
 
                     // Check for a hit.  If null is returned loop back around.
-                    traceResult = hitCheck(mutablePos.setPos(posX, posY, posZ));
+                    traceResult = hitCheck(mutablePos.set(posX, posY, posZ));
                 } while (traceResult == null);
 
             }
@@ -148,7 +148,7 @@ public class BlockRayTrace {
     @Nonnull
     private BlockRayTraceResult miss() {
         final Vector3d directionVec = this.start.subtract(this.end);
-        return BlockRayTraceResult.createMiss(this.end, Direction.getFacingFromVector(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
+        return BlockRayTraceResult.miss(this.end, Direction.getNearest(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
     }
 
     // Fast path an empty air block as much as possible.  For tracing this would be the most common block
@@ -162,16 +162,16 @@ public class BlockRayTrace {
         if (!state.isAir(this.world, pos)) {
             final VoxelShape voxelShape = this.blockMode.get(state, this.world, pos, this.selectionCtx);
             if (!voxelShape.isEmpty())
-                traceResult = this.world.rayTraceBlocks(this.start, this.end, pos, voxelShape, state);
+                traceResult = this.world.clipWithInteractionOverride(this.start, this.end, pos, voxelShape, state);
         }
 
         // Handle it's fluid state
         BlockRayTraceResult fluidTraceResult = null;
         final FluidState fluidState = state.getFluidState();
-        if (!fluidState.isEmpty() && this.fluidMode.test(fluidState)) {
+        if (!fluidState.isEmpty() && this.fluidMode.canPick(fluidState)) {
             final VoxelShape voxelFluidShape = state.getShape(this.world, pos);
             if (!voxelFluidShape.isEmpty())
-                fluidTraceResult = voxelFluidShape.rayTrace(this.start, this.end, pos);
+                fluidTraceResult = voxelFluidShape.clip(this.start, this.end, pos);
         }
 
         // No results for either
@@ -186,8 +186,8 @@ public class BlockRayTrace {
 
         // Get the closest.  It is possible to encounter the water before the solid, like a fence post that is
         // water logged.
-        final double blockDistance = this.start.squareDistanceTo(traceResult.getHitVec());
-        final double fluidDistance = this.start.squareDistanceTo(fluidTraceResult.getHitVec());
+        final double blockDistance = this.start.distanceToSqr(traceResult.getLocation());
+        final double fluidDistance = this.start.distanceToSqr(fluidTraceResult.getLocation());
         return blockDistance <= fluidDistance ? traceResult : fluidTraceResult;
     }
 }

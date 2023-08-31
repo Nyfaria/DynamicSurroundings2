@@ -87,7 +87,7 @@ public class MoteWaterSpray extends MotionMote {
 		final float y = renderY(info, partialTicks);
 		final float z = renderZ(info, partialTicks);
 
-		Quaternion quaternion = info.getRotation();
+		Quaternion quaternion = info.rotation();
 
 		Vector3f vector3f1 = new Vector3f(-1.0F, -1.0F, 0.0F);
 		vector3f1.transform(quaternion);
@@ -104,10 +104,10 @@ public class MoteWaterSpray extends MotionMote {
 			vector3f.add(x, y, z);
 		}
 
-		drawVertex(buffer, avector3f[0].getX(), avector3f[0].getY(), avector3f[0].getZ(), this.texU2, this.texV2);
-		drawVertex(buffer, avector3f[1].getX(), avector3f[1].getY(), avector3f[1].getZ(), this.texU2, this.texV1);
-		drawVertex(buffer, avector3f[2].getX(), avector3f[2].getY(), avector3f[2].getZ(), this.texU1, this.texV1);
-		drawVertex(buffer, avector3f[3].getX(), avector3f[3].getY(), avector3f[3].getZ(), this.texU1, this.texV2);
+		drawVertex(buffer, avector3f[0].x(), avector3f[0].y(), avector3f[0].z(), this.texU2, this.texV2);
+		drawVertex(buffer, avector3f[1].x(), avector3f[1].y(), avector3f[1].z(), this.texU2, this.texV1);
+		drawVertex(buffer, avector3f[2].x(), avector3f[2].y(), avector3f[2].z(), this.texU1, this.texV1);
+		drawVertex(buffer, avector3f[3].x(), avector3f[3].y(), avector3f[3].z(), this.texU1, this.texV2);
 	}
 
 }

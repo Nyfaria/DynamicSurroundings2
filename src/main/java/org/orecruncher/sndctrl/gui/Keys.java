@@ -37,15 +37,15 @@ public class Keys {
     public static void register() {
         quickVolumeGui = new KeyBinding(
                 "sndctrl.text.quickvolumemenu.open",
-                InputMappings.INPUT_INVALID.getKeyCode(),
+                InputMappings.UNKNOWN.getValue(),
                 "dsurround.text.controls.group");
-        quickVolumeGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getInputByName("key.keyboard.v"));
+        quickVolumeGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getKey("key.keyboard.v"));
 
         soundConfigGui = new KeyBinding(
                 "sndctrl.text.soundconfig.open",
-                InputMappings.INPUT_INVALID.getKeyCode(),
+                InputMappings.UNKNOWN.getValue(),
                 "dsurround.text.controls.group");
-        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getInputByName("key.keyboard.i"));
+        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getKey("key.keyboard.i"));
 
         ClientRegistry.registerKeyBinding(quickVolumeGui);
         ClientRegistry.registerKeyBinding(soundConfigGui);
@@ -53,14 +53,14 @@ public class Keys {
 
     @SubscribeEvent
     public static void keyPressed(InputEvent.KeyInputEvent event) {
-        if (GameUtils.getMC().currentScreen == null && GameUtils.getPlayer() != null) {
-            if (quickVolumeGui.isPressed()) {
-                GameUtils.getMC().displayGuiScreen(new QuickVolumeScreen());
-            } else if (soundConfigGui.isPressed()) {
-                final boolean singlePlayer = GameUtils.getMC().getCurrentAction().equals("singleplayer");
-                GameUtils.getMC().displayGuiScreen(new IndividualSoundControlScreen(null, singlePlayer));
+        if (GameUtils.getMC().screen == null && GameUtils.getPlayer() != null) {
+            if (quickVolumeGui.consumeClick()) {
+                GameUtils.getMC().setScreen(new QuickVolumeScreen());
+            } else if (soundConfigGui.consumeClick()) {
+                final boolean singlePlayer = GameUtils.getMC().getCurrentSnooperAction().equals("singleplayer");
+                GameUtils.getMC().setScreen(new IndividualSoundControlScreen(null, singlePlayer));
                 if (singlePlayer)
-                    GameUtils.getMC().getSoundHandler().pause();
+                    GameUtils.getMC().getSoundManager().pause();
             }
         }
     }

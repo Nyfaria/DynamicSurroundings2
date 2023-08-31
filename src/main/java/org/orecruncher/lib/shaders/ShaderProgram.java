@@ -47,13 +47,13 @@ final class ShaderProgram implements IShaderManager {
     }
 
     @Override
-    public int getProgram() {
+    public int getId() {
         return program;
     }
 
     void setUniforms(@Nonnull final Collection<String> uniforms) {
         for (final String u : uniforms) {
-            final int id = GlStateManager.getUniformLocation(this.program, u);
+            final int id = GlStateManager._glGetUniformLocation(this.program, u);
             if (id < 0)
                 Lib.LOGGER.warn("Cannot locate uniform '%s' for shader '%s'", u, this.name);
             this.uniforms.put(u, id);
@@ -71,13 +71,13 @@ final class ShaderProgram implements IShaderManager {
 
     @Override
     @Nonnull
-    public ShaderLoader getVertexShaderLoader() {
+    public ShaderLoader getVertexProgram() {
         return vert;
     }
 
     @Override
     @Nonnull
-    public ShaderLoader getFragmentShaderLoader() {
+    public ShaderLoader getFragmentProgram() {
         return frag;
     }
 

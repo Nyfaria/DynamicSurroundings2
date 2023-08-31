@@ -85,8 +85,8 @@ public class BiomeUtilities {
             return NO_COLOR;
 
         // If the fluid is water, need to check the biome for coloration
-        final Fluid fluid = fluidState.getFluid();
-        if (fluid.isIn(FluidTags.WATER)) {
+        final Fluid fluid = fluidState.getType();
+        if (fluid.is(FluidTags.WATER)) {
             final Biome biome = BiomeUtilities.getClientBiome(pos);
             if (biome != null)
                 return new Color(biome.getWaterColor());
@@ -104,7 +104,7 @@ public class BiomeUtilities {
                     loc = forgeBiome.getRegistryName();
             }
             if (loc != null) {
-                RegistryKey<Biome> key = RegistryKey.getOrCreateKey(Registry.BIOME_KEY, loc);
+                RegistryKey<Biome> key = RegistryKey.create(Registry.BIOME_REGISTRY, loc);
                 return BiomeDictionary.getTypes(key);
             }
         } catch (@Nonnull final Throwable t) {
@@ -128,7 +128,7 @@ public class BiomeUtilities {
         final ClientWorld world = GameUtils.getWorld();
         if (world == null)
             return BiomeRegistry.THE_VOID;
-        ResourceLocation loc = world.func_241828_r().getRegistry(Registry.BIOME_KEY).getKey(biome);
+        ResourceLocation loc = world.registryAccess().registryOrThrow(Registry.BIOME_REGISTRY).getKey(biome);
         if (loc == null)
             return BiomeRegistry.THE_VOID;
         final Biome result = ForgeRegistries.BIOMES.getValue(loc);

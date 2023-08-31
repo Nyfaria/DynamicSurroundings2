@@ -45,8 +45,8 @@ public final class Collections {
                 }
 
                 @Override
-                public void beginRender(@Nonnull BufferBuilder buffer, @Nonnull TextureManager textureManager) {
-                    super.beginRender(buffer, textureManager);
+                public void begin(@Nonnull BufferBuilder buffer, @Nonnull TextureManager textureManager) {
+                    super.begin(buffer, textureManager);
                     RenderSystem.depthMask(true);
                     RenderSystem.enableBlend();
                     RenderSystem.blendFuncSeparate(GlStateManager.SourceFactor.SRC_ALPHA, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA, GlStateManager.SourceFactor.ONE, GlStateManager.DestFactor.ONE_MINUS_SRC_ALPHA);

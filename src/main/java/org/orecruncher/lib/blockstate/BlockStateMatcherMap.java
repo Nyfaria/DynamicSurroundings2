@@ -31,6 +31,8 @@ import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
+import java.util.Map.Entry;
+
 /**
  * Special Map implementation that is implemented with BlockStateMatcher as a key type.  It handles any special
  * processing that may occur because of the fuzzyness of BlockState matching.

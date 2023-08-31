@@ -133,7 +133,7 @@ public class ValidationHelpers {
     public static void isProperResourceLocation(@Nonnull final String field, @Nullable final String value, @Nullable final Consumer<String> errorLogger) throws ValidationException {
         notNull(field, value, errorLogger);
         if (value != null)
-            if (!ResourceLocation.isResouceNameValid(value))
+            if (!ResourceLocation.isValidResourceLocation(value))
                 handleException(new ValidationException(field, "\"%s\" is not a proper resource location", value), errorLogger);
     }
 

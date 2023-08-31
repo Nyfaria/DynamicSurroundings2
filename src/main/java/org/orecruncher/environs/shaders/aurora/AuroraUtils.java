@@ -44,7 +44,7 @@ public class AuroraUtils {
 	 * The range in chunks of the player view.
 	 */
 	public static int getChunkRenderDistance() {
-		return GameUtils.getGameSettings().renderDistanceChunks;
+		return GameUtils.getGameSettings().renderDistance;
 	}
 
 	/*
@@ -53,7 +53,7 @@ public class AuroraUtils {
 	 * calculations.
 	 */
 	public static float getTimeSeconds() {
-		return ((float) TickCounter.getTickCount() + GameUtils.getMC().getRenderPartialTicks()) / 20F;
+		return ((float) TickCounter.getTickCount() + GameUtils.getMC().getFrameTime()) / 20F;
 	}
 
 	/*

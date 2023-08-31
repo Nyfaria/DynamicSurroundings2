@@ -76,7 +76,7 @@ public final class SoundEventHandling {
             IAcousticFactory factory = acoustic.getFactory();
             if (factory != null) {
                 final ISoundInstance instance = new PlayerCenteredSoundInstance(acoustic.getFactory().createSound(), Category.MASTER);
-                GameUtils.getMC().enqueue(() -> {
+                GameUtils.getMC().tell(() -> {
                     try {
                         AudioEngine.play(instance);
                     } catch (@Nonnull final Throwable t) {

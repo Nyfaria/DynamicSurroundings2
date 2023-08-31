@@ -45,7 +45,7 @@ import java.util.stream.Stream;
 public class DumpCommand {
     public static void register(@Nonnull final CommandDispatcher<CommandSource> dispatcher) {
         dispatcher.register(Commands.literal("dsdump")
-                .requires(req -> req.hasPermissionLevel(0))
+                .requires(req -> req.hasPermission(0))
                 .then(Commands.literal("acoustics").executes(cmd -> dumpAcoustics(cmd.getSource())))
                 .then(Commands.literal("audioeffects").executes(cmd -> dumpAudioEffects(cmd.getSource())))
                 .then(Commands.literal("blocks").executes(cmd -> dumpBlocks(cmd.getSource())))
@@ -100,7 +100,7 @@ public class DumpCommand {
 
     private static int handle(@Nonnull final CommandSource source, @Nonnull final String cmdString, @Nonnull final Supplier<Stream<String>> supplier) {
         try {
-            if (GameUtils.getMC().isSingleplayer()) {
+            if (GameUtils.getMC().hasSingleplayerServer()) {
                 final String operation = cmdString.substring(5);
                 final String fileName = operation + ".txt";
                 File target = new File(DynamicSurroundings.DUMP_PATH, fileName);
