@@ -26,7 +26,7 @@ import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.audio.ISound.AttenuationType;
+import net.minecraft.client.resources.sounds.SoundInstance.Attenuation;
 
 @OnlyIn(Dist.CLIENT)
 public class PlayerCenteredSoundInstance extends WrappedSoundInstance {
@@ -40,8 +40,8 @@ public class PlayerCenteredSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public AttenuationType getAttenuation() {
-        return AttenuationType.NONE;
+    public Attenuation getAttenuation() {
+        return Attenuation.NONE;
     }
 
     @Override

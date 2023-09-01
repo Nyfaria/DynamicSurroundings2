@@ -21,12 +21,12 @@ package org.orecruncher.sndctrl.library;
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.annotations.SerializedName;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
@@ -155,7 +155,7 @@ public final class AudioEffectLibrary {
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
                 final String tagName = name.substring(1);
-                final ITag<Block> tag = TagUtils.getBlockTag(tagName);
+                final Tag<Block> tag = TagUtils.getBlockTag(tagName);
                 if (tag != null) {
                     for (final Block block : tag.getValues()) {
                         for (final BlockState state : block.getStateDefinition().getPossibleStates())
@@ -196,7 +196,7 @@ public final class AudioEffectLibrary {
             } else if (name.startsWith(TAG_PREFIX)) {
                 // Tag entry
                 final String tagName = name.substring(1);
-                final ITag<Block> tag = TagUtils.getBlockTag(tagName);
+                final Tag<Block> tag = TagUtils.getBlockTag(tagName);
                 if (tag != null) {
                     for (final Block block : tag.getValues()) {
                         for (final BlockState state : block.getStateDefinition().getPossibleStates())

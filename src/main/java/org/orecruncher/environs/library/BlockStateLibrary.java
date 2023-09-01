@@ -20,11 +20,11 @@ package org.orecruncher.environs.library;
 
 import com.google.common.collect.ImmutableList;
 import com.google.gson.reflect.TypeToken;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.apache.commons.lang3.StringUtils;
@@ -141,7 +141,7 @@ public final class BlockStateLibrary {
     private static Collection<BlockStateMatcher> expand(@Nonnull final String blockName) {
         if (blockName.startsWith(TAG_SPECIFIER)) {
             final String tagName = blockName.substring(1);
-            final ITag<Block> tag = TagUtils.getBlockTag(tagName);
+            final Tag<Block> tag = TagUtils.getBlockTag(tagName);
             if (tag != null) {
                 return tag.getValues().stream().map(BlockStateMatcher::create).filter(m -> !m.isEmpty()).collect(Collectors.toList());
             }

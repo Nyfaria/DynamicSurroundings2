@@ -18,9 +18,9 @@
 
 package org.orecruncher.environs.library;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.DimensionType;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.dimension.DimensionType;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
@@ -57,7 +57,7 @@ public class DimensionInfo {
         this.isFlatWorld = false;
     }
 
-    public DimensionInfo(@Nonnull final World world, @Nullable final DimensionConfig dimConfig) {
+    public DimensionInfo(@Nonnull final Level world, @Nullable final DimensionConfig dimConfig) {
         // Attributes that come from the world object itself. Set now because the config may override.
         DimensionType dt = world.dimensionType();
         this.name = world.dimension().location();

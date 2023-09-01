@@ -27,9 +27,9 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 
 import com.google.common.collect.ImmutableSet;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.lib.GameUtils;
@@ -55,7 +55,7 @@ public class FakeBiomeAdapter implements IBiome {
 	}
 
 	@Override
-	public Biome.RainType getPrecipitationType() {
+	public Biome.Precipitation getPrecipitationType() {
 		return getTrueBiome().getPrecipitationType();
 	}
 

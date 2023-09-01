@@ -18,13 +18,13 @@
 
 package org.orecruncher.mobeffects.library;
 
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ArmorItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
@@ -86,8 +86,8 @@ public class ItemData {
      * to make the determination.
      */
     public static ItemStack effectiveArmorItemStack(@Nonnull final LivingEntity entity) {
-        final ItemStack chest = entity.getItemBySlot(EquipmentSlotType.CHEST);
-        final ItemStack legs = entity.getItemBySlot(EquipmentSlotType.LEGS);
+        final ItemStack chest = entity.getItemBySlot(EquipmentSlot.CHEST);
+        final ItemStack legs = entity.getItemBySlot(EquipmentSlot.LEGS);
         final ItemData chestItemData = ItemLibrary.getItemData(chest);
         final ItemData legsItemData = ItemLibrary.getItemData(legs);
         final int chestPriority = chestItemData.isArmor() ? ((ArmorItemData) chestItemData).getPriority() : -1;
@@ -99,7 +99,7 @@ public class ItemData {
      * Gets the armor class of the entities feet.
      */
     public static ItemStack footArmorItemStack(@Nonnull final LivingEntity entity) {
-        return entity.getItemBySlot(EquipmentSlotType.FEET);
+        return entity.getItemBySlot(EquipmentSlot.FEET);
     }
 
     @Nonnull

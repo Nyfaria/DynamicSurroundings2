@@ -19,7 +19,7 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
@@ -27,12 +27,12 @@ import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.audio.ISound.AttenuationType;
+import net.minecraft.client.resources.sounds.SoundInstance.Attenuation;
 
 @OnlyIn(Dist.CLIENT)
 public class LoopingSoundInstance extends WrappedSoundInstance {
 
-    private final Vector3d position;
+    private final Vec3 position;
 
     public LoopingSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final ISoundCategory category) {
         super(sound, category);
@@ -44,7 +44,7 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
         this.position = null;
     }
 
-    public LoopingSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final Vector3d position) {
+    public LoopingSoundInstance(@Nonnull final ISoundInstance sound, @Nonnull final Vec3 position) {
         super(sound);
         this.position = position;
     }
@@ -85,8 +85,8 @@ public class LoopingSoundInstance extends WrappedSoundInstance {
     }
 
     @Override
-    public AttenuationType getAttenuation() {
-        return AttenuationType.LINEAR;
+    public Attenuation getAttenuation() {
+        return Attenuation.LINEAR;
     }
 
     @Override

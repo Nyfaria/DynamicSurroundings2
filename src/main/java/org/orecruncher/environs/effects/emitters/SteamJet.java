@@ -18,9 +18,9 @@
 
 package org.orecruncher.environs.effects.emitters;
 
-import net.minecraft.block.BlockState;
+import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.SteamJetEffect;
@@ -32,7 +32,7 @@ public class SteamJet extends Jet {
 
     private final BlockState source;
 
-    public SteamJet(final int strength, final IBlockReader world, final double x, final double y, final double z) {
+    public SteamJet(final int strength, final BlockGetter world, final double x, final double y, final double z) {
         super(strength, world, x, y, z);
         this.source = world.getBlockState(getPos());
     }

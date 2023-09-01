@@ -18,27 +18,27 @@
 
 package org.orecruncher.environs.effects.particles;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.client.particle.DiggingParticle;
-import net.minecraft.client.world.ClientWorld;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.client.particle.TerrainParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.WorldUtils;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 
 @OnlyIn(Dist.CLIENT)
-public class DustParticle extends DiggingParticle {
+public class DustParticle extends TerrainParticle {
 
-	private final BlockPos.Mutable pos = new BlockPos.Mutable();
+	private final BlockPos.MutableBlockPos pos = new BlockPos.MutableBlockPos();
 
-	public DustParticle(final World world, final double x, final double y, final double z, final BlockState state) {
+	public DustParticle(final Level world, final double x, final double y, final double z, final BlockState state) {
 		this(world, x, y, z, 0, 0, 0, state);
 	}
 
-	public DustParticle(final World world, final double x, final double y, final double z, final double dX, final double dY, final double dZ, final BlockState state) {
-		super((ClientWorld) world, x, y, z, 0, 0, 0, state);
+	public DustParticle(final Level world, final double x, final double y, final double z, final double dX, final double dY, final double dZ, final BlockState state) {
+		super((ClientLevel) world, x, y, z, 0, 0, 0, state);
 
 		this.hasPhysics = false;
 		this.xd = dX;

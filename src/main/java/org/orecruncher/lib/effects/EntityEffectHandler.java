@@ -18,9 +18,9 @@
 
 package org.orecruncher.lib.effects;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.profiler.IProfiler;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -89,7 +89,7 @@ public final class EntityEffectHandler {
             final LivingEntity entity = event.getEntityLiving();
             if (entity != null && entity.getCommandSenderWorld().isClientSide) {
 
-                final IProfiler profiler = GameUtils.getMC().getProfiler();
+                final ProfilerFiller profiler = GameUtils.getMC().getProfiler();
                 profiler.push("MobEffects Living Update");
                 final long start = System.nanoTime();
 

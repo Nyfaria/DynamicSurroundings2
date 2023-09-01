@@ -19,11 +19,11 @@
 package org.orecruncher.sndctrl.audio.handlers;
 
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import net.minecraft.client.audio.AudioStreamBuffer;
-import net.minecraft.client.audio.ChannelManager;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.SoundSource;
-import net.minecraft.util.text.TextFormatting;
+import com.mojang.blaze3d.audio.SoundBuffer;
+import net.minecraft.client.sounds.ChannelAccess;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import com.mojang.blaze3d.audio.Channel;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -151,7 +151,7 @@ public final class SoundFXProcessor {
      * @param sound The sound that is going to play
      * @param entry The ChannelManager.Entry instance for the sound play
      */
-    public static void onSoundPlay(@Nonnull final ISound sound, @Nonnull final ChannelManager.Entry entry) {
+    public static void onSoundPlay(@Nonnull final SoundInstance sound, @Nonnull final ChannelAccess.ChannelHandle entry) {
 
         if (!isAvailable())
             return;
@@ -180,7 +180,7 @@ public final class SoundFXProcessor {
      *
      * @param source SoundSource being ticked
      */
-    public static void tick(@Nonnull final SoundSource source) {
+    public static void tick(@Nonnull final Channel source) {
         final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
             ctx.tick(source.source);
@@ -191,7 +191,7 @@ public final class SoundFXProcessor {
      *
      * @param source The sound source that is stopping
      */
-    public static void stopSoundPlay(@Nonnull final SoundSource source) {
+    public static void stopSoundPlay(@Nonnull final Channel source) {
         final SourceContext ctx = ((IMixinSoundContext)source).getData();
         if (ctx != null)
             sources[source.source - 1] = null;
@@ -205,7 +205,7 @@ public final class SoundFXProcessor {
      * @param buffer The buffer in question.
      */
     @Nonnull
-    public static AudioStreamBuffer playBuffer(@Nonnull final SoundSource source, @Nonnull final AudioStreamBuffer buffer) {
+    public static SoundBuffer playBuffer(@Nonnull final Channel source, @Nonnull final SoundBuffer buffer) {
 
         // If disabled return
         if (!Config.CLIENT.sound.enableMonoConversion.get())
@@ -215,7 +215,7 @@ public final class SoundFXProcessor {
 
         // If there is no context attached and conversion is enabled do it.  This can happen if enhanced sound
         // processing is turned off.  If there is a context, make sure that the sound is attenuated.
-        boolean doConversion = ctx == null || (ctx.getSound() != null && ctx.getSound().getAttenuation() != ISound.AttenuationType.NONE);
+        boolean doConversion = ctx == null || (ctx.getSound() != null && ctx.getSound().getAttenuation() != SoundInstance.Attenuation.NONE);
 
         if (doConversion)
             return Conversion.convert(buffer);
@@ -268,7 +268,7 @@ public final class SoundFXProcessor {
         if (isAvailable() && soundProcessor != null) {
             final String msg = soundProcessor.getDiagnosticString();
             if (!StringUtils.isEmpty(msg))
-                event.getLeft().add(TextFormatting.GREEN + msg);
+                event.getLeft().add(ChatFormatting.GREEN + msg);
         }
     }
 

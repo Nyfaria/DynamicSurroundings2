@@ -18,11 +18,11 @@
 
 package org.orecruncher.lib.fml;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.resources.ResourcePackInfo;
-import net.minecraft.resources.ResourcePackType;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.server.packs.repository.Pack;
+import net.minecraft.server.packs.PackType;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ModContainer;
@@ -90,7 +90,7 @@ public final class ForgeUtils {
 
     @OnlyIn(Dist.CLIENT)
     @Nonnull
-    public static Collection<ResourcePackInfo> getEnabledResourcePacks() {
+    public static Collection<Pack> getEnabledResourcePacks() {
         return GameUtils.getMC().getResourcePackRepository().getSelectedPacks();
     }
 
@@ -99,7 +99,7 @@ public final class ForgeUtils {
     public static List<String> getResourcePackIdList() {
         return getEnabledResourcePacks()
                 .stream()
-                .flatMap(e -> e.open().getNamespaces(ResourcePackType.CLIENT_RESOURCES).stream())
+                .flatMap(e -> e.open().getNamespaces(PackType.CLIENT_RESOURCES).stream())
                 .collect(Collectors.toList());
     }
 

@@ -18,8 +18,8 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import net.minecraft.client.audio.ISound;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -92,8 +92,8 @@ public final class MusicFader {
         // MUSIC category to be re-evaluated, and the getClampedVolume() override will
         // scale accordingly.
         if (Float.compare(oldScale, currentScale) != 0) {
-            final float mcScale = GameUtils.getGameSettings().getSoundSourceVolume(SoundCategory.MUSIC);
-            GameUtils.getSoundHander().updateSourceVolume(SoundCategory.MUSIC, mcScale);
+            final float mcScale = GameUtils.getGameSettings().getSoundSourceVolume(SoundSource.MUSIC);
+            GameUtils.getSoundHander().updateSourceVolume(SoundSource.MUSIC, mcScale);
         }
     }
 
@@ -132,7 +132,7 @@ public final class MusicFader {
      * @param sound Sound instance to check
      * @return true if the sound is the currently play configuration sound, false otherwise
      */
-    public static boolean isConfigSoundInstance(@Nonnull final ISound sound) {
+    public static boolean isConfigSoundInstance(@Nonnull final SoundInstance sound) {
         return playingConfigSound == Objects.requireNonNull(sound);
     }
 

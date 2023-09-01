@@ -18,7 +18,7 @@
 
 package org.orecruncher.mobeffects.misc;
 
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -37,7 +37,7 @@ public class EntityInspectionHandler {
         event.entity.getCapability(CapabilityEntityFXData.FX_INFO).ifPresent(cap -> {
             final EntityEffectManager mgr = cap.get();
             if (mgr != null) {
-                event.data.add(TextFormatting.DARK_AQUA + "<Effects>");
+                event.data.add(ChatFormatting.DARK_AQUA + "<Effects>");
                 event.data.addAll(mgr.getAttachedEffects());
             }
         });

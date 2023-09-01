@@ -18,13 +18,13 @@
 
 package org.orecruncher.environs.effects.emitters;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import net.minecraft.client.particle.Particle;
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.orecruncher.environs.effects.particles.DustParticle;
 
 @OnlyIn(Dist.CLIENT)
@@ -32,7 +32,7 @@ public class FountainJet extends Jet {
 
 	protected final BlockState state;
 
-	public FountainJet(final int strength, final IBlockReader world, final double x, final double y, final double z,
+	public FountainJet(final int strength, final BlockGetter world, final double x, final double y, final double z,
 					   final BlockState state) {
 		super(1, strength, world, x, y, z, 1);
 		this.state = state;
@@ -44,7 +44,7 @@ public class FountainJet extends Jet {
 		final double motionZ = RANDOM.nextGaussian() * 0.03D;
 		final double x = this.posX + RANDOM.nextGaussian() * 0.2D;
 		final double z = this.posZ + RANDOM.nextGaussian() * 0.2D;
-		final Particle particle = new DustParticle((World) this.world, x, this.posY, z, motionX, 0.5D, motionZ, this.state)
+		final Particle particle = new DustParticle((Level) this.world, x, this.posY, z, motionX, 0.5D, motionZ, this.state)
 				.init();
 		addParticle(particle);
 	}

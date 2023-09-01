@@ -18,13 +18,13 @@
 
 package org.orecruncher.mobeffects.effects;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.World;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -89,7 +89,7 @@ public class EntityBreathEffect extends AbstractEntityEffect {
     }
 
     protected boolean isBreathVisible(@Nonnull final LivingEntity entity) {
-        final PlayerEntity player = GameUtils.getPlayer();
+        final Player player = GameUtils.getPlayer();
         if (entity == player) {
             return !(player.isSpectator() || GameUtils.getGameSettings().hideGui);
         }
@@ -107,7 +107,7 @@ public class EntityBreathEffect extends AbstractEntityEffect {
 
     protected boolean showFrostBreath(final LivingEntity entity, @Nonnull final BlockState headBlock, @Nonnull final BlockPos pos) {
         if (headBlock.getMaterial() == Material.AIR) {
-            final World world = entity.getCommandSenderWorld();
+            final Level world = entity.getCommandSenderWorld();
             return WorldUtils.isColdTemperature(WorldUtils.getTemperatureAt(world, pos));
         }
         return false;

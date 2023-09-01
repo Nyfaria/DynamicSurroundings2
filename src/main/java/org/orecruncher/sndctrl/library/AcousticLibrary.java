@@ -19,9 +19,9 @@
 package org.orecruncher.sndctrl.library;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectAVLTreeMap;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.StringUtils;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
@@ -103,7 +103,7 @@ public final class AcousticLibrary {
     @Nonnull
     private static IAcoustic parseDefinition(@Nullable ResourceLocation acousticName, @Nullable String definition, @Nullable final Function<ResourceLocation, IAcoustic> acousticGenerator) {
         IAcoustic result;
-        if (!StringUtils.isNullOrEmpty(definition)) {
+        if (!StringUtil.isNullOrEmpty(definition)) {
             if (acousticName == null)
                 acousticName = ADHOC;
             final String nameSpace = acousticName.getNamespace();
@@ -174,9 +174,9 @@ public final class AcousticLibrary {
 
     @Nonnull
     public static ResourceLocation resolveResource(@Nonnull final String defaultDomain, @Nonnull final String name) {
-        if (StringUtils.isNullOrEmpty(name))
+        if (StringUtil.isNullOrEmpty(name))
             throw new IllegalArgumentException("Sound name is null or empty");
-        if (StringUtils.isNullOrEmpty(defaultDomain))
+        if (StringUtil.isNullOrEmpty(defaultDomain))
             throw new IllegalArgumentException("Default domain is null or empty");
 
         ResourceLocation res;

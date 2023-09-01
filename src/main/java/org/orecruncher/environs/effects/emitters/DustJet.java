@@ -19,8 +19,8 @@
 
 package org.orecruncher.environs.effects.emitters;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraft.client.particle.Particle;
@@ -32,7 +32,7 @@ public class DustJet extends Jet {
 
 	protected final BlockState blockState;
 
-	public DustJet(final int strength, final IBlockReader world, final double x, final double y, final double z,
+	public DustJet(final int strength, final BlockGetter world, final double x, final double y, final double z,
 				   final BlockState state) {
 		super(1, strength, world, x, y, z, 2);
 		this.blockState = state;

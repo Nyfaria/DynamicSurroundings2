@@ -20,7 +20,7 @@ package org.orecruncher.mobeffects.footsteps;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.library.Constants;

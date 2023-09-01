@@ -20,7 +20,7 @@ package org.orecruncher.lib;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.gson.Gson;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.orecruncher.lib.resource.ResourceUtils;
 
 import javax.annotation.Nonnull;

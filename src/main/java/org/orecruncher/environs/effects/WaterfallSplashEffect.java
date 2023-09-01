@@ -22,28 +22,28 @@ import java.util.Random;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FlowingFluid;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FlowingFluid;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.effects.emitters.Jet;
 import org.orecruncher.environs.effects.emitters.WaterSplashJet;
 import org.orecruncher.lib.WorldUtils;
 
-import net.minecraft.block.material.Material;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Vec3i;
 
 @OnlyIn(Dist.CLIENT)
 public class WaterfallSplashEffect extends JetEffect {
 
-	private final static Vector3i[] cardinal_offsets = {
-		new Vector3i(-1, 0, 0),
-		new Vector3i(1, 0, 0),
-		new Vector3i(0, 0, -1),
-		new Vector3i(0, 0, 1)
+	private final static Vec3i[] cardinal_offsets = {
+		new Vec3i(-1, 0, 0),
+		new Vec3i(1, 0, 0),
+		new Vec3i(0, 0, -1),
+		new Vec3i(0, 0, 1)
 	};
 
 	public WaterfallSplashEffect(final int chance) {
@@ -56,8 +56,8 @@ public class WaterfallSplashEffect extends JetEffect {
 		return BlockEffectType.SPLASH;
 	}
 
-	private static boolean isUnboundedLiquid(final IBlockReader provider, final BlockPos pos) {
-		for (final Vector3i cardinal_offset : cardinal_offsets) {
+	private static boolean isUnboundedLiquid(final BlockGetter provider, final BlockPos pos) {
+		for (final Vec3i cardinal_offset : cardinal_offsets) {
 			final BlockPos tp = pos.offset(cardinal_offset);
 			final BlockState state = provider.getBlockState(tp);
 			if (state.getMaterial() == Material.AIR)
@@ -74,8 +74,8 @@ public class WaterfallSplashEffect extends JetEffect {
 	/**
 	 * Similar to isUnboundedLiquid() but geared towards determine that the liquid is bound on all sides.
 	 */
-	private static boolean isBoundedLiquid(final IBlockReader provider, final BlockPos pos) {
-		for (final Vector3i cardinal_offset : cardinal_offsets) {
+	private static boolean isBoundedLiquid(final BlockGetter provider, final BlockPos pos) {
+		for (final Vec3i cardinal_offset : cardinal_offsets) {
 			final BlockPos tp = pos.offset(cardinal_offset);
 			final BlockState state = provider.getBlockState(tp);
 			if (state.getMaterial() == Material.AIR)
@@ -94,15 +94,15 @@ public class WaterfallSplashEffect extends JetEffect {
 		return true;
 	}
 
-	private int liquidBlockCount(final IBlockReader provider, final BlockPos pos) {
+	private int liquidBlockCount(final BlockGetter provider, final BlockPos pos) {
 		return countVerticalBlocks(provider, pos, FLUID_PREDICATE, 1);
 	}
 
-	public static boolean isValidSpawnBlock(@Nonnull final IBlockReader provider, @Nonnull final BlockPos pos) {
+	public static boolean isValidSpawnBlock(@Nonnull final BlockGetter provider, @Nonnull final BlockPos pos) {
 		return isValidSpawnBlock(provider, provider.getBlockState(pos), pos);
 	}
 
-	private static boolean isValidSpawnBlock(final IBlockReader provider, final BlockState state,
+	private static boolean isValidSpawnBlock(final BlockGetter provider, final BlockState state,
 			final BlockPos pos) {
 		if (state.getFluidState().isEmpty())
 			return false;
@@ -118,13 +118,13 @@ public class WaterfallSplashEffect extends JetEffect {
 	}
 
 	@Override
-	public boolean canTrigger(@Nonnull final IBlockReader provider, @Nonnull final BlockState state,
+	public boolean canTrigger(@Nonnull final BlockGetter provider, @Nonnull final BlockState state,
 			@Nonnull final BlockPos pos, @Nonnull final Random random) {
 		return super.canTrigger(provider, state, pos, random) && isValidSpawnBlock(provider, state, pos);
 	}
 
 	@Override
-	public void doEffect(@Nonnull final IBlockReader provider, @Nonnull final BlockState state,
+	public void doEffect(@Nonnull final BlockGetter provider, @Nonnull final BlockState state,
 			@Nonnull final BlockPos pos, @Nonnull final Random random) {
 
 		final int strength = liquidBlockCount(provider, pos);

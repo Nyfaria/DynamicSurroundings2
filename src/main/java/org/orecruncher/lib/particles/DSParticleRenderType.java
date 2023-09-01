@@ -18,14 +18,15 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.renderer.BufferBuilder;
-import net.minecraft.client.renderer.RenderHelper;
-import net.minecraft.client.renderer.Tessellator;
+import com.mojang.blaze3d.systems.RenderSystem;
+import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.platform.Lighting;
+import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.renderer.texture.TextureManager;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.lwjgl.opengl.GL11;
@@ -33,24 +34,23 @@ import org.lwjgl.opengl.GL11;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class ParticleRenderType implements IParticleRenderType {
+public class DSParticleRenderType implements ParticleRenderType {
 
     private final ResourceLocation texture;
 
-    public ParticleRenderType(@Nonnull final ResourceLocation texture) {
+    public DSParticleRenderType(@Nonnull final ResourceLocation texture) {
         this.texture = texture;
     }
 
     @Nonnull
     protected VertexFormat getVertexFormat() {
-        return DefaultVertexFormats.PARTICLE;
+        return DefaultVertexFormat.PARTICLE;
     }
 
     @Override
-    public void begin(@Nonnull final BufferBuilder buffer, @Nonnull final TextureManager textureManager) {
-        RenderHelper.turnOff();
-        textureManager.bind(getTexture());
-        buffer.begin(GL11.GL_QUADS, getVertexFormat());
+    public void begin(@Nonnull final BufferBuilder buffer, @Nonnull final TextureManager textureManager) {;
+        RenderSystem.setShaderTexture(0, getTexture());
+        buffer.begin(VertexFormat.Mode.QUADS, getVertexFormat());
     }
 
     protected ResourceLocation getTexture() {
@@ -58,7 +58,7 @@ public class ParticleRenderType implements IParticleRenderType {
     }
 
     @Override
-    public void end(@Nonnull final Tessellator tessellator) {
+    public void end(@Nonnull final Tesselator tessellator) {
         tessellator.end();
     }
 

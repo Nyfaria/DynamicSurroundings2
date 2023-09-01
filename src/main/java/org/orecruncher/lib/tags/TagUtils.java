@@ -19,9 +19,9 @@
 package org.orecruncher.lib.tags;
 
 import com.google.common.collect.ImmutableList;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.tags.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -37,9 +37,9 @@ public final class TagUtils {
 
     }
 
-    private static ITagCollectionSupplier supplier;
+    private static TagContainer supplier;
 
-    public static void setTagManager(@Nonnull final ITagCollectionSupplier manager) {
+    public static void setTagManager(@Nonnull final TagContainer manager) {
         supplier = manager;
     }
 
@@ -48,12 +48,12 @@ public final class TagUtils {
     }
 
     @Nullable
-    public static ITag<Block> getBlockTag(@Nonnull final String name) {
+    public static Tag<Block> getBlockTag(@Nonnull final String name) {
         return getBlockTag(new ResourceLocation(name));
     }
 
     @Nullable
-    public static ITag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
+    public static Tag<Block> getBlockTag(@Nonnull final ResourceLocation res) {
         if (supplier == null)
             return null;
         return supplier.getBlocks().getTag(res);
@@ -63,12 +63,12 @@ public final class TagUtils {
         if (supplier == null)
             return ImmutableList.<String>of().stream();
 
-        final ITagCollection<Block> collection = supplier.getBlocks();
+        final TagCollection<Block> collection = supplier.getBlocks();
 
         return collection.getAvailableTags().stream().map(loc -> {
             final StringBuilder builder = new StringBuilder();
             builder.append(loc.toString()).append(" -> ");
-            final ITag<Block> tag = collection.getTag(loc);
+            final Tag<Block> tag = collection.getTag(loc);
             final String text;
             if (tag == null) {
                 text = "<NULL>";

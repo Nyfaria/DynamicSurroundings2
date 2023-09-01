@@ -18,14 +18,14 @@
 
 package org.orecruncher.sndctrl.gui;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.IFormattableTextComponent;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import com.mojang.blaze3d.vertex.PoseStack;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -46,11 +46,11 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
     private static final int CONTROL_WIDTH = 160;
     private static final int CONTROL_HEIGHT = 20;
     private static final int CONTROL_SPACING = 5;
-    private static final Button.IPressable NULL_PRESSABLE = (b) -> { };
-    private static final ITextComponent SUFFIX = new StringTextComponent("%");
-    private static final ITextComponent FOOTER = new TranslationTextComponent("sndctrl.text.quickvolumemenu.footer");
-    private static final ITextComponent TITLE = new TranslationTextComponent("sndctrl.text.quickvolumemenu.title");
-    private static final ITextComponent OCCLUSION = new TranslationTextComponent("sndctrl.text.quickvolumemenu.occlusion");
+    private static final Button.OnPress NULL_PRESSABLE = (b) -> { };
+    private static final Component SUFFIX = new TextComponent("%");
+    private static final Component FOOTER = new TranslatableComponent("sndctrl.text.quickvolumemenu.footer");
+    private static final Component TITLE = new TranslatableComponent("sndctrl.text.quickvolumemenu.title");
+    private static final Component OCCLUSION = new TranslatableComponent("sndctrl.text.quickvolumemenu.occlusion");
 
     private final List<ISoundCategory> categories = new ArrayList<>();
     private final List<Float> categoryValues = new ArrayList<>();
@@ -126,18 +126,18 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
         this.occlusionToggle.setMessage(generateTextForSetting(Config.CLIENT.sound.enableOcclusionCalcs));
     }
 
-    protected ITextComponent generateTextForSetting(@Nonnull final ForgeConfigSpec.BooleanValue value) {
-        final IFormattableTextComponent txt = OCCLUSION.plainCopy().append(": ");
+    protected Component generateTextForSetting(@Nonnull final ForgeConfigSpec.BooleanValue value) {
+        final MutableComponent txt = OCCLUSION.plainCopy().append(": ");
         if (value.get()) {
-            txt.append(DialogTexts.OPTION_ON);
+            txt.append(CommonComponents.OPTION_ON);
         } else {
-            txt.append(DialogTexts.OPTION_OFF);
+            txt.append(CommonComponents.OPTION_OFF);
         }
         return txt;
     }
 
-    protected ITextComponent getSliderLabel(@Nonnull final ITextComponent text) {
-        return ((IFormattableTextComponent)text).append(new StringTextComponent(": "));
+    protected Component getSliderLabel(@Nonnull final Component text) {
+        return ((MutableComponent)text).append(new TextComponent(": "));
     }
 
     @Override
@@ -184,7 +184,7 @@ public class QuickVolumeScreen extends Screen implements Slider.ISlider {
     }
 
     @Override
-    public void render(@Nonnull MatrixStack stack, int mouseX, int mouseY, float partialTicks) {
+    public void render(@Nonnull PoseStack stack, int mouseX, int mouseY, float partialTicks) {
         super.render(stack, mouseX, mouseY, partialTicks);
 
         // Render our text footer

@@ -18,7 +18,7 @@
 
 package org.orecruncher.lib.particles;
 
-import net.minecraft.client.particle.IParticleRenderType;
+import net.minecraft.client.particle.ParticleRenderType;
 import net.minecraft.client.particle.Particle;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -35,18 +35,18 @@ final class ParticleCollectionHelper implements IParticleCollection {
 
     protected final String name;
     protected final ParticleCollection.ICollectionFactory factory;
-    protected final IParticleRenderType renderType;
+    protected final ParticleRenderType renderType;
 
     // Weak reference because the particle could be evicted from Minecraft's
     // particle manager for some reason.
     protected WeakReference<ParticleCollection> collection;
 
-    public ParticleCollectionHelper(@Nonnull final String name, @Nonnull final IParticleRenderType renderType) {
+    public ParticleCollectionHelper(@Nonnull final String name, @Nonnull final ParticleRenderType renderType) {
         this(name, ParticleCollection.FACTORY, renderType);
     }
 
     public ParticleCollectionHelper(@Nonnull final String name, @Nonnull final ParticleCollection.ICollectionFactory factory,
-                                    @Nonnull final IParticleRenderType renderType) {
+                                    @Nonnull final ParticleRenderType renderType) {
         this.name = name;
         this.renderType = renderType;
         this.factory = factory;

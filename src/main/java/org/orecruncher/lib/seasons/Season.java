@@ -18,7 +18,7 @@
 
 package org.orecruncher.lib.seasons;
 
-import net.minecraft.world.World;
+import net.minecraft.world.level.Level;
 import org.orecruncher.lib.Localization;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.lib.compat.ModEnvironment;
@@ -76,12 +76,12 @@ public enum Season {
     }
 
     @Nonnull
-    public static Season getSeason(@Nonnull final World world) {
+    public static Season getSeason(@Nonnull final Level world) {
         return SEASON_HELPER.getSeason(world);
     }
 
     @Nonnull
-    private static Season getSereneSeason(@Nonnull final World world) {
+    private static Season getSereneSeason(@Nonnull final Level world) {
         Season season = Season.NONE;
         final ISeasonState state = sereneseasons.api.season.SeasonHelper.getSeasonState(world);
         if (state != null) {
@@ -142,6 +142,6 @@ public enum Season {
     }
 
     private interface ISeasonHelper {
-        Season getSeason(@Nonnull final World world);
+        Season getSeason(@Nonnull final Level world);
     }
 }

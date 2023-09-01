@@ -19,9 +19,9 @@
 package org.orecruncher.environs;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.particle.IParticleFactory;
-import net.minecraft.particles.BasicParticleType;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.client.particle.ParticleProvider;
+import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -82,7 +82,7 @@ public final class Environs {
     private void clientSetup(@Nonnull final FMLClientSetupEvent event) {
         // Disable Particles if configured to do so
         if (Config.CLIENT.effects.disableUnderwaterParticles.get())
-            Minecraft.getInstance().particleEngine.register(ParticleTypes.UNDERWATER, (IParticleFactory<BasicParticleType>) null);
+            Minecraft.getInstance().particleEngine.register(ParticleTypes.UNDERWATER, (ParticleProvider<SimpleParticleType>) null);
     }
 
     private void enqueueIMC(final InterModEnqueueEvent event) {

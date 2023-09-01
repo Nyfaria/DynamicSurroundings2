@@ -19,16 +19,16 @@
 package org.orecruncher.environs.handlers;
 
 import com.google.common.collect.Streams;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.merchant.villager.VillagerEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tileentity.BellTileEntity;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StringUtils;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.npc.Villager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.block.entity.BellBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.StringUtil;
+import net.minecraft.ChatFormatting;
+import net.minecraft.world.level.LightLayer;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -63,7 +63,7 @@ class CommonStateHandler extends HandlerBase {
         scripts = Pattern.compile("\\r?\\n")
                 .splitAsStream(script_lines)
                 .map(String::trim)
-                .filter(s -> !(StringUtils.isNullOrEmpty(s) || s.startsWith("//")))
+                .filter(s -> !(StringUtil.isNullOrEmpty(s) || s.startsWith("//")))
                 .collect(Collectors.toList());
     }
 
@@ -74,11 +74,11 @@ class CommonStateHandler extends HandlerBase {
     }
 
     @Override
-    public void process(@Nonnull final PlayerEntity player) {
+    public void process(@Nonnull final Player player) {
 
         final long currentTick = TickCounter.getTickCount();
         final CommonState data = CommonState.getData();
-        final World world = player.getCommandSenderWorld();
+        final Level world = player.getCommandSenderWorld();
 
         ceilingCoverage.tick();
 
@@ -99,8 +99,8 @@ class CommonStateHandler extends HandlerBase {
         data.isInSpace = data.playerBiome == BiomeLibrary.OUTERSPACE_INFO;
         data.isInClouds = data.playerBiome == BiomeLibrary.CLOUDS_INFO;
 
-        final int blockLight = world.getBrightness(LightType.BLOCK, data.playerPosition);
-        final int skyLight = world.getBrightness(LightType.SKY, data.playerPosition) - world.getRawBrightness(data.playerPosition, 0);
+        final int blockLight = world.getBrightness(LightLayer.BLOCK, data.playerPosition);
+        final int skyLight = world.getBrightness(LightLayer.SKY, data.playerPosition) - world.getRawBrightness(data.playerPosition, 0);
         data.lightLevel = Math.max(blockLight, skyLight);
 
         // Only check once a second
@@ -108,8 +108,8 @@ class CommonStateHandler extends HandlerBase {
             // Only for surface worlds.  Other types of worlds are interpreted as not having villages.
             if (world.dimensionType().natural()) {
                 // Look for a bell within range of the player
-                final Optional<TileEntity> bell = world.blockEntityList.stream()
-                        .filter(te -> te instanceof BellTileEntity)
+                final Optional<BlockEntity> bell = world.blockEntityList.stream()
+                        .filter(te -> te instanceof BellBlockEntity)
                         .filter(te -> te.getBlockPos().distSqr(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z, true) <= VILLAGE_RANGE)
                         .findAny();
 
@@ -117,7 +117,7 @@ class CommonStateHandler extends HandlerBase {
                 data.isInVillage = bell.isPresent();
                 if (data.isInVillage) {
                     final Optional<Entity> entity = Streams.stream(GameUtils.getWorld().entitiesForRendering())
-                            .filter(e -> e instanceof VillagerEntity)
+                            .filter(e -> e instanceof Villager)
                             .filter(e -> e.distanceToSqr(data.playerEyePosition.x, data.playerEyePosition.y, data.playerEyePosition.z) <= VILLAGE_RANGE)
                             .findAny();
                     data.isInVillage = entity.isPresent();
@@ -139,11 +139,11 @@ class CommonStateHandler extends HandlerBase {
     @SubscribeEvent(priority = EventPriority.HIGH)
     public void diagnostics(@Nonnull final DiagnosticEvent event) {
         if (Config.CLIENT.logging.enableLogging.get()) {
-            event.addLeft(TextFormatting.YELLOW + CommonState.getData().clock.getFormattedTime());
+            event.addLeft(ChatFormatting.YELLOW + CommonState.getData().clock.getFormattedTime());
 
             for (final String s : scripts) {
                 final String result = ConditionEvaluator.INSTANCE.eval(s).toString();
-                event.getLeft().add(TextFormatting.DARK_AQUA + result);
+                event.getLeft().add(ChatFormatting.DARK_AQUA + result);
             }
         }
     }

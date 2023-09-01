@@ -18,13 +18,13 @@
 
 package org.orecruncher.sndctrl.mixins;
 
-import net.minecraft.client.audio.SoundSystem;
+import com.mojang.blaze3d.audio.Library;
 import org.orecruncher.sndctrl.config.Config;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.Constant;
 import org.spongepowered.asm.mixin.injection.ModifyConstant;
 
-@Mixin(SoundSystem.class)
+@Mixin(Library.class)
 public class MixinSoundSystem {
 
     /**

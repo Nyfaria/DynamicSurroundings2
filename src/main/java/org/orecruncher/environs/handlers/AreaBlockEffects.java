@@ -18,7 +18,7 @@
 
 package org.orecruncher.environs.handlers;
 
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -46,7 +46,7 @@ class AreaBlockEffects extends HandlerBase {
     }
 
     @Override
-    public void process(@Nonnull final PlayerEntity player) {
+    public void process(@Nonnull final Player player) {
         this.nearEffects.tick();
         this.farEffects.tick();
         this.alwaysOn.tick();

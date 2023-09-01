@@ -21,8 +21,8 @@ package org.orecruncher.sndctrl.audio.handlers;
 import it.unimi.dsi.fastutil.objects.Object2FloatOpenHashMap;
 import it.unimi.dsi.fastutil.objects.Object2LongOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -103,7 +103,7 @@ public final class SoundProcessor {
         return volumeControl.getFloat(Objects.requireNonNull(sound));
     }
 
-    public static float getVolumeScale(@Nonnull final ISound sound) {
+    public static float getVolumeScale(@Nonnull final SoundInstance sound) {
         return getVolumeScale(Objects.requireNonNull(sound).getLocation());
     }
 
@@ -131,7 +131,7 @@ public final class SoundProcessor {
     // Event handler for sound plays - hooked in static class initializer
     private static void soundPlay(@Nonnull final PlaySoundEvent e) {
         // If there is no sound assigned, or if there is no more room in the play lists kill it
-        final ISound theSound = e.getSound();
+        final SoundInstance theSound = e.getSound();
         if (theSound == null || !SoundUtils.hasRoom()) {
             e.setResultSound(null);
             return;

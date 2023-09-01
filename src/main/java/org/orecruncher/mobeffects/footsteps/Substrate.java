@@ -24,7 +24,7 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
-import net.minecraft.util.StringUtils;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -51,6 +51,6 @@ public enum Substrate {
 
 	@Nonnull
 	public static Substrate get(@Nullable final String name) {
-		return StringUtils.isNullOrEmpty(name) ? Substrate.NORMAL : lookup.get(name);
+		return StringUtil.isNullOrEmpty(name) ? Substrate.NORMAL : lookup.get(name);
 	}
 }

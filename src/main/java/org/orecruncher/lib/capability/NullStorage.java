@@ -27,8 +27,8 @@ package org.orecruncher.lib.capability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 
 /**
@@ -39,12 +39,12 @@ public final class NullStorage<T> implements Capability.IStorage<T> {
 
 	@Nullable
 	@Override
-	public INBT writeNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side) {
+	public Tag writeNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side) {
 		return null;
 	}
 
 	@Override
-	public void readNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side, @Nonnull final INBT nbt) {
+	public void readNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side, @Nonnull final Tag nbt) {
 
 	}
 }

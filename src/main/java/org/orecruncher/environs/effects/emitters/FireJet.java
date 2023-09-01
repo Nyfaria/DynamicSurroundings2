@@ -20,10 +20,10 @@
 package org.orecruncher.environs.effects.emitters;
 
 import net.minecraft.client.particle.FlameParticle;
-import net.minecraft.particles.IParticleData;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -36,11 +36,11 @@ public class FireJet extends Jet {
 
 	private static final ResourceLocation FIRE_ACOUSTIC = new ResourceLocation("block.fire.ambient");
 	protected final boolean isLava;
-	protected final IParticleData particleType;
+	protected final ParticleOptions particleType;
 	protected final boolean isSolid;
 	protected boolean soundFired;
 
-	public FireJet(final int strength, final IBlockReader world, final double x, final double y, final double z, boolean isSolid) {
+	public FireJet(final int strength, final BlockGetter world, final double x, final double y, final double z, boolean isSolid) {
 		super(strength, world, x, y, z);
 		this.isLava = !isSolid && RANDOM.nextInt(3) == 0;
 		this.particleType = this.isLava ? ParticleTypes.LAVA : ParticleTypes.FLAME;

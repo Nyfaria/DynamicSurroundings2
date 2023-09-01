@@ -19,18 +19,18 @@
 package org.orecruncher.sndctrl.mixins;
 
 import com.google.common.collect.Multimap;
-import net.minecraft.client.GameSettings;
-import net.minecraft.client.audio.ChannelManager;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.ITickableSound;
-import net.minecraft.client.audio.Sound;
-import net.minecraft.client.audio.SoundEngine;
-import net.minecraft.client.audio.SoundEventAccessor;
-import net.minecraft.client.audio.SoundSource;
-import net.minecraft.client.audio.SoundSystem;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.Options;
+import net.minecraft.client.sounds.ChannelAccess;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.client.sounds.SoundEngine;
+import net.minecraft.client.sounds.WeighedSoundEvents;
+import com.mojang.blaze3d.audio.Channel;
+import com.mojang.blaze3d.audio.Library;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.phys.Vec3;
 import org.orecruncher.sndctrl.SoundControl;
 import org.orecruncher.sndctrl.api.sound.Category;
 import org.orecruncher.sndctrl.api.sound.ISoundInstance;
@@ -58,26 +58,26 @@ public class MixinSoundEngine {
 
     @Final
     @Shadow
-    private SoundSystem library;
+    private Library library;
 
     @Final
     @Shadow
-    public Map<ISound, ChannelManager.Entry> instanceToChannel;
+    public Map<SoundInstance, ChannelAccess.ChannelHandle> instanceToChannel;
 
     @Final
     @Shadow
-    private GameSettings options;
+    private Options options;
 
     @Final
     @Shadow
-    private Map<ISound, Integer> soundDeleteTime;
+    private Map<SoundInstance, Integer> soundDeleteTime;
 
 
 
 
-    @Shadow @Final private List<ITickableSound> tickingSounds;
+    @Shadow @Final private List<TickableSoundInstance> tickingSounds;
 
-    @Shadow @Final private Multimap<SoundCategory, ISound> instanceBySource;
+    @Shadow @Final private Multimap<SoundSource, SoundInstance> instanceBySource;
 
     /**
      * Calculates the volume of sound based on the myriad of factors in the game as
@@ -87,7 +87,7 @@ public class MixinSoundEngine {
      * @param ci    The callback context used to return the result of the calculation
      */
     @Inject(method = "calculateVolume(Lnet/minecraft/client/audio/ISound;)F", at = @At("HEAD"), cancellable = true)
-    private void getClampedVolume(ISound sound, CallbackInfoReturnable<Float> ci) {
+    private void getClampedVolume(SoundInstance sound, CallbackInfoReturnable<Float> ci) {
         try {
             ci.setReturnValue(SoundVolumeEvaluator.getClampedVolume(sound));
         } catch (final Throwable ignored) {
@@ -137,7 +137,7 @@ public class MixinSoundEngine {
      * @param entry              The ChannelManager entry that is being queued to the SoundEngine for off thread processing.
      */
     @Inject(method = "play(Lnet/minecraft/client/audio/ISound;)V", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/audio/ChannelManager$Entry;execute(Ljava/util/function/Consumer;)V", shift = At.Shift.AFTER), locals = LocalCapture.CAPTURE_FAILEXCEPTION)
-    public void onSoundPlay(ISound p_sound, CallbackInfo ci, SoundEventAccessor soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f, float f1, SoundCategory soundcategory, float f2, float f3, ISound.AttenuationType attenuationtype, boolean flag, Vector3d vector3d, boolean flag2, boolean flag3, CompletableFuture completablefuture, ChannelManager.Entry entry) {
+    public void onSoundPlay(SoundInstance p_sound, CallbackInfo ci, WeighedSoundEvents soundeventaccessor, ResourceLocation resourcelocation, Sound sound, float f, float f1, SoundSource soundcategory, float f2, float f3, SoundInstance.Attenuation attenuationtype, boolean flag, Vec3 vector3d, boolean flag2, boolean flag3, CompletableFuture completablefuture, ChannelAccess.ChannelHandle entry) {
         try {
             SoundFXProcessor.onSoundPlay(p_sound, entry);
             AudioEngine.onPlaySound(p_sound);
@@ -157,19 +157,19 @@ public class MixinSoundEngine {
         if (!isGamePaused)
             return;
 
-        final Iterator<Map.Entry<ISound, ChannelManager.Entry>> iterator = this.instanceToChannel.entrySet().iterator();
+        final Iterator<Map.Entry<SoundInstance, ChannelAccess.ChannelHandle>> iterator = this.instanceToChannel.entrySet().iterator();
 
         while (iterator.hasNext()) {
-            Map.Entry<ISound, ChannelManager.Entry> entry = iterator.next();
+            Map.Entry<SoundInstance, ChannelAccess.ChannelHandle> entry = iterator.next();
             if (entry.getKey() instanceof ISoundInstance) {
                 final ISoundInstance instance = (ISoundInstance) entry.getKey();
                 // Skip non-config sounds
                 if (instance.getSoundCategory() != Category.CONFIG)
                     continue;
-                final ChannelManager.Entry channelmanager$entry1 = entry.getValue();
+                final ChannelAccess.ChannelHandle channelmanager$entry1 = entry.getValue();
                 float f2 = this.options.getSoundSourceVolume(instance.getSource());
                 if (f2 <= 0.0F) {
-                    channelmanager$entry1.execute(SoundSource::stop);
+                    channelmanager$entry1.execute(Channel::stop);
                     iterator.remove();
                 } else if (channelmanager$entry1.isStopped()) {
                     iterator.remove();
@@ -180,7 +180,7 @@ public class MixinSoundEngine {
                     } catch (RuntimeException ignore) {
                     }
 
-                    if (instance instanceof ITickableSound) {
+                    if (instance instanceof TickableSoundInstance) {
                         this.tickingSounds.remove(instance);
                     }
                 }

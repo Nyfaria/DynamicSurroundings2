@@ -18,13 +18,13 @@
 
 package org.orecruncher.environs.effects.particles;
 
-import net.minecraft.client.particle.IAnimatedSprite;
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.world.World;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -34,14 +34,14 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
-public class SteamCloudParticle extends SpriteTexturedParticle {
+public class SteamCloudParticle extends TextureSheetParticle {
 
     private static final Random RANDOM = XorShiftRandom.current();
 
-    private final IAnimatedSprite sprites;
+    private final SpriteSet sprites;
 
-    public SteamCloudParticle(World world, double x, double y, double z, double dY) {
-        super((ClientWorld) world, x, y, z, RANDOM.nextGaussian() * 0.02D, dY,
+    public SteamCloudParticle(Level world, double x, double y, double z, double dY) {
+        super((ClientLevel) world, x, y, z, RANDOM.nextGaussian() * 0.02D, dY,
                 RANDOM.nextGaussian() * 0.02D);
 
         this.sprites = GameUtils.getMC().particleEngine.spriteSets.get(ParticleTypes.CLOUD.getRegistryName());
@@ -63,12 +63,12 @@ public class SteamCloudParticle extends SpriteTexturedParticle {
     }
 
     @Nonnull
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     public float getQuadSize(float p_217561_1_) {
-        return this.quadSize * MathHelper.clamp(((float) this.age + p_217561_1_) / (float) this.lifetime * 32.0F, 0.0F, 1.0F);
+        return this.quadSize * Mth.clamp(((float) this.age + p_217561_1_) / (float) this.lifetime * 32.0F, 0.0F, 1.0F);
     }
 
     public void tick() {

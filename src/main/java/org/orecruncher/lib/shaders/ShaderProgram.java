@@ -19,8 +19,8 @@ package org.orecruncher.lib.shaders;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import it.unimi.dsi.fastutil.objects.Object2IntOpenHashMap;
-import net.minecraft.client.shader.IShaderManager;
-import net.minecraft.client.shader.ShaderLoader;
+import com.mojang.blaze3d.shaders.Effect;
+import com.mojang.blaze3d.shaders.Program;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
@@ -29,15 +29,15 @@ import javax.annotation.Nonnull;
 import java.util.Collection;
 
 @OnlyIn(Dist.CLIENT)
-final class ShaderProgram implements IShaderManager {
+final class ShaderProgram implements Effect {
 
     private final String name;
     private final int program;
-    private final ShaderLoader vert;
-    private final ShaderLoader frag;
+    private final Program vert;
+    private final Program frag;
     private final Object2IntOpenHashMap<String> uniforms = new Object2IntOpenHashMap<>();
 
-    ShaderProgram(@Nonnull final String name, int program, @Nonnull final ShaderLoader vert, @Nonnull final ShaderLoader frag) {
+    ShaderProgram(@Nonnull final String name, int program, @Nonnull final Program vert, @Nonnull final Program frag) {
         this.name = name;
         this.program = program;
         this.vert = vert;
@@ -71,13 +71,13 @@ final class ShaderProgram implements IShaderManager {
 
     @Override
     @Nonnull
-    public ShaderLoader getVertexProgram() {
+    public Program getVertexProgram() {
         return vert;
     }
 
     @Override
     @Nonnull
-    public ShaderLoader getFragmentProgram() {
+    public Program getFragmentProgram() {
         return frag;
     }
 

@@ -18,9 +18,9 @@
 
 package org.orecruncher.lib.fml;
 
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.resources.I18n;
-import net.minecraft.util.text.ITextComponent;
+import net.minecraft.client.player.LocalPlayer;
+import net.minecraft.client.resources.language.I18n;
+import net.minecraft.network.chat.Component;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.VersionChecker;
@@ -65,11 +65,11 @@ public class UpdateChecker extends Checker {
 
     @Nullable
     @Override
-    public ITextComponent onClientLogin(@Nonnull final ClientPlayerEntity player) {
+    public Component onClientLogin(@Nonnull final LocalPlayer player) {
         final String updateMessage = getUpdateMessage(this.modId);
         if (updateMessage != null) {
             try {
-                return ITextComponent.Serializer.fromJson(updateMessage);
+                return Component.Serializer.fromJson(updateMessage);
             } catch (@Nonnull final Throwable t) {
                 t.printStackTrace();
             }

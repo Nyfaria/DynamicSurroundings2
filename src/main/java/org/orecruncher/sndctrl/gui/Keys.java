@@ -17,8 +17,8 @@
  */
 package org.orecruncher.sndctrl.gui;
 
-import net.minecraft.client.settings.KeyBinding;
-import net.minecraft.client.util.InputMappings;
+import net.minecraft.client.KeyMapping;
+import com.mojang.blaze3d.platform.InputConstants;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.settings.KeyModifier;
@@ -31,21 +31,21 @@ import org.orecruncher.sndctrl.SoundControl;
 @Mod.EventBusSubscriber(modid = SoundControl.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public class Keys {
 
-    private static KeyBinding quickVolumeGui;
-    private static KeyBinding soundConfigGui;
+    private static KeyMapping quickVolumeGui;
+    private static KeyMapping soundConfigGui;
 
     public static void register() {
-        quickVolumeGui = new KeyBinding(
+        quickVolumeGui = new KeyMapping(
                 "sndctrl.text.quickvolumemenu.open",
-                InputMappings.UNKNOWN.getValue(),
+                InputConstants.UNKNOWN.getValue(),
                 "dsurround.text.controls.group");
-        quickVolumeGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getKey("key.keyboard.v"));
+        quickVolumeGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.getKey("key.keyboard.v"));
 
-        soundConfigGui = new KeyBinding(
+        soundConfigGui = new KeyMapping(
                 "sndctrl.text.soundconfig.open",
-                InputMappings.UNKNOWN.getValue(),
+                InputConstants.UNKNOWN.getValue(),
                 "dsurround.text.controls.group");
-        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputMappings.getKey("key.keyboard.i"));
+        soundConfigGui.setKeyModifierAndCode(KeyModifier.CONTROL, InputConstants.getKey("key.keyboard.i"));
 
         ClientRegistry.registerKeyBinding(quickVolumeGui);
         ClientRegistry.registerKeyBinding(soundConfigGui);

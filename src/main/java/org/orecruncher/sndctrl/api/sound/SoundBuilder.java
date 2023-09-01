@@ -18,12 +18,12 @@
 
 package org.orecruncher.sndctrl.api.sound;
 
-import net.minecraft.client.audio.ISound.AttenuationType;
-import net.minecraft.client.audio.LocatableSound;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.resources.sounds.SoundInstance.Attenuation;
+import net.minecraft.client.resources.sounds.AbstractSoundInstance;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.math.MathStuff;
@@ -51,9 +51,9 @@ public class SoundBuilder {
     @Nonnull
     private ISoundCategory soundCategory;
     @Nonnull
-    private Vector3d position = Vector3d.ZERO;
+    private Vec3 position = Vec3.ZERO;
     @Nonnull
-    private AttenuationType attenuation = AttenuationType.LINEAR;
+    private Attenuation attenuation = Attenuation.LINEAR;
 
     private float volumeMin = 1F;
     private float volumeMax = 1F;
@@ -131,16 +131,16 @@ public class SoundBuilder {
         final ISoundCategory cat = SoundLibrary.getSoundCategory(resource, Category.MASTER);
         final SoundBuilder builder = new SoundBuilder(se, cat);
         builder.setVolume(volume);
-        builder.setAttenuation(AttenuationType.NONE);
+        builder.setAttenuation(Attenuation.NONE);
         return builder.build();
     }
 
     @Nonnull
-    public SoundBuilder from(@Nonnull final LocatableSound ps) {
+    public SoundBuilder from(@Nonnull final AbstractSoundInstance ps) {
         Objects.requireNonNull(ps);
 
         this.soundCategory = Category.getCategory(ps.getSource()).orElse(Category.MASTER);
-        this.position = new Vector3d(ps.getX(), ps.getY(), ps.getZ());
+        this.position = new Vec3(ps.getX(), ps.getY(), ps.getZ());
         this.attenuation = ps.getAttenuation();
         this.global = ps.isRelative();
         this.repeatable = ps.isLooping();
@@ -164,7 +164,7 @@ public class SoundBuilder {
 
     @Nonnull
     public SoundBuilder setPosition(final float x, final float y, final float z) {
-        this.position = new Vector3d(x, y, z);
+        this.position = new Vec3(x, y, z);
         return this;
     }
 
@@ -176,7 +176,7 @@ public class SoundBuilder {
     }
 
     @Nonnull
-    public SoundBuilder setPosition(@Nonnull final Vector3d pos) {
+    public SoundBuilder setPosition(@Nonnull final Vec3 pos) {
         Objects.requireNonNull(pos);
 
         this.position = pos;
@@ -281,7 +281,7 @@ public class SoundBuilder {
     }
 
     @Nonnull
-    public SoundBuilder setAttenuation(final AttenuationType type) {
+    public SoundBuilder setAttenuation(final Attenuation type) {
         Objects.requireNonNull(type);
         this.attenuation = type;
         return this;
@@ -307,7 +307,7 @@ public class SoundBuilder {
             sound.setPosition(this.position);
             sound.setAttenuationType(this.attenuation);
         } else {
-            sound.setAttenuationType(AttenuationType.NONE);
+            sound.setAttenuationType(Attenuation.NONE);
         }
 
         return sound;

@@ -18,9 +18,9 @@
 
 package org.orecruncher.lib.service;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManager;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.ClientPlayerNetworkEvent;
 import net.minecraftforge.event.TagsUpdatedEvent;
@@ -59,8 +59,8 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
     private boolean reloadFired = false;
 
     private ModuleServiceManager() {
-        final IResourceManager resourceManager = GameUtils.getMC().getResourceManager();
-        ((IReloadableResourceManager) resourceManager).registerReloadListener(this);
+        final ResourceManager resourceManager = GameUtils.getMC().getResourceManager();
+        ((ReloadableResourceManager) resourceManager).registerReloadListener(this);
     }
 
     public static ModuleServiceManager instance() {
@@ -97,7 +97,7 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
      * @param resourcePredicate Used to test which resource type is being reloaded
      */
     @Override
-    public void onResourceManagerReload(@Nonnull final IResourceManager resourceManager, @Nonnull final Predicate<IResourceType> resourcePredicate) {
+    public void onResourceManagerReload(@Nonnull final ResourceManager resourceManager, @Nonnull final Predicate<IResourceType> resourcePredicate) {
         // Reload based on sounds
         if (resourcePredicate.test(VanillaResourceType.SOUNDS)) {
             reportStatus("Received Resource reload callback");
@@ -137,7 +137,7 @@ public final class ModuleServiceManager implements ISelectiveResourceReloadListe
 
     @SubscribeEvent
     public static void entityJoinWorld(@Nonnull final EntityJoinWorldEvent event) {
-        final PlayerEntity player = GameUtils.getPlayer();
+        final Player player = GameUtils.getPlayer();
         if (player != null && player.getCommandSenderWorld().isClientSide() && player.getId() == event.getEntity().getId()) {
             instance().joinWorld(event);
         }

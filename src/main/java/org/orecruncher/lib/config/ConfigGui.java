@@ -18,14 +18,14 @@
 
 package org.orecruncher.lib.config;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.DialogTexts;
-import net.minecraft.client.gui.IBidiRenderer;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.button.Button;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.network.chat.CommonComponents;
+import net.minecraft.client.gui.components.MultiLineLabel;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.ExtensionPoint;
@@ -47,8 +47,8 @@ public class ConfigGui {
     public static class InstallClothGuiFactory implements BiFunction<Minecraft, Screen, Screen> {
 
         // Resources for displaying info about getting ClothAPI
-        private static final ITextComponent title = new TranslationTextComponent("dsurround.dialog.missingcloth.title");
-        private static final ITextComponent description = new TranslationTextComponent("dsurround.dialog.missingcloth.description");
+        private static final Component title = new TranslatableComponent("dsurround.dialog.missingcloth.title");
+        private static final Component description = new TranslatableComponent("dsurround.dialog.missingcloth.description");
 
         @Override
         public Screen apply(@Nonnull final Minecraft minecraft, @Nonnull final Screen screen) {
@@ -59,12 +59,12 @@ public class ConfigGui {
     // Swipe the disconnected from server dialog.  All this to replace the button resource...maybe I will fancy it
     // up with dancing creepers or something.
     private static class InstallClothGui extends Screen {
-        private final ITextComponent message;
-        private IBidiRenderer message2 = IBidiRenderer.EMPTY;
+        private final Component message;
+        private MultiLineLabel message2 = MultiLineLabel.EMPTY;
         private final Screen nextScreen;
         private int textHeight;
 
-        public InstallClothGui(Screen p_i242056_1_, ITextComponent p_i242056_2_, ITextComponent p_i242056_3_) {
+        public InstallClothGui(Screen p_i242056_1_, Component p_i242056_2_, Component p_i242056_3_) {
             super(p_i242056_2_);
             this.nextScreen = p_i242056_1_;
             this.message = p_i242056_3_;
@@ -75,14 +75,14 @@ public class ConfigGui {
         }
 
         protected void init() {
-            this.message2 = IBidiRenderer.create(this.font, this.message, this.width - 50);
+            this.message2 = MultiLineLabel.create(this.font, this.message, this.width - 50);
             this.textHeight = this.message2.getLineCount() * 9;
-            this.addButton(new Button(this.width / 2 - 100, Math.min(this.height / 2 + this.textHeight / 2 + 9, this.height - 30), 200, 20, DialogTexts.GUI_DONE, (p_213033_1_) -> {
+            this.addButton(new Button(this.width / 2 - 100, Math.min(this.height / 2 + this.textHeight / 2 + 9, this.height - 30), 200, 20, CommonComponents.GUI_DONE, (p_213033_1_) -> {
                 this.minecraft.setScreen(this.nextScreen);
             }));
         }
 
-        public void render(MatrixStack matrixStack, int mouseX, int mouseY, float partialTicks) {
+        public void render(PoseStack matrixStack, int mouseX, int mouseY, float partialTicks) {
             this.renderBackground(matrixStack);
             drawCenteredString(matrixStack, this.font, this.title, this.width / 2, this.height / 2 - this.textHeight / 2 - 9 * 2, 11184810);
             this.message2.renderCentered(matrixStack, this.width / 2, this.height / 2 - this.textHeight / 2);

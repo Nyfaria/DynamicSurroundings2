@@ -19,8 +19,8 @@
 package org.orecruncher.lib;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import net.minecraft.block.SoundType;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.sounds.SoundEvent;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;

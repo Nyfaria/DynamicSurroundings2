@@ -25,17 +25,17 @@ import java.util.Map;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IWorldReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.Direction;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.LevelReader;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import it.unimi.dsi.fastutil.objects.Reference2ObjectOpenHashMap;
-import net.minecraft.block.Block;
+import net.minecraft.world.level.block.Block;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.mobeffects.MobEffects;
@@ -79,7 +79,7 @@ public final class FacadeHelper {
 
 	@Nonnull
 	public static BlockState resolveState(@Nonnull final LivingEntity entity, @Nonnull final BlockState state,
-										  @Nonnull final IWorldReader world, @Nonnull final Vector3d pos, @Nullable final Direction side) {
+										  @Nonnull final LevelReader world, @Nonnull final Vec3 pos, @Nullable final Direction side) {
 		if (crackers.size() > 0 && state.getMaterial() != Material.AIR) {
 			final IFacadeAccessor accessor = crackers.get(state.getBlock());
 			if (accessor != null) {

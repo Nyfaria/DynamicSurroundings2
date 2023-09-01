@@ -19,10 +19,10 @@
 package org.orecruncher.mobeffects.effects.particles;
 
 import net.minecraft.client.particle.*;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particles.ParticleTypes;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -33,19 +33,19 @@ import javax.annotation.Nonnull;
 import java.util.Random;
 
 @OnlyIn(Dist.CLIENT)
-public class FrostBreathParticle extends SpriteTexturedParticle {
-    private final IAnimatedSprite sprites;
+public class FrostBreathParticle extends TextureSheetParticle {
+    private final SpriteSet sprites;
 
     public FrostBreathParticle(@Nonnull final LivingEntity entity) {
-        super((ClientWorld) entity.getCommandSenderWorld(), 0, 0, 0, 0.0D, 0.0D, 0.0D);
+        super((ClientLevel) entity.getCommandSenderWorld(), 0, 0, 0, 0.0D, 0.0D, 0.0D);
 
         final Random rand = XorShiftRandom.current();
 
         // Reuse the cloud sheet
         this.sprites = GameUtils.getMC().particleEngine.spriteSets.get(ParticleTypes.CLOUD.getRegistryName());
 
-        final Vector3d origin = ParticleUtils.getBreathOrigin(entity);
-        final Vector3d trajectory = ParticleUtils.getLookTrajectory(entity);
+        final Vec3 origin = ParticleUtils.getBreathOrigin(entity);
+        final Vec3 trajectory = ParticleUtils.getLookTrajectory(entity);
 
         this.setPos(origin.x, origin.y, origin.z);
         this.xo = origin.x;
@@ -69,8 +69,8 @@ public class FrostBreathParticle extends SpriteTexturedParticle {
     }
 
     @Nonnull
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 
     public float getQuadSize(float p_217561_1_) {

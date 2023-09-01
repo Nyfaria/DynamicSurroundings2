@@ -18,11 +18,11 @@
 
 package org.orecruncher.lib.blockstate;
 
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.state.Property;
-import net.minecraft.state.StateContainer;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.state.properties.Property;
+import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.orecruncher.lib.Lib;
 import org.orecruncher.lib.blockstate.BlockStateParser.ParseResult;
@@ -85,7 +85,7 @@ public final class BlockStateMatcher {
     public static BlockStateMatcher create(@Nonnull final ParseResult result) {
         final Block block = result.getBlock();
         final BlockState defaultState = block.defaultBlockState();
-        final StateContainer<Block, BlockState> container = block.getStateDefinition();
+        final StateDefinition<Block, BlockState> container = block.getStateDefinition();
         if (container.getPossibleStates().size() == 1) {
             // Easy case - it's always an identical match because there are no other properties
             return new BlockStateMatcher(defaultState);

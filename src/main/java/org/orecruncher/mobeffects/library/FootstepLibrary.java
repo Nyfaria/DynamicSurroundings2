@@ -21,15 +21,15 @@ package org.orecruncher.mobeffects.library;
 import com.google.gson.reflect.TypeToken;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
-import net.minecraft.block.Block;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.tags.ITag;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.tags.Tag;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ChatFormatting;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -72,7 +72,7 @@ import java.util.stream.Stream;
 @Mod.EventBusSubscriber(modid = MobEffects.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class FootstepLibrary {
 
-    private static final String TEXT_FOOTSTEPS = TextFormatting.DARK_PURPLE + "<Footsteps>";
+    private static final String TEXT_FOOTSTEPS = ChatFormatting.DARK_PURPLE + "<Footsteps>";
     private static final Map<Substrate, BlockAcousticMap> substrateMap = new EnumMap<>(Substrate.class);
     private static final List<SoundType> FOOTPRINT_SOUND_PROFILE =
             Arrays.asList(
@@ -396,7 +396,7 @@ public final class FootstepLibrary {
             tagName = tagName.substring(0, idx);
         }
 
-        final ITag<Block> blockTag = TagUtils.getBlockTag(tagName);
+        final Tag<Block> blockTag = TagUtils.getBlockTag(tagName);
         if (blockTag != null) {
             final List<Block> elements = blockTag.getValues();
             if (elements.size() == 0) {
@@ -434,7 +434,7 @@ public final class FootstepLibrary {
         Variator var;
         if (entity.isBaby()) {
             var = childVariator;
-        } else if (entity instanceof PlayerEntity) {
+        } else if (entity instanceof Player) {
             var = Config.CLIENT.footsteps.footstepsAsQuadruped.get() ? playerQuadrupedVariator : playerVariator;
         } else {
             var = getVariator(entity.getType().getRegistryName().toString());

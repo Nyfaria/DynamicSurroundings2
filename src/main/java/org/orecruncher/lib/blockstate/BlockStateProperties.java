@@ -20,8 +20,8 @@ package org.orecruncher.lib.blockstate;
 
 import com.google.common.base.MoreObjects;
 import com.google.common.collect.ImmutableMap;
-import net.minecraft.block.BlockState;
-import net.minecraft.state.Property;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.Property;
 import org.apache.commons.lang3.StringUtils;
 import org.orecruncher.lib.Lib;
 

@@ -20,16 +20,16 @@ package org.orecruncher.lib.particles;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.client.Camera;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.core.Direction;
+import net.minecraft.util.Mth;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -50,7 +50,7 @@ public abstract class MotionMote extends AgeableMote {
 	protected double prevY;
 	protected double prevZ;
 
-	protected MotionMote(@Nonnull final IBlockReader world, final double x, final double y, final double z,
+	protected MotionMote(@Nonnull final BlockGetter world, final double x, final double y, final double z,
 						 final double dX, final double dY, final double dZ) {
 		super(world, x, y, z);
 		this.prevX = this.posX;
@@ -63,18 +63,18 @@ public abstract class MotionMote extends AgeableMote {
 	}
 
 	@Override
-	protected float renderX(ActiveRenderInfo info, final float partialTicks) {
-		return (float)(MathHelper.lerp(partialTicks, this.prevX, this.posX) - info.getPosition().x());
+	protected float renderX(Camera info, final float partialTicks) {
+		return (float)(Mth.lerp(partialTicks, this.prevX, this.posX) - info.getPosition().x());
 	}
 
 	@Override
-	protected float renderY(ActiveRenderInfo info, final float partialTicks) {
-		return (float)(MathHelper.lerp(partialTicks, this.prevY, this.posY) - info.getPosition().y());
+	protected float renderY(Camera info, final float partialTicks) {
+		return (float)(Mth.lerp(partialTicks, this.prevY, this.posY) - info.getPosition().y());
 	}
 
 	@Override
-	protected float renderZ(ActiveRenderInfo info, final float partialTicks) {
-		return (float)(MathHelper.lerp(partialTicks, this.prevZ, this.posZ) - info.getPosition().z());
+	protected float renderZ(Camera info, final float partialTicks) {
+		return (float)(Mth.lerp(partialTicks, this.prevZ, this.posZ) - info.getPosition().z());
 	}
 
 	/**
@@ -99,7 +99,7 @@ public abstract class MotionMote extends AgeableMote {
 				// Hit the surface of liquid
 				return Optional.of(new ParticleCollisionResult(
 						this.world,
-						new Vector3d(this.posX, height, this.posZ),
+						new Vec3(this.posX, height, this.posZ),
 						state,
 						false,
 						fluid
@@ -109,14 +109,14 @@ public abstract class MotionMote extends AgeableMote {
 
 		// If the current position blocks movement then it will block a particle
 		if (state.getMaterial().blocksMotion()) {
-			final VoxelShape shape = state.getCollisionShape(this.world, this.position, ISelectionContext.empty());
+			final VoxelShape shape = state.getCollisionShape(this.world, this.position, CollisionContext.empty());
 			if (!shape.isEmpty()) {
 				final double height = shape.max(Direction.Axis.Y) + this.position.getY();
 				if (height >= this.posY) {
 					// Have a collision
 					return Optional.of(new ParticleCollisionResult(
 							this.world,
-							new Vector3d(this.posX, height, this.posZ),
+							new Vec3(this.posX, height, this.posZ),
 							state,
 							true,
 							null

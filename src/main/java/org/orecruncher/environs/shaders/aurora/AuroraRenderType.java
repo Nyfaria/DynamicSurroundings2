@@ -20,20 +20,20 @@ package org.orecruncher.environs.shaders.aurora;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.client.renderer.RenderState;
+import net.minecraft.client.renderer.RenderStateShard;
 import net.minecraft.client.renderer.RenderType;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexFormat;
-import net.minecraft.util.ResourceLocation;
+import com.mojang.blaze3d.vertex.DefaultVertexFormat;
+import com.mojang.blaze3d.vertex.VertexFormat;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
 import org.lwjgl.opengl.GL11;
 import org.orecruncher.environs.Environs;
 
-import net.minecraft.client.renderer.RenderState.TargetState;
-import net.minecraft.client.renderer.RenderState.TextureState;
-import net.minecraft.client.renderer.RenderState.TransparencyState;
+import net.minecraft.client.renderer.RenderStateShard.OutputStateShard;
+import net.minecraft.client.renderer.RenderStateShard.TextureStateShard;
+import net.minecraft.client.renderer.RenderStateShard.TransparencyStateShard;
 
 @OnlyIn(Dist.CLIENT)
 public class AuroraRenderType extends RenderType {
@@ -41,7 +41,7 @@ public class AuroraRenderType extends RenderType {
         super(nameIn, formatIn, drawModeIn, bufferSizeIn, useDelegateIn, needsSortingIn, setupTaskIn, clearTaskIn);
     }
 
-    private static final TransparencyState AURORA_TRANSPARENCY = new TransparencyState(
+    private static final TransparencyStateShard AURORA_TRANSPARENCY = new TransparencyStateShard(
             "aurora_transparency",
             () -> {
                 RenderSystem.enableBlend();
@@ -49,24 +49,24 @@ public class AuroraRenderType extends RenderType {
             },
             RenderSystem::disableBlend);
 
-    private static final TargetState TARGET = WEATHER_TARGET;
+    private static final OutputStateShard TARGET = WEATHER_TARGET;
 
     public static ResourceLocation TEXTURE = new ResourceLocation(Environs.MOD_ID,"textures/misc/aurora_band.png");
 
     public static final RenderType QUAD = create(
             "aurora_render_type",
-            DefaultVertexFormats.POSITION_TEX,
+            DefaultVertexFormat.POSITION_TEX,
             GL11.GL_QUADS,
             64,
-            RenderType.State.builder()
-                    .setTextureState(new TextureState(TEXTURE, false, false))
+            RenderType.CompositeState.builder()
+                    .setTextureState(new TextureStateShard(TEXTURE, false, false))
                     .setTransparencyState(AURORA_TRANSPARENCY)
                     .setOutputState(TARGET)
                     .setFogState(FOG)
-                    .setShadeModelState(RenderState.SMOOTH_SHADE)
+                    .setShadeModelState(RenderStateShard.SMOOTH_SHADE)
                     .setAlphaState(DEFAULT_ALPHA)
                     .setDepthTestState(LEQUAL_DEPTH_TEST)
                     .setCullState(NO_CULL)
-                    .setWriteMaskState(RenderState.COLOR_DEPTH_WRITE)
+                    .setWriteMaskState(RenderStateShard.COLOR_DEPTH_WRITE)
                     .createCompositeState(false));
 }

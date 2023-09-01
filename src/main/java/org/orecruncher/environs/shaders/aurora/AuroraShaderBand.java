@@ -18,13 +18,13 @@
 
 package org.orecruncher.environs.shaders.aurora;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import com.mojang.blaze3d.vertex.IVertexBuilder;
+import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.renderer.*;
-import net.minecraft.util.math.vector.Matrix4f;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
+import com.mojang.math.Matrix4f;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.shaders.ShaderPrograms;
@@ -87,7 +87,7 @@ public class AuroraShaderBand extends AuroraBase {
 		return AuroraBand.AURORA_AMPLITUDE;
 	}
 
-	protected void generateBand(@Nonnull final IVertexBuilder builder, @Nonnull final Matrix4f matrix) {
+	protected void generateBand(@Nonnull final VertexConsumer builder, @Nonnull final Matrix4f matrix) {
 
 		for (int i = 0; ; i++) {
 			final Vector3f[] quad = this.band.getPanelQuad(i);
@@ -106,7 +106,7 @@ public class AuroraShaderBand extends AuroraBase {
 	}
 
 	@Override
-	public void render(@Nonnull final MatrixStack matrixStack, final float partialTick) {
+	public void render(@Nonnull final PoseStack matrixStack, final float partialTick) {
 
 		if (this.program == null)
 			return;
@@ -117,19 +117,19 @@ public class AuroraShaderBand extends AuroraBase {
 		final double tranX = getTranslationX(partialTick);
 		final double tranZ = getTranslationZ(partialTick);
 
-		final Vector3d view = GameUtils.getMC().gameRenderer.getMainCamera().getPosition();
+		final Vec3 view = GameUtils.getMC().gameRenderer.getMainCamera().getPosition();
 		matrixStack.pushPose();
 		matrixStack.translate(-view.x(), -view.y(), -view.z());
 
 		final RenderType type = AuroraRenderType.QUAD;
-		final IRenderTypeBuffer.Impl buffer = GameUtils.getMC().renderBuffers().bufferSource();
+		final MultiBufferSource.BufferSource buffer = GameUtils.getMC().renderBuffers().bufferSource();
 
 		ShaderPrograms.MANAGER.useShader(this.program, this.callback);
 
 		try {
 
 			for (int b = 0; b < this.bandCount; b++) {
-				final IVertexBuilder builder = buffer.getBuffer(type);
+				final VertexConsumer builder = buffer.getBuffer(type);
 				matrixStack.pushPose();
 				matrixStack.translate(tranX, tranY, tranZ + this.offset * b);
 				generateBand(builder, matrixStack.last().pose());

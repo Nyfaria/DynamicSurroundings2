@@ -18,15 +18,15 @@
 
 package org.orecruncher.mobeffects.effects.particles;
 
-import net.minecraft.client.particle.IAnimatedSprite;
-import net.minecraft.client.particle.IParticleRenderType;
-import net.minecraft.client.particle.SpriteTexturedParticle;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.particles.ParticleTypes;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.particle.ParticleRenderType;
+import net.minecraft.client.particle.TextureSheetParticle;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.tags.FluidTags;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -34,16 +34,16 @@ import org.orecruncher.lib.GameUtils;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class BubbleBreathParticle  extends SpriteTexturedParticle {
+public class BubbleBreathParticle  extends TextureSheetParticle {
     public BubbleBreathParticle(@Nonnull final LivingEntity entity, final boolean isDrowning) {
-        super((ClientWorld) entity.getCommandSenderWorld(), 0, 0, 0);
+        super((ClientLevel) entity.getCommandSenderWorld(), 0, 0, 0);
 
         // Reuse the bubble sheet
-        final IAnimatedSprite spriteSet = GameUtils.getMC().particleEngine.spriteSets.get(ParticleTypes.BUBBLE.getRegistryName());
+        final SpriteSet spriteSet = GameUtils.getMC().particleEngine.spriteSets.get(ParticleTypes.BUBBLE.getRegistryName());
         this.pickSprite(spriteSet);
 
-        final Vector3d origin = ParticleUtils.getBreathOrigin(entity);
-        final Vector3d trajectory = ParticleUtils.getLookTrajectory(entity);
+        final Vec3 origin = ParticleUtils.getBreathOrigin(entity);
+        final Vec3 trajectory = ParticleUtils.getLookTrajectory(entity);
         final double factor = isDrowning ? 0.02D : 0.005D;
 
         this.setPos(origin.x, origin.y, origin.z);
@@ -82,7 +82,7 @@ public class BubbleBreathParticle  extends SpriteTexturedParticle {
         }
     }
 
-    public IParticleRenderType getRenderType() {
-        return IParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
+    public ParticleRenderType getRenderType() {
+        return ParticleRenderType.PARTICLE_SHEET_TRANSLUCENT;
     }
 }

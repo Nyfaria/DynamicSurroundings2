@@ -19,8 +19,8 @@
 package org.orecruncher.environs.handlers;
 
 import it.unimi.dsi.fastutil.longs.Long2ObjectOpenHashMap;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.BlockPos;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.config.Config;
@@ -53,7 +53,7 @@ public class ParticleSystems extends HandlerBase {
     }
 
     @Override
-    public void process(@Nonnull final PlayerEntity player) {
+    public void process(@Nonnull final Player player) {
         final BlockPos current = CommonState.getPlayerPosition();
         final boolean sittingStill = this.lastPos.equals(current);
         this.lastPos = current;

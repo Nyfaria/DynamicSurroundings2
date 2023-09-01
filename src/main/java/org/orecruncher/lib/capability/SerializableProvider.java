@@ -9,8 +9,8 @@ package org.orecruncher.lib.capability;
 
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -23,7 +23,7 @@ import net.minecraftforge.common.capabilities.Capability.IStorage;
  *
  * @author Choonster
  */
-public class SerializableProvider<HANDLER> extends SimpleProvider<HANDLER> implements INBTSerializable<INBT> {
+public class SerializableProvider<HANDLER> extends SimpleProvider<HANDLER> implements INBTSerializable<Tag> {
 
 	/**
 	 * Create a provider for the default handler instance.
@@ -48,7 +48,7 @@ public class SerializableProvider<HANDLER> extends SimpleProvider<HANDLER> imple
 
 	@Nullable
 	@Override
-	public INBT serializeNBT() {
+	public Tag serializeNBT() {
 		final HANDLER instance = getInstance();
 
 		if (instance == null) {
@@ -59,7 +59,7 @@ public class SerializableProvider<HANDLER> extends SimpleProvider<HANDLER> imple
 	}
 
 	@Override
-	public void deserializeNBT(final INBT nbt) {
+	public void deserializeNBT(final Tag nbt) {
 		final HANDLER instance = getInstance();
 
 		if (instance == null) {

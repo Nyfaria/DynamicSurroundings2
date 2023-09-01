@@ -18,8 +18,8 @@
 
 package org.orecruncher.sndctrl.audio.handlers;
 
-import net.minecraft.client.gui.screen.MainMenuScreen;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.client.gui.screens.TitleScreen;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -51,7 +51,7 @@ public final class SoundEventHandling {
 
     @SubscribeEvent
     public static void onGuiOpen(@Nonnull final GuiOpenEvent event) {
-        if (!hasPlayed && event.getGui() instanceof MainMenuScreen) {
+        if (!hasPlayed && event.getGui() instanceof TitleScreen) {
 
             hasPlayed = true;
 

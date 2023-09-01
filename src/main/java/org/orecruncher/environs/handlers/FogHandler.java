@@ -20,9 +20,9 @@ package org.orecruncher.environs.handlers;
 
 import com.mojang.blaze3d.platform.GlStateManager;
 import net.minecraft.client.renderer.FogRenderer;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.profiler.IProfiler;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.EntityViewRenderEvent;
@@ -52,7 +52,7 @@ public class FogHandler extends HandlerBase {
     }
 
     @Override
-    public void process(@Nonnull final PlayerEntity player) {
+    public void process(@Nonnull final Player player) {
         if (doFog()) {
             this.fogRange.tick();
         }
@@ -60,8 +60,8 @@ public class FogHandler extends HandlerBase {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void fogRenderEvent(final EntityViewRenderEvent.RenderFogEvent event) {
-        if (event.getType() == FogRenderer.FogType.FOG_TERRAIN && doFog()) {
-            final IProfiler profiler = GameUtils.getMC().getProfiler();
+        if (event.getType() == FogRenderer.FogMode.FOG_TERRAIN && doFog()) {
+            final ProfilerFiller profiler = GameUtils.getMC().getProfiler();
             profiler.push("Environs Fog Render");
             this.render.begin();
             final FluidState fluidState = event.getInfo().getFluidInCamera();

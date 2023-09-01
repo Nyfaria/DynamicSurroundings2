@@ -23,11 +23,11 @@ import java.util.Random;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.material.Material;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.fluid.FluidState;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.material.FluidState;
 import net.minecraft.tags.BlockTags;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
@@ -39,9 +39,9 @@ import org.orecruncher.lib.logging.IModLog;
 import org.orecruncher.lib.math.MathStuff;
 import org.orecruncher.lib.random.XorShiftRandom;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.World;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.Level;
 import org.orecruncher.mobeffects.config.Config;
 import org.orecruncher.mobeffects.MobEffects;
 import org.orecruncher.mobeffects.effects.particles.Collections;
@@ -116,7 +116,7 @@ public class Generator {
 			return;
 
 		// No footstep or print effects for spectators
-		if ((entity instanceof PlayerEntity) && entity.isSpectator())
+		if ((entity instanceof Player) && entity.isSpectator())
 			return;
 
 		// Clear starting state
@@ -146,7 +146,7 @@ public class Generator {
 	}
 
 	protected boolean isClimbing(@Nonnull final LivingEntity entity) {
-		final World world = entity.getCommandSenderWorld();
+		final Level world = entity.getCommandSenderWorld();
 		final BlockPos blockPos = entity.blockPosition();
 		final BlockState blockState = world.getBlockState(blockPos);
 		return blockState.is(BlockTags.CLIMBABLE) || ForgeHooks.isLivingOnLadder(blockState, world, blockPos, entity);
@@ -433,11 +433,11 @@ public class Generator {
 		// It is possible that the association has no position, so it
 		// needs to be checked.
 		if (result != null && shouldProducePrint(entity)) {
-			final Vector3d printPos = result.getStrikeLocation().footprintPosition();
+			final Vec3 printPos = result.getStrikeLocation().footprintPosition();
 			if (printPos != null) {
 				FootprintStyle style = this.VAR.FOOTPRINT_STYLE;
 
-				if (entity instanceof PlayerEntity) {
+				if (entity instanceof Player) {
 					style = Config.CLIENT.footsteps.playerFootprintStyle.get();
 				}
 
@@ -446,8 +446,8 @@ public class Generator {
 						this.VAR.FOOTPRINT_SCALE,
 						isRightFoot);
 
-				final Vector3d stepLocation = print.getStepLocation();
-				final World world = print.getEntity().getCommandSenderWorld();
+				final Vec3 stepLocation = print.getStepLocation();
+				final Level world = print.getEntity().getCommandSenderWorld();
 				Collections.addFootprint(print.getStyle(), world, stepLocation, print.getRotation(), print.getScale(),
 						print.isRightFoot());
 			}

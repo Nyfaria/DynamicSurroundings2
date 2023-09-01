@@ -18,9 +18,9 @@
 
 package org.orecruncher.lib.scripting.sets;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.potion.Effects;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -34,23 +34,23 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
 
     private final LazyVariable<Boolean> isSuffocating = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
-            final PlayerEntity player = GameUtils.getPlayer();
+            final Player player = GameUtils.getPlayer();
             return !player.isCreative() && player.getAirSupply() < 0;
         }
         return false;
     });
     private final LazyVariable<Boolean> canSeeSky = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
-            final World world = GameUtils.getWorld();
-            final PlayerEntity player = GameUtils.getPlayer();
+            final Level world = GameUtils.getWorld();
+            final Player player = GameUtils.getPlayer();
             return world.canSeeSkyFromBelowWater(player.blockPosition().offset(0, 2, 0));
         }
         return false;
     });
     private final LazyVariable<Boolean> canRainOn = new LazyVariable<>(() -> {
         if (GameUtils.isInGame()) {
-            final World world = GameUtils.getWorld();
-            final PlayerEntity player = GameUtils.getPlayer();
+            final Level world = GameUtils.getWorld();
+            final Player player = GameUtils.getPlayer();
             if (world.canSeeSkyFromBelowWater(player.blockPosition().offset(0, 2, 0)))
                 return WorldUtils.getTopSolidOrLiquidBlock(world, player.blockPosition()).getY() <= player.blockPosition().getY();
         }
@@ -84,7 +84,7 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
     public void update() {
 
         if (GameUtils.isInGame()) {
-            final PlayerEntity player = GameUtils.getPlayer();
+            final Player player = GameUtils.getPlayer();
             assert player != null;
 
             this.isCreative = player.isCreative();
@@ -93,7 +93,7 @@ public class PlayerVariables extends VariableSet<IPlayerVariables> implements IP
             this.isSprintnig = player.isSprinting();
             this.isInLava = player.isInLava();
             this.isInvisible = player.isInvisible();
-            this.isBlind = player.hasEffect(Effects.BLINDNESS);
+            this.isBlind = player.hasEffect(MobEffects.BLINDNESS);
             this.isInWater = player.isInWater();
             this.isWet = player.isInWaterOrRain();
             this.isRiding = player.hasOnePlayerPassenger();

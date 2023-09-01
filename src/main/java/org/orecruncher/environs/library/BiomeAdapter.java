@@ -25,9 +25,9 @@ import javax.annotation.Nonnull;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.biome.Biome;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraftforge.common.BiomeDictionary.Type;
 import org.orecruncher.lib.biomes.BiomeUtilities;
 
@@ -63,7 +63,7 @@ public class BiomeAdapter implements IBiome {
 	}
 
 	@Override
-	public Biome.RainType getPrecipitationType() {
+	public Biome.Precipitation getPrecipitationType() {
 		return this.biome.getPrecipitation();
 	}
 

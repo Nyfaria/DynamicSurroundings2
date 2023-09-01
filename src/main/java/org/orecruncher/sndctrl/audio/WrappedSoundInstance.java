@@ -18,12 +18,12 @@
 
 package org.orecruncher.sndctrl.audio;
 
-import net.minecraft.client.audio.ITickableSound;
-import net.minecraft.client.audio.Sound;
-import net.minecraft.client.audio.SoundEventAccessor;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundCategory;
+import net.minecraft.client.resources.sounds.TickableSoundInstance;
+import net.minecraft.client.resources.sounds.Sound;
+import net.minecraft.client.sounds.WeighedSoundEvents;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.api.sound.ISoundCategory;
@@ -33,13 +33,13 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.util.Objects;
 
-import net.minecraft.client.audio.ISound.AttenuationType;
+import net.minecraft.client.resources.sounds.SoundInstance.Attenuation;
 
 /**
  * Base class for special sounds that aggregate the true sound being played.
  */
 @OnlyIn(Dist.CLIENT)
-public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
+public class WrappedSoundInstance implements ISoundInstance, TickableSoundInstance {
 
     @Nonnull
     protected final ISoundInstance sound;
@@ -63,8 +63,8 @@ public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
 
     @Override
     public void tick() {
-        if (this.sound instanceof ITickableSound)
-            ((ITickableSound) this.sound).tick();
+        if (this.sound instanceof TickableSoundInstance)
+            ((TickableSoundInstance) this.sound).tick();
     }
 
     @Nonnull
@@ -96,7 +96,7 @@ public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
 
     @Nullable
     @Override
-    public SoundEventAccessor resolve(SoundHandler handler) {
+    public WeighedSoundEvents resolve(SoundManager handler) {
         return this.sound.resolve(handler);
     }
 
@@ -108,7 +108,7 @@ public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
 
     @Nonnull
     @Override
-    public SoundCategory getSource() {
+    public SoundSource getSource() {
         return this.sound.getSource();
     }
 
@@ -160,7 +160,7 @@ public class WrappedSoundInstance implements ISoundInstance, ITickableSound {
 
     @Nonnull
     @Override
-    public AttenuationType getAttenuation() {
+    public Attenuation getAttenuation() {
         return this.sound.getAttenuation();
     }
 }

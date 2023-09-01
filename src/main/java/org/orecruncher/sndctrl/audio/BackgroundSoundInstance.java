@@ -25,7 +25,7 @@ import org.orecruncher.sndctrl.api.sound.ISoundInstance;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.audio.ISound.AttenuationType;
+import net.minecraft.client.resources.sounds.SoundInstance.Attenuation;
 
 /**
  * A BackgroundSoundInstance is intended to play continuously in the background, similar to the music
@@ -65,8 +65,8 @@ public class BackgroundSoundInstance extends FadableSoundInstance {
 
     @Nonnull
     @Override
-    public AttenuationType getAttenuation() {
-        return AttenuationType.NONE;
+    public Attenuation getAttenuation() {
+        return Attenuation.NONE;
     }
 
 }

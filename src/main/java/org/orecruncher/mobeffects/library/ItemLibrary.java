@@ -23,7 +23,7 @@ import it.unimi.dsi.fastutil.objects.Object2ReferenceAVLTreeMap;
 import it.unimi.dsi.fastutil.objects.Reference2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.minecraft.item.*;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -45,6 +45,11 @@ import java.lang.reflect.Type;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import net.minecraft.world.item.ArmorItem;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 
 @OnlyIn(Dist.CLIENT)
 public final class ItemLibrary {
@@ -120,7 +125,7 @@ public final class ItemLibrary {
         // See if it is an armor item.  We can use the equip sound from the material entry.
         if (item.getItem() instanceof ArmorItem) {
             final ArmorItem ai = (ArmorItem) item.getItem();
-            final IArmorMaterial material = ai.getMaterial();
+            final ArmorMaterial material = ai.getMaterial();
             // Make sure the primitives get created before assigning to an item
             Primitives.getArmorToolbarAcoustic(material);
             Primitives.getArmorAccentAcoustic(material);

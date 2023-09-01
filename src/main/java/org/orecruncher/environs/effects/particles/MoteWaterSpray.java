@@ -18,12 +18,12 @@
 
 package org.orecruncher.environs.effects.particles;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.renderer.ActiveRenderInfo;
-import net.minecraft.fluid.Fluids;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.IBlockReader;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.Camera;
+import net.minecraft.world.level.material.Fluids;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -47,7 +47,7 @@ public class MoteWaterSpray extends MotionMote {
 	protected final float texU1, texU2;
 	protected final float texV1, texV2;
 
-	public MoteWaterSpray(final IBlockReader world, final double x, final double y, final double z, final double dX,
+	public MoteWaterSpray(final BlockGetter world, final double x, final double y, final double z, final double dX,
 						  final double dY, final double dZ) {
 
 		super(world, x, y, z, dX, dY, dZ);
@@ -81,7 +81,7 @@ public class MoteWaterSpray extends MotionMote {
 	}
 
 	@Override
-	public void renderParticle(@Nonnull IVertexBuilder buffer, @Nonnull ActiveRenderInfo info, float partialTicks) {
+	public void renderParticle(@Nonnull VertexConsumer buffer, @Nonnull Camera info, float partialTicks) {
 
 		final float x = renderX(info, partialTicks);
 		final float y = renderY(info, partialTicks);

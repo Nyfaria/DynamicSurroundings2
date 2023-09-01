@@ -20,8 +20,8 @@ package org.orecruncher.lib.resource;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import net.minecraft.resources.IResourcePack;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.server.packs.PackResources;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.Lib;
@@ -151,7 +151,7 @@ public interface IResourceAccessor {
      * @param location Location of the resource within the pack
      * @return Reference to a resource accessor to obtain the necessary data.
      */
-    static IResourceAccessor createPackResource(@Nonnull final IResourcePack pack, @Nonnull final ResourceLocation location, @Nonnull final ResourceLocation actual) {
+    static IResourceAccessor createPackResource(@Nonnull final PackResources pack, @Nonnull final ResourceLocation location, @Nonnull final ResourceLocation actual) {
         return new ResourceAccessorPack(location, pack, actual);
     }
 

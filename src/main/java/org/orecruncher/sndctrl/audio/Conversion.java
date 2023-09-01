@@ -18,8 +18,8 @@
 
 package org.orecruncher.sndctrl.audio;
 
-import net.minecraft.client.audio.AudioStreamBuffer;
-import net.minecraft.client.audio.IAudioStream;
+import com.mojang.blaze3d.audio.SoundBuffer;
+import net.minecraft.client.sounds.AudioStream;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -38,7 +38,7 @@ public final class Conversion {
      * @param inputStream The audio stream that is to be played
      * @return An IAudioStream that is in mono format
      */
-    public static IAudioStream convert(@Nonnull final IAudioStream inputStream) {
+    public static AudioStream convert(@Nonnull final AudioStream inputStream) {
         final AudioFormat format = inputStream.getFormat();
         if (format.getChannels() == 1)
             return inputStream;
@@ -52,7 +52,7 @@ public final class Conversion {
      * @param buffer Audio stream buffer to convert
      * @return Converted audio buffer
      */
-    public static AudioStreamBuffer convert(@Nonnull final AudioStreamBuffer buffer) {
+    public static SoundBuffer convert(@Nonnull final SoundBuffer buffer) {
 
         final AudioFormat format = buffer.format;
 
@@ -104,11 +104,11 @@ public final class Conversion {
         return buffer;
     }
 
-    private static class MonoStream implements IAudioStream {
+    private static class MonoStream implements AudioStream {
 
-        private final IAudioStream source;
+        private final AudioStream source;
 
-        public MonoStream(@Nonnull final IAudioStream source) {
+        public MonoStream(@Nonnull final AudioStream source) {
             this.source = source;
         }
 

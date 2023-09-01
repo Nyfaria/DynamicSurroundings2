@@ -19,8 +19,8 @@
 package org.orecruncher.environs.handlers;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.profiler.IProfiler;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.util.profiling.ProfilerFiller;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.TickEvent;
@@ -98,7 +98,7 @@ public class Manager {
         }
     }
 
-    protected static PlayerEntity getPlayer() {
+    protected static Player getPlayer() {
         return GameUtils.getPlayer();
     }
 
@@ -112,7 +112,7 @@ public class Manager {
         if (!checkReady(event))
             return;
 
-        final IProfiler profiler = GameUtils.getMC().getProfiler();
+        final ProfilerFiller profiler = GameUtils.getMC().getProfiler();
         profiler.push("Environs Client Tick");
 
         final long tick = TickCounter.getTickCount();

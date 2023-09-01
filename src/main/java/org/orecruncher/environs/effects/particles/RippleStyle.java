@@ -25,7 +25,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.environs.Environs;
 import org.orecruncher.lib.random.XorShiftRandom;
 
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 
 @OnlyIn(Dist.CLIENT)
 public enum RippleStyle {

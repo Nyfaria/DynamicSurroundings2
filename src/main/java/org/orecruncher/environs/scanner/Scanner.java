@@ -25,15 +25,15 @@ import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
 import it.unimi.dsi.fastutil.objects.ReferenceArraySet;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.XorShiftRandom;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 @OnlyIn(Dist.CLIENT)
 public abstract class Scanner {
@@ -64,7 +64,7 @@ public abstract class Scanner {
 	protected final ScanContext locus;
 
 	protected final Random random = new XorShiftRandom();
-	protected final BlockPos.Mutable workingPos = new BlockPos.Mutable();
+	protected final BlockPos.MutableBlockPos workingPos = new BlockPos.MutableBlockPos();
 
 	public Scanner(@Nonnull final ScanContext locus, @Nonnull final String name, final int range) {
 		this(locus, name, range, 0);
@@ -134,7 +134,7 @@ public abstract class Scanner {
 
 		preScan();
 
-		final IBlockReader provider = this.locus.getWorld();
+		final BlockGetter provider = this.locus.getWorld();
 		for (int count = 0; count < this.blocksPerTick; count++) {
 			final BlockPos pos = nextPos(this.workingPos, this.random);
 			if (pos == null)
@@ -157,6 +157,6 @@ public abstract class Scanner {
 	 * returned from the function call.
 	 */
 	@Nullable
-	protected abstract BlockPos nextPos(@Nonnull final BlockPos.Mutable pos, @Nonnull final Random rand);
+	protected abstract BlockPos nextPos(@Nonnull final BlockPos.MutableBlockPos pos, @Nonnull final Random rand);
 
 }

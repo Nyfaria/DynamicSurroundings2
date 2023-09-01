@@ -18,26 +18,26 @@
 
 package org.orecruncher.dsurround.huds.lightlevel;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
-import net.minecraft.block.material.Material;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.world.ClientWorld;
-import net.minecraft.entity.EntitySpawnPlacementRegistry;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Direction;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.LightType;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.material.Material;
+import net.minecraft.client.gui.Font;
+import net.minecraft.client.renderer.MultiBufferSource;
+import com.mojang.blaze3d.vertex.Tesselator;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.world.entity.SpawnPlacements;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.core.Direction;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import com.mojang.math.Quaternion;
+import net.minecraft.world.phys.Vec3;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.LightLayer;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -60,7 +60,7 @@ import javax.annotation.Nonnull;
 @Mod.EventBusSubscriber(modid = DynamicSurroundings.MOD_ID, value = Dist.CLIENT, bus = Mod.EventBusSubscriber.Bus.FORGE)
 public final class LightLevelHUD {
 
-    private static FontRenderer font;
+    private static Font font;
 
     public enum Mode {
         BLOCK,
@@ -99,7 +99,7 @@ public final class LightLevelHUD {
 
     private static final int ALLOCATION_SIZE = 2048;
     private static final ObjectArray<LightCoord> lightLevels = new ObjectArray<>(ALLOCATION_SIZE);
-    private static final BlockPos.Mutable mutable = new BlockPos.Mutable();
+    private static final BlockPos.MutableBlockPos mutable = new BlockPos.MutableBlockPos();
     private static int nextCoord = 0;
 
     private static final String[] lightLevelText = new String[16];
@@ -120,7 +120,7 @@ public final class LightLevelHUD {
     }
 
     protected static boolean inFrustum(final double x, final double y, final double z) {
-        return FrustumHelper.isLocationInFrustum(new Vector3d(x, y, z));
+        return FrustumHelper.isLocationInFrustum(new Vec3(x, y, z));
     }
 
     protected static boolean renderLightLevel(@Nonnull final BlockState state, @Nonnull final BlockState below) {
@@ -143,9 +143,9 @@ public final class LightLevelHUD {
         return state.getBlock() == Blocks.SNOW ? adjust + 0.125F : adjust;
     }
 
-    protected static void updateLightInfo(@Nonnull final Vector3d position) {
+    protected static void updateLightInfo(@Nonnull final Vec3 position) {
 
-        final FontRenderer fr = GameUtils.getMC().font;
+        final Font fr = GameUtils.getMC().font;
 
         if (fr != font) {
             font = fr;
@@ -164,7 +164,7 @@ public final class LightLevelHUD {
         final int originZ = MathStuff.floor(position.z) - (rangeXZ / 2);
         final int originY = MathStuff.floor(position.y) - (rangeY - 3);
 
-        final ClientWorld world = GameUtils.getWorld();
+        final ClientLevel world = GameUtils.getWorld();
 
         for (int dX = 0; dX < rangeXZ; dX++)
             for (int dZ = 0; dZ < rangeXZ; dZ++) {
@@ -193,12 +193,12 @@ public final class LightLevelHUD {
                         final boolean mobSpawn = lastState.canCreatureSpawn(
                                 GameUtils.getWorld(),
                                 mutable,
-                                EntitySpawnPlacementRegistry.PlacementType.ON_GROUND,
+                                SpawnPlacements.Type.ON_GROUND,
                                 EntityType.ZOMBIE);
 
                         if (mobSpawn || !Config.CLIENT.lightLevel.hideSafe.get()) {
-                            final int blockLight = world.getBrightness(LightType.BLOCK, mutable);
-                            final int skyLight = world.getBrightness(LightType.SKY, mutable) - skyLightSub;
+                            final int blockLight = world.getBrightness(LightLayer.BLOCK, mutable);
+                            final int skyLight = world.getBrightness(LightLayer.SKY, mutable) - skyLightSub;
                             final int effective = Math.max(blockLight, skyLight);
 
                             final int result;
@@ -256,18 +256,18 @@ public final class LightLevelHUD {
         updateLightInfo(event.player.position());
     }
 
-    public static void render(@Nonnull final MatrixStack matrixStack, final float partialTicks) {
+    public static void render(@Nonnull final PoseStack matrixStack, final float partialTicks) {
         if (!showHUD || nextCoord == 0)
             return;
 
-        final PlayerEntity player = GameUtils.getPlayer();
+        final Player player = GameUtils.getPlayer();
         if (player == null)
             return;
 
         drawStringRender(matrixStack, player);
     }
 
-    private static void drawStringRender(@Nonnull final MatrixStack matrixStack, @Nonnull final PlayerEntity player) {
+    private static void drawStringRender(@Nonnull final PoseStack matrixStack, @Nonnull final Player player) {
 
         final boolean thirdPerson = GameUtils.isThirdPersonView();
         Direction playerFacing = player.getDirection();
@@ -279,7 +279,7 @@ public final class LightLevelHUD {
 
         final Quaternion rotY = Vector3f.YP.rotationDegrees(rotationAngle);
         final Quaternion rotX = Vector3f.XP.rotationDegrees(90);
-        final Vector3d view = GameUtils.getMC().gameRenderer.getMainCamera().getPosition();
+        final Vec3 view = GameUtils.getMC().gameRenderer.getMainCamera().getPosition();
         matrixStack.pushPose();
         matrixStack.translate(-view.x(), -view.y(), -view.z());
 
@@ -290,7 +290,7 @@ public final class LightLevelHUD {
         RenderSystem.depthFunc(GL11.GL_LEQUAL);
         RenderSystem.depthMask(true);
 
-        IRenderTypeBuffer.Impl buffer = IRenderTypeBuffer.immediate(Tessellator.getInstance().getBuilder());
+        MultiBufferSource.BufferSource buffer = MultiBufferSource.immediate(Tesselator.getInstance().getBuilder());
 
         final int yAdjust = -(font.lineHeight / 2);
 

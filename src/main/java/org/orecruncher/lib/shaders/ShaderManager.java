@@ -18,14 +18,14 @@
 
 package org.orecruncher.lib.shaders;
 
-import net.minecraft.client.shader.ShaderLinkHelper;
-import net.minecraft.client.shader.ShaderLoader;
-import net.minecraft.resources.IReloadableResourceManager;
-import net.minecraft.resources.IResourceManager;
-import net.minecraft.resources.IResourceManagerReloadListener;
+import com.mojang.blaze3d.shaders.ProgramManager;
+import com.mojang.blaze3d.shaders.Program;
+import net.minecraft.server.packs.resources.ReloadableResourceManager;
+import net.minecraft.server.packs.resources.ResourceManager;
+import net.minecraft.server.packs.resources.ResourceManagerReloadListener;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.resources.ResourceLocation;
 import org.orecruncher.lib.GameUtils;
 import org.orecruncher.lib.Lib;
 
@@ -81,7 +81,7 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 			return;
 
 		final int programId = program.getId();
-		ShaderLinkHelper.glUseProgram(programId);
+		ProgramManager.glUseProgram(programId);
 
 		if (callback != null) {
 			callback.accept(new ShaderCallContext(program));
@@ -95,7 +95,7 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 
 	public void releaseShader() {
 		if (supported())
-			ShaderLinkHelper.glUseProgram(0);
+			ProgramManager.glUseProgram(0);
 	}
 
 	@SuppressWarnings("deprecation")
@@ -103,17 +103,17 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 		if (!supported())
 			return;
 
-		if (GameUtils.getMC().getResourceManager() instanceof IReloadableResourceManager) {
-			((IReloadableResourceManager) GameUtils.getMC().getResourceManager()).registerReloadListener(
-					(IResourceManagerReloadListener) manager -> {
-						this.programs.values().forEach(ShaderLinkHelper::releaseProgram);
+		if (GameUtils.getMC().getResourceManager() instanceof ReloadableResourceManager) {
+			((ReloadableResourceManager) GameUtils.getMC().getResourceManager()).registerReloadListener(
+					(ResourceManagerReloadListener) manager -> {
+						this.programs.values().forEach(ProgramManager::releaseProgram);
 						this.programs.clear();
 						loadShaders(manager);
 					});
 		}
 	}
 
-	private void loadShaders(@Nonnull final IResourceManager manager) {
+	private void loadShaders(@Nonnull final ResourceManager manager) {
 		for (final T shader : this.clazz.getEnumConstants()) {
 			final ShaderProgram program = createProgram(manager, shader);
 			if (program != null)
@@ -122,13 +122,13 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 	}
 
 	@Nullable
-	private ShaderProgram createProgram(@Nonnull final IResourceManager manager, @Nonnull final T shader) {
+	private ShaderProgram createProgram(@Nonnull final ResourceManager manager, @Nonnull final T shader) {
 		try {
-			final ShaderLoader vert = createShader(manager, shader.getVertex(), ShaderLoader.ShaderType.VERTEX);
-			final ShaderLoader frag = createShader(manager, shader.getFragment(), ShaderLoader.ShaderType.FRAGMENT);
-			final int programId = ShaderLinkHelper.createProgram();
+			final Program vert = createShader(manager, shader.getVertex(), Program.Type.VERTEX);
+			final Program frag = createShader(manager, shader.getFragment(), Program.Type.FRAGMENT);
+			final int programId = ProgramManager.createProgram();
 			final ShaderProgram program = new ShaderProgram(shader.getShaderName(), programId, vert, frag);
-			ShaderLinkHelper.linkProgram(program);
+			ProgramManager.linkProgram(program);
 			program.setUniforms(shader.getUniforms());
 			return program;
 		} catch (IOException ex) {
@@ -137,9 +137,9 @@ public final class ShaderManager<T extends Enum<T> & IShaderResourceProvider> {
 		return null;
 	}
 
-	private static ShaderLoader createShader(@Nonnull final IResourceManager manager, @Nonnull final ResourceLocation loc, @Nonnull final ShaderLoader.ShaderType shaderType) throws IOException {
+	private static Program createShader(@Nonnull final ResourceManager manager, @Nonnull final ResourceLocation loc, @Nonnull final Program.Type shaderType) throws IOException {
 		try (InputStream is = new BufferedInputStream(manager.getResource(loc).getInputStream())) {
-			return ShaderLoader.compileShader(shaderType, loc.toString(), is, shaderType.name().toLowerCase(Locale.ROOT));
+			return Program.compileShader(shaderType, loc.toString(), is, shaderType.name().toLowerCase(Locale.ROOT));
 		}
 	}
 }

@@ -19,9 +19,9 @@
 package org.orecruncher.sndctrl.gui;
 
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.list.AbstractOptionList;
-import net.minecraft.util.StringUtils;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.util.StringUtil;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.sndctrl.library.IndividualSoundConfig;
@@ -36,7 +36,7 @@ import java.util.function.Function;
 import java.util.function.Supplier;
 
 @OnlyIn(Dist.CLIENT)
-public class IndividualSoundControlList extends AbstractOptionList<IndividualSoundControlListEntry> {
+public class IndividualSoundControlList extends ContainerObjectSelectionList<IndividualSoundControlListEntry> {
 
     private final Screen parent;
     private final boolean enablePlay;
@@ -93,7 +93,7 @@ public class IndividualSoundControlList extends AbstractOptionList<IndividualSou
         // Get the filter string.  It's a simple contains check.
         final Function<IndividualSoundConfig, Boolean> process;
 
-        if (StringUtils.isNullOrEmpty(filter)) {
+        if (StringUtil.isNullOrEmpty(filter)) {
             process = (isc) -> true;
         } else {
             process = (isc) -> isc.getLocation().toString().contains(filter);

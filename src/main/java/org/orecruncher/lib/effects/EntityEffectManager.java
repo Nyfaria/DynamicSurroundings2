@@ -23,11 +23,11 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.client.GameSettings;
+import net.minecraft.client.Options;
 import net.minecraft.client.particle.Particle;
-import net.minecraft.client.settings.PointOfView;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.client.CameraType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -148,8 +148,8 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 */
 	@Override
 	public boolean isFirstPersonView() {
-		final GameSettings settings = GameUtils.getGameSettings();
-		return settings.getCameraType() == PointOfView.FIRST_PERSON;
+		final Options settings = GameUtils.getGameSettings();
+		return settings.getCameraType() == CameraType.FIRST_PERSON;
 	}
 
 	/**
@@ -170,7 +170,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 */
 	@Override
 	public boolean isActivePlayer(@Nonnull final LivingEntity player) {
-		final PlayerEntity ep = thePlayer();
+		final Player ep = thePlayer();
 		return ep.getId() == player.getId();
 	}
 
@@ -181,7 +181,7 @@ public class EntityEffectManager implements IEntityEffectManager {
 	 */
 	@Override
 	@Nonnull
-	public PlayerEntity thePlayer() {
+	public Player thePlayer() {
 		return GameUtils.getPlayer();
 	}
 

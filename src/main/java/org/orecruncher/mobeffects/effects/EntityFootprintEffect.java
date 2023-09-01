@@ -20,8 +20,8 @@ package org.orecruncher.mobeffects.effects;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -39,7 +39,7 @@ public class EntityFootprintEffect extends AbstractEntityEffect {
 	private static final ResourceLocation NAME = new ResourceLocation(MobEffects.MOD_ID, "footprint");
 	public static final FactoryHandler FACTORY = new FactoryHandler(
 			EntityFootprintEffect.NAME,
-			entity -> entity instanceof PlayerEntity ? new PlayerFootprintEffect() : new EntityFootprintEffect());
+			entity -> entity instanceof Player ? new PlayerFootprintEffect() : new EntityFootprintEffect());
 
 	protected Generator generator;
 

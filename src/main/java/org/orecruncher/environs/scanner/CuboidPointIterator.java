@@ -26,8 +26,8 @@ import javax.annotation.Nullable;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.BlockPos.Mutable;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.BlockPos.MutableBlockPos;
 import org.orecruncher.lib.BlockPosUtil;
 
 /**
@@ -51,7 +51,7 @@ public class CuboidPointIterator implements IPointIterator {
 
 	};
 
-	protected final Iterator<Mutable> itr;
+	protected final Iterator<MutableBlockPos> itr;
 	protected BlockPos peeked;
 
 	private CuboidPointIterator() {

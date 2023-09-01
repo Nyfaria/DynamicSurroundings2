@@ -19,13 +19,13 @@
 package org.orecruncher.sndctrl.audio;
 
 import com.google.common.base.MoreObjects;
-import net.minecraft.client.audio.ISound;
-import net.minecraft.client.audio.LocatableSound;
-import net.minecraft.client.audio.SoundHandler;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.util.math.vector.Vector3i;
+import net.minecraft.client.resources.sounds.SoundInstance;
+import net.minecraft.client.resources.sounds.AbstractSoundInstance;
+import net.minecraft.client.sounds.SoundManager;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.core.Vec3i;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.GameUtils;
@@ -36,7 +36,7 @@ import org.orecruncher.sndctrl.audio.handlers.SoundVolumeEvaluator;
 import javax.annotation.Nonnull;
 
 @OnlyIn(Dist.CLIENT)
-public class SoundInstance extends LocatableSound implements ISoundInstance {
+public class SoundInstance extends AbstractSoundInstance implements ISoundInstance {
 
     private SoundState state;
     private final ISoundCategory category;
@@ -57,10 +57,10 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.x = this.y = this.z = 0;
         this.looping = false;
         this.delay = 0;
-        this.attenuation = ISound.AttenuationType.LINEAR;
+        this.attenuation = SoundInstance.Attenuation.LINEAR;
 
         this.playDelay = 0;
-        this.sound = SoundHandler.EMPTY_SOUND;
+        this.sound = SoundManager.EMPTY_SOUND;
 
         // Force creation of the sound instance now.  Need the info in the OGG definition for attenuation
         // distance prior to submission.
@@ -94,15 +94,15 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
         this.z = z;
     }
 
-    public void setPosition(@Nonnull final Vector3i pos) {
+    public void setPosition(@Nonnull final Vec3i pos) {
         this.setPosition(pos.getX() + 0.5F, pos.getY() + 0.5F, pos.getZ() + 0.5F);
     }
 
-    public void setPosition(@Nonnull final Vector3d pos) {
+    public void setPosition(@Nonnull final Vec3 pos) {
         this.setPosition((float) pos.x, (float) pos.y, (float) pos.z);
     }
 
-    public void setAttenuationType(@Nonnull final ISound.AttenuationType type) {
+    public void setAttenuationType(@Nonnull final SoundInstance.Attenuation type) {
         this.attenuation = type;
     }
 
@@ -156,7 +156,7 @@ public class SoundInstance extends LocatableSound implements ISoundInstance {
                 .toString();
     }
 
-    static float getEffectiveVolume(@Nonnull final ISound sound) {
+    static float getEffectiveVolume(@Nonnull final SoundInstance sound) {
         try {
             return SoundVolumeEvaluator.getClampedVolume(sound);
         } catch(@Nonnull final Throwable ignored) {

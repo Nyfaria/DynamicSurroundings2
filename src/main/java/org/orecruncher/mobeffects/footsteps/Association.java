@@ -20,12 +20,12 @@ package org.orecruncher.mobeffects.footsteps;
 
 import javax.annotation.Nonnull;
 
-import net.minecraft.entity.LivingEntity;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.phys.Vec3;
 import org.orecruncher.sndctrl.api.acoustics.AcousticEvent;
 import org.orecruncher.sndctrl.api.acoustics.IAcoustic;
 import org.orecruncher.sndctrl.audio.acoustic.AcousticCompiler;
@@ -37,7 +37,7 @@ public class Association {
 	private IAcoustic data;
 
 	public Association(@Nonnull final LivingEntity entity, @Nonnull final IAcoustic association) {
-		final Vector3d vec = entity.position();
+		final Vec3 vec = entity.position();
 		this.location = new FootStrikeLocation(entity, vec.x, vec.y + 1, vec.z);
 		this.data = association;
 	}

@@ -20,14 +20,14 @@ package org.orecruncher.lib.particles;
 
 import javax.annotation.Nonnull;
 
-import com.mojang.blaze3d.vertex.IVertexBuilder;
-import net.minecraft.client.particle.IAnimatedSprite;
-import net.minecraft.client.renderer.ActiveRenderInfo;
+import com.mojang.blaze3d.vertex.VertexConsumer;
+import net.minecraft.client.particle.SpriteSet;
+import net.minecraft.client.Camera;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Quaternion;
-import net.minecraft.util.math.vector.Vector3f;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.util.Mth;
+import com.mojang.math.Quaternion;
+import com.mojang.math.Vector3f;
+import net.minecraft.world.level.BlockGetter;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.gui.Color;
@@ -74,9 +74,9 @@ public abstract class AnimatedMote extends MotionMote {
 	protected float texV1, texV2;
 	protected float particleScale;
 
-	protected final IAnimatedSprite sprites;
+	protected final SpriteSet sprites;
 
-	protected AnimatedMote(final @Nonnull IAnimatedSprite sprites, @Nonnull final IBlockReader world, double x, double y,
+	protected AnimatedMote(final @Nonnull SpriteSet sprites, @Nonnull final BlockGetter world, double x, double y,
 						   double z, double dX, double dY, double dZ) {
 		super(world, x, y, z, dX, dY, dZ);
 
@@ -115,9 +115,9 @@ public abstract class AnimatedMote extends MotionMote {
 
 	private void lerpColors() {
 		final float scaling = 1 / (float) this.maxAge;
-		this.dRed = MathHelper.lerp(scaling, this.red, this.fadeTargetRed);
-		this.dGreen = MathHelper.lerp(scaling, this.green, this.fadeTargetGreen);
-		this.dBlue = MathHelper.lerp(scaling, this.blue, this.fadeTargetBlue);
+		this.dRed = Mth.lerp(scaling, this.red, this.fadeTargetRed);
+		this.dGreen = Mth.lerp(scaling, this.green, this.fadeTargetGreen);
+		this.dBlue = Mth.lerp(scaling, this.blue, this.fadeTargetBlue);
 	}
 
 	@Override
@@ -161,7 +161,7 @@ public abstract class AnimatedMote extends MotionMote {
 	}
 
 	@Override
-	public void renderParticle(@Nonnull final IVertexBuilder buffer, @Nonnull final ActiveRenderInfo info, float partialTicks) {
+	public void renderParticle(@Nonnull final VertexConsumer buffer, @Nonnull final Camera info, float partialTicks) {
 
 		final float x = renderX(info, partialTicks);
 		final float y = renderY(info, partialTicks);

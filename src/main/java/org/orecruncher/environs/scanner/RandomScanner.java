@@ -26,7 +26,7 @@ import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.random.LCGRandom;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 /**
  * Serves up random blocks in an area around the player. Concentration of block
@@ -60,7 +60,7 @@ public abstract class RandomScanner extends Scanner {
 
 	@Override
 	@Nonnull
-	protected BlockPos nextPos(@Nonnull final BlockPos.Mutable workingPos, @Nonnull final Random rand) {
+	protected BlockPos nextPos(@Nonnull final BlockPos.MutableBlockPos workingPos, @Nonnull final Random rand) {
 		return workingPos.set(this.playerX + randomRange(this.xRange), this.playerY + randomRange(this.yRange),
 				this.playerZ + randomRange(this.zRange));
 	}

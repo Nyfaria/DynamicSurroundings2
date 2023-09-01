@@ -18,17 +18,22 @@
 
 package org.orecruncher.lib.math;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.fluid.FluidState;
-import net.minecraft.util.Direction;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.material.FluidState;
+import net.minecraft.core.Direction;
 import net.minecraft.util.math.*;
-import net.minecraft.util.math.shapes.ISelectionContext;
-import net.minecraft.util.math.shapes.VoxelShape;
-import net.minecraft.util.math.vector.Vector3d;
-import net.minecraft.world.IBlockReader;
+import net.minecraft.world.phys.shapes.CollisionContext;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraft.world.phys.Vec3;
+import net.minecraft.world.level.BlockGetter;
 
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
+
+import net.minecraft.core.BlockPos;
+import net.minecraft.util.Mth;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.BlockHitResult;
 
 /**
  * Block ray trace and context rolled into one!  With some optimizations specific to blocks.  These routines are
@@ -38,77 +43,77 @@ public class BlockRayTrace {
 
     private static final double NUDGE = -1.0E-7D;
 
-    final IBlockReader world;
-    final RayTraceContext.BlockMode blockMode;
-    final RayTraceContext.FluidMode fluidMode;
-    final ISelectionContext selectionCtx;
+    final BlockGetter world;
+    final ClipContext.Block blockMode;
+    final ClipContext.Fluid fluidMode;
+    final CollisionContext selectionCtx;
 
     // Can be changed dynamically to avoid recreating contexts
-    Vector3d start;
-    Vector3d end;
+    Vec3 start;
+    Vec3 end;
 
-    public BlockRayTrace(@Nonnull final IBlockReader world, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
-        this(world, Vector3d.ZERO, Vector3d.ZERO, bm, fm);
+    public BlockRayTrace(@Nonnull final BlockGetter world, @Nonnull final ClipContext.Block bm, @Nonnull final ClipContext.Fluid fm) {
+        this(world, Vec3.ZERO, Vec3.ZERO, bm, fm);
     }
 
-    public BlockRayTrace(@Nonnull final IBlockReader world, @Nonnull final Vector3d start, @Nonnull final Vector3d end, @Nonnull final RayTraceContext.BlockMode bm, @Nonnull final RayTraceContext.FluidMode fm) {
+    public BlockRayTrace(@Nonnull final BlockGetter world, @Nonnull final Vec3 start, @Nonnull final Vec3 end, @Nonnull final ClipContext.Block bm, @Nonnull final ClipContext.Fluid fm) {
         this.world = world;
         this.start = start;
         this.end = end;
         this.blockMode = bm;
         this.fluidMode = fm;
-        this.selectionCtx = ISelectionContext.empty();
+        this.selectionCtx = CollisionContext.empty();
     }
 
     @Nonnull
-    public BlockRayTraceResult trace() {
+    public BlockHitResult trace() {
         return traceLoop();
     }
 
     @Nonnull
-    public BlockRayTraceResult trace(@Nonnull final Vector3d start, @Nonnull final Vector3d end) {
+    public BlockHitResult trace(@Nonnull final Vec3 start, @Nonnull final Vec3 end) {
         this.start = start;
         this.end = end;
         return traceLoop();
     }
 
     @Nonnull
-    private BlockRayTraceResult traceLoop() {
+    private BlockHitResult traceLoop() {
         if (this.start.equals(this.end)) {
             return miss();
         } else {
 
-            final double lerpX = MathHelper.lerp(NUDGE, this.start.x, this.end.x);
-            final double lerpY = MathHelper.lerp(NUDGE, this.start.y, this.end.y);
-            final double lerpZ = MathHelper.lerp(NUDGE, this.start.z, this.end.z);
+            final double lerpX = Mth.lerp(NUDGE, this.start.x, this.end.x);
+            final double lerpY = Mth.lerp(NUDGE, this.start.y, this.end.y);
+            final double lerpZ = Mth.lerp(NUDGE, this.start.z, this.end.z);
 
-            int posX = MathHelper.floor(lerpX);
-            int posY = MathHelper.floor(lerpY);
-            int posZ = MathHelper.floor(lerpZ);
+            int posX = Mth.floor(lerpX);
+            int posY = Mth.floor(lerpY);
+            int posZ = Mth.floor(lerpZ);
 
             // Do a quick check on the first block.  If there is a hit return
             // that result.  Else, traverse the line segment between start and end
             // points until a hit.
-            BlockPos.Mutable mutablePos = new BlockPos.Mutable(posX, posY, posZ);
-            BlockRayTraceResult traceResult = hitCheck(mutablePos);
+            BlockPos.MutableBlockPos mutablePos = new BlockPos.MutableBlockPos(posX, posY, posZ);
+            BlockHitResult traceResult = hitCheck(mutablePos);
             if (traceResult == null) {
                 // No hit.  Do the calcs to traverse the line
-                final double xLerp = MathHelper.lerp(NUDGE, this.end.x, this.start.x);
-                final double yLerp = MathHelper.lerp(NUDGE, this.end.y, this.start.y);
-                final double zLerp = MathHelper.lerp(NUDGE, this.end.z, this.start.z);
+                final double xLerp = Mth.lerp(NUDGE, this.end.x, this.start.x);
+                final double yLerp = Mth.lerp(NUDGE, this.end.y, this.start.y);
+                final double zLerp = Mth.lerp(NUDGE, this.end.z, this.start.z);
                 final double lenX = xLerp - lerpX;
                 final double lenY = yLerp - lerpY;
                 final double lenZ = zLerp - lerpZ;
-                final int dirX = MathHelper.sign(lenX);
-                final int dirY = MathHelper.sign(lenY);
-                final int dirZ = MathHelper.sign(lenZ);
+                final int dirX = Mth.sign(lenX);
+                final int dirY = Mth.sign(lenY);
+                final int dirZ = Mth.sign(lenZ);
                 final double deltaX = dirX == 0 ? Double.MAX_VALUE : (dirX / lenX);
                 final double deltaY = dirY == 0 ? Double.MAX_VALUE : (dirY / lenY);
                 final double deltaZ = dirZ == 0 ? Double.MAX_VALUE : (dirZ / lenZ);
 
-                double X = deltaX * (dirX > 0 ? 1.0D - MathHelper.frac(lerpX) : MathHelper.frac(lerpX));
-                double Y = deltaY * (dirY > 0 ? 1.0D - MathHelper.frac(lerpY) : MathHelper.frac(lerpY));
-                double Z = deltaZ * (dirZ > 0 ? 1.0D - MathHelper.frac(lerpZ) : MathHelper.frac(lerpZ));
+                double X = deltaX * (dirX > 0 ? 1.0D - Mth.frac(lerpX) : Mth.frac(lerpX));
+                double Y = deltaY * (dirY > 0 ? 1.0D - Mth.frac(lerpY) : Mth.frac(lerpY));
+                double Z = deltaZ * (dirZ > 0 ? 1.0D - Mth.frac(lerpZ) : Mth.frac(lerpZ));
 
                 // Main processing loop that traverses the line segment between start and end point.  This process
                 // will continue until there is a miss or a block is hit.
@@ -146,18 +151,18 @@ public class BlockRayTrace {
     }
 
     @Nonnull
-    private BlockRayTraceResult miss() {
-        final Vector3d directionVec = this.start.subtract(this.end);
-        return BlockRayTraceResult.miss(this.end, Direction.getNearest(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
+    private BlockHitResult miss() {
+        final Vec3 directionVec = this.start.subtract(this.end);
+        return BlockHitResult.miss(this.end, Direction.getNearest(directionVec.x, directionVec.y, directionVec.z), new BlockPos(this.end));
     }
 
     // Fast path an empty air block as much as possible.  For tracing this would be the most common block
     // encountered.  As an FYI the logic needs to consider both the solid and fluid aspects of a block since
     // Minecraft now has this notion of water logged.
     @Nullable
-    private BlockRayTraceResult hitCheck(@Nonnull final BlockPos pos) {
+    private BlockHitResult hitCheck(@Nonnull final BlockPos pos) {
         // Handle the block
-        BlockRayTraceResult traceResult = null;
+        BlockHitResult traceResult = null;
         final BlockState state = this.world.getBlockState(pos);
         if (!state.isAir(this.world, pos)) {
             final VoxelShape voxelShape = this.blockMode.get(state, this.world, pos, this.selectionCtx);
@@ -166,7 +171,7 @@ public class BlockRayTrace {
         }
 
         // Handle it's fluid state
-        BlockRayTraceResult fluidTraceResult = null;
+        BlockHitResult fluidTraceResult = null;
         final FluidState fluidState = state.getFluidState();
         if (!fluidState.isEmpty() && this.fluidMode.canPick(fluidState)) {
             final VoxelShape voxelFluidShape = state.getShape(this.world, pos);

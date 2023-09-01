@@ -18,11 +18,11 @@
 
 package org.orecruncher.mobeffects.effects;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.mobeffects.MobEffects;
@@ -44,30 +44,30 @@ public class PlayerToolbarEffect extends AbstractEntityEffect {
     protected static class HandTracker {
 
         protected final IEntityEffectManager manager;
-        protected final Hand hand;
+        protected final InteractionHand hand;
         protected Item lastHeld;
 
-        protected HandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final PlayerEntity player) {
-            this(manager, player, Hand.OFF_HAND);
+        protected HandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final Player player) {
+            this(manager, player, InteractionHand.OFF_HAND);
         }
 
-        protected HandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final PlayerEntity player, @Nonnull final Hand hand) {
+        protected HandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final Player player, @Nonnull final InteractionHand hand) {
             this.manager = manager;
             this.hand = hand;
             this.lastHeld = getItemForHand(player, hand);
         }
 
-        protected Item getItemForHand(final PlayerEntity player, final Hand hand) {
+        protected Item getItemForHand(final Player player, final InteractionHand hand) {
             final ItemStack stack = player.getItemInHand(hand);
             return stack.getItem();
         }
 
-        protected boolean triggerNewEquipSound(@Nonnull final PlayerEntity player) {
+        protected boolean triggerNewEquipSound(@Nonnull final Player player) {
             final Item heldItem = getItemForHand(player, this.hand);
             return heldItem != this.lastHeld;
         }
 
-        public void update(@Nonnull final PlayerEntity player) {
+        public void update(@Nonnull final Player player) {
             if (triggerNewEquipSound(player)) {
                 final ItemStack currentStack = player.getItemInHand(this.hand);
                 if (!currentStack.isEmpty()) {
@@ -86,18 +86,18 @@ public class PlayerToolbarEffect extends AbstractEntityEffect {
 
         protected int lastSlot;
 
-        public MainHandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final PlayerEntity player) {
-            super(manager, player, Hand.MAIN_HAND);
+        public MainHandTracker(@Nonnull final IEntityEffectManager manager, @Nonnull final Player player) {
+            super(manager, player, InteractionHand.MAIN_HAND);
             this.lastSlot = player.inventory.selected;
         }
 
         @Override
-        protected boolean triggerNewEquipSound(@Nonnull final PlayerEntity player) {
+        protected boolean triggerNewEquipSound(@Nonnull final Player player) {
             return this.lastSlot != player.inventory.selected || super.triggerNewEquipSound(player);
         }
 
         @Override
-        public void update(@Nonnull final PlayerEntity player) {
+        public void update(@Nonnull final Player player) {
             super.update(player);
             this.lastSlot = player.inventory.selected;
         }
@@ -112,14 +112,14 @@ public class PlayerToolbarEffect extends AbstractEntityEffect {
 
     public void intitialize(@Nonnull final IEntityEffectManager manager) {
         super.intitialize(manager);
-        final PlayerEntity player = (PlayerEntity) getEntity();
+        final Player player = (Player) getEntity();
         this.mainHand = new MainHandTracker(manager, player);
         this.offHand = new HandTracker(manager, player);
     }
 
     @Override
     public void update() {
-        final PlayerEntity player = (PlayerEntity) getEntity();
+        final Player player = (Player) getEntity();
         this.mainHand.update(player);
         this.offHand.update(player);
     }

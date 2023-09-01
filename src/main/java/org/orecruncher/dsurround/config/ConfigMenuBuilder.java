@@ -22,9 +22,9 @@ import me.shedaniel.clothconfig2.forge.api.ConfigBuilder;
 import me.shedaniel.clothconfig2.forge.api.ConfigCategory;
 import me.shedaniel.clothconfig2.forge.api.ConfigEntryBuilder;
 import me.shedaniel.clothconfig2.forge.impl.builders.SubCategoryBuilder;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.TextFormatting;
-import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.ChatFormatting;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.huds.lightlevel.LightLevelHUD;
@@ -36,7 +36,7 @@ import javax.annotation.Nonnull;
 public class ConfigMenuBuilder extends ClothAPIFactory {
 
     public ConfigMenuBuilder() {
-        super(new TranslationTextComponent("dsurround.modname"), () -> {
+        super(new TranslatableComponent("dsurround.modname"), () -> {
                     Config.SPEC.save();
                     org.orecruncher.sndctrl.config.Config.SPEC.save();
                     org.orecruncher.environs.config.Config.SPEC.save();
@@ -50,9 +50,9 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
         final ConfigEntryBuilder entryBuilder = builder.entryBuilder();
 
         ConfigCategory category = createRootCategory(builder);
-        SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", TextFormatting.GOLD, false);
+        SubCategoryBuilder modRoot = createSubCategory(entryBuilder, "dsurround.modname", ChatFormatting.GOLD, false);
 
-        SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", TextFormatting.YELLOW, false);
+        SubCategoryBuilder subCategory = createSubCategory(entryBuilder, "dsurround.cfg.logging", ChatFormatting.YELLOW, false);
 
         subCategory.add(
                 createBoolean(
@@ -71,7 +71,7 @@ public class ConfigMenuBuilder extends ClothAPIFactory {
 
         modRoot.add(subCategory.build());
 
-        subCategory = createSubCategory(entryBuilder, "dsurround.cfg.lightlevel", TextFormatting.YELLOW, false);
+        subCategory = createSubCategory(entryBuilder, "dsurround.cfg.lightlevel", ChatFormatting.YELLOW, false);
 
         subCategory.add(
                 createEnumList(

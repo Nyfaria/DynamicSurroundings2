@@ -28,9 +28,9 @@ import java.util.stream.Stream;
 import javax.annotation.Nonnull;
 
 import com.google.gson.reflect.TypeToken;
-import net.minecraft.util.RegistryKey;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.dsurround.DynamicSurroundings;
@@ -57,7 +57,7 @@ public final class DimensionLibrary {
 
 	private static final ObjectArray<DimensionConfig> cache = new ObjectArray<>();
 	// TODO:  What type of hash map?
-	private static final HashMap<RegistryKey<World>, DimensionInfo> configs = new HashMap<>();
+	private static final HashMap<ResourceKey<Level>, DimensionInfo> configs = new HashMap<>();
 
 	static void initialize() {
 		ModuleServiceManager.instance().add(new DimensionLibraryService());
@@ -99,8 +99,8 @@ public final class DimensionLibrary {
 	}
 
 	@Nonnull
-	public static DimensionInfo getData(@Nonnull final World world) {
-		RegistryKey<World> key = world.dimension();
+	public static DimensionInfo getData(@Nonnull final Level world) {
+		ResourceKey<Level> key = world.dimension();
 		DimensionInfo dimInfo = configs.get(key);
 
 		if (dimInfo == null) {

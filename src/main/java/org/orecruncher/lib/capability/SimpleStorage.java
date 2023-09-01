@@ -27,9 +27,9 @@ package org.orecruncher.lib.capability;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 
-import net.minecraft.nbt.CompoundNBT;
-import net.minecraft.nbt.INBT;
-import net.minecraft.util.Direction;
+import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.Tag;
+import net.minecraft.core.Direction;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.INBTSerializable;
 import net.minecraftforge.common.capabilities.ICapabilityProvider;
@@ -39,16 +39,16 @@ import net.minecraftforge.common.capabilities.ICapabilityProvider;
  *
  * @author Choonster
  */
-public final class SimpleStorage<T extends INBTSerializable<CompoundNBT>> implements Capability.IStorage<T> {
+public final class SimpleStorage<T extends INBTSerializable<CompoundTag>> implements Capability.IStorage<T> {
 
 	@Nullable
 	@Override
-	public INBT writeNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side) {
+	public Tag writeNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side) {
 		return instance.serializeNBT();
 	}
 
 	@Override
-	public void readNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side, @Nonnull final INBT nbt) {
-		instance.deserializeNBT((CompoundNBT) nbt);
+	public void readNBT(@Nonnull final Capability<T> capability, @Nonnull final T instance, @Nullable final Direction side, @Nonnull final Tag nbt) {
+		instance.deserializeNBT((CompoundTag) nbt);
 	}
 }

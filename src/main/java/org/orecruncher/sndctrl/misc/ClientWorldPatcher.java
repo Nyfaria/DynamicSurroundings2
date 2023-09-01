@@ -18,8 +18,8 @@
 
 package org.orecruncher.sndctrl.misc;
 
-import net.minecraft.world.IWorld;
-import net.minecraft.world.World;
+import net.minecraft.world.level.LevelAccessor;
+import net.minecraft.world.level.Level;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -39,9 +39,9 @@ public final class ClientWorldPatcher {
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public static void onWorldLoad(@Nonnull final WorldEvent.Load event) {
         if (Config.CLIENT.effects.fixupRandoms.get()) {
-            final IWorld world = event.getWorld();
-            if (world.isClientSide() && world instanceof World) {
-                final World w = (World) world;
+            final LevelAccessor world = event.getWorld();
+            if (world.isClientSide() && world instanceof Level) {
+                final Level w = (Level) world;
                 w.random = new XorShiftRandom();
             }
         }

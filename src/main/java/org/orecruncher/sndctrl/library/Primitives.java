@@ -18,11 +18,11 @@
 
 package org.orecruncher.sndctrl.library;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.block.SoundType;
-import net.minecraft.item.IArmorMaterial;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.SoundEvent;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.SoundType;
+import net.minecraft.world.item.ArmorMaterial;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvent;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.orecruncher.lib.SoundTypeUtils;
@@ -57,12 +57,12 @@ public class Primitives {
     private static final ResourceLocation FOOTSTEP_TEMPLATE = new ResourceLocation(SoundControl.MOD_ID, "templates/primitive_block_step.json");
 
     @Nonnull
-    public static ResourceLocation createArmorToolbarResource(@Nonnull final IArmorMaterial material) {
+    public static ResourceLocation createArmorToolbarResource(@Nonnull final ArmorMaterial material) {
         return new ResourceLocation(MobEffects.MOD_ID, Utilities.safeResourcePath(ARMOR_EQUIP_PREFIX + material.getName()));
     }
 
     @Nonnull
-    public static ResourceLocation createArmorAccentResource(@Nonnull final IArmorMaterial material) {
+    public static ResourceLocation createArmorAccentResource(@Nonnull final ArmorMaterial material) {
         return new ResourceLocation(MobEffects.MOD_ID, Utilities.safeResourcePath(ARMOR_ACCENT_PREFIX + material.getName()));
     }
 
@@ -104,7 +104,7 @@ public class Primitives {
     }
 
     @Nonnull
-    public static IAcoustic getArmorToolbarAcoustic(@Nonnull final IArmorMaterial material) {
+    public static IAcoustic getArmorToolbarAcoustic(@Nonnull final ArmorMaterial material) {
         final ResourceLocation loc = createArmorToolbarResource(material);
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
@@ -118,7 +118,7 @@ public class Primitives {
     }
 
     @Nonnull
-    public static IAcoustic getArmorAccentAcoustic(@Nonnull final IArmorMaterial material) {
+    public static IAcoustic getArmorAccentAcoustic(@Nonnull final ArmorMaterial material) {
         final ResourceLocation loc = createArmorAccentResource(material);
         IAcoustic acoustic = AcousticLibrary.resolve(loc);
         if (acoustic == NullAcoustic.INSTANCE) {
